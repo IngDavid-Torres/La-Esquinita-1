@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <style>
+    .accesibilidad-bar {
+      position: fixed;
+      left: 24px;
+      bottom: 24px;
+      z-index: 2000;
+      background: #222;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      padding: 14px 10px 10px 10px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+      opacity: 0.93;
+      min-width: 48px;
+      min-height: 48px;
+      transition: box-shadow 0.2s, opacity 0.2s;
+    }
+    .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+      opacity: 1;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    }
+    .accesibilidad-bar button, .accesibilidad-bar select {
+      background: #fff;
+      color: #222;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+    .accesibilidad-bar button.active {
+      background: #ffb300;
+      color: #222;
+      transform: scale(1.08);
+    }
+    .accesibilidad-bar label {
+      display: none;
+    }
+    .accesibilidad-bar select {
+      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      font-size: 0.95em;
+      padding: 0;
+      margin-bottom: 2px;
+    }
+    .accesibilidad-bar option {
+      font-size: 1em;
+    }
+    .accesibilidad-bar .icono {
+      font-size: 1.2em;
+    }
+    @media(max-width:600px){
+      .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
+      .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    footer {
+      background: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 25px 20px 38px 20px;
+      margin-top: auto;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      box-sizing: border-box;
+    }
+  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tu Carrito | La Esquinita</title>
+  <style>
+    :root {
+      --primary: #ffb300;
+      --secondary: #2e7d32;
+      --accent: #ff5722;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+      --danger: #d32f2f;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    
+    header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .logo img {
+      height: 70px;
+      border-radius: 8px;
+    }
+    nav {
+      display: flex;
+      gap: 40px;
+    }
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    nav a img {
+      width: 32px;
+      height: 32px;
+    }
+    nav a:hover { color: var(--accent); }
+
+    
+    .container {
+      max-width: 1000px;
+      margin: 140px auto 50px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2em;
+      color: var(--secondary);
+    }
+
+    
+    .carrito-lista {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 450px;
+      overflow-y: auto;
+    }
+    .carrito-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 18px;
+      border-bottom: 1px solid #eee;
+      background: var(--light);
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .carrito-item img {
+      width: 110px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .carrito-detalle {
+      flex: 1;
+      text-align: left;
+    }
+    .carrito-detalle p {
+      margin: 4px 0;
+    }
+
+    
+    .btn-quitar {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-quitar:hover {
+      background: #b71c1c;
+      transform: scale(1.05);
+    }
+
+    .total {
+      text-align: right;
+      font-size: 1.4em;
+      font-weight: bold;
+      color: var(--secondary);
+      margin-top: 20px;
+    }
+    .pagar {
+      display: inline-block;
+      background: var(--primary);
+      color: var(--dark);
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      text-decoration: none;
+      margin-top: 20px;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .pagar:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .mensaje-carrito {
+      text-align: center;
+      color: var(--danger);
+      font-size: 1.2em;
+      margin-top: 40px;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 25px 20px;
+      margin-top: auto;
+    }
+    footer p { margin: 5px 0; }
+    footer .social {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    footer .social a {
+      color: #fff;
+      font-size: 1.2em;
+      transition: color 0.3s;
+    }
+    footer .social a:hover { color: var(--primary); }
+
+    
+    @media(max-width:768px){
+      .carrito-item { flex-direction: column; align-items: flex-start; }
+      .carrito-item img { width: 100%; max-width: 220px; }
+      .total { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+    <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
+    <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+    <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
+    <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
+    <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
+    <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
+    <select id="tipografiaSelect" aria-label="Cambiar tipografía">
+      <option value="default">Aa</option>
+      <option value="arial">A</option>
+      <option value="verdana">V</option>
+      <option value="comic">C</option>
+      <option value="open">O</option>
+    </select>
+    <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
+  </div>
+  <div id="contenido-principal">
+  <script>
+    
+    const root = document.documentElement;
+    const body = document.body;
+    let fontSize = 1;
+    let modoNocturno = false;
+    let contraste = false;
+    let grises = false;
+    let guiaLectura = false;
+    let lectorActivo = false;
+    let tipografia = 'default';
+
+    function setFontSize(mult) {
+      fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
+      body.style.fontSize = fontSize + 'em';
+    }
+    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
+    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
+
+    document.getElementById('modoNocturnoBtn').onclick = function() {
+      modoNocturno = !modoNocturno;
+      if(modoNocturno) {
+        body.style.background = '#181818';
+        body.style.color = '#fff';
+        this.classList.add('active');
+      } else {
+        body.style.background = '';
+        body.style.color = '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('contrasteBtn').onclick = function() {
+      contraste = !contraste;
+      if(contraste) {
+        body.style.filter = 'contrast(1.7)';
+        this.classList.add('active');
+      } else {
+        body.style.filter = '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('grisesBtn').onclick = function() {
+      grises = !grises;
+      if(grises) {
+        body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
+        this.classList.add('active');
+      } else {
+        body.style.filter = contraste ? 'contrast(1.7)' : '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('guiaLecturaBtn').onclick = function() {
+      guiaLectura = !guiaLectura;
+      let contenido = document.getElementById('contenido-principal');
+      if(guiaLectura) {
+        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+        contenido.style.background = '#fffbe7';
+        this.classList.add('active');
+      } else {
+        contenido.style.boxShadow = '';
+        contenido.style.background = '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('tipografiaSelect').onchange = function() {
+      tipografia = this.value;
+      switch(tipografia) {
+        case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
+        case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
+        case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
+        case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
+        default: body.style.fontFamily = '';
+      }
+    };
+
+    // Lector de pantalla básico
+    document.getElementById('lectorPantallaBtn').onclick = function() {
+      lectorActivo = !lectorActivo;
+      if(lectorActivo) {
+        this.classList.add('active');
+        let texto = document.getElementById('contenido-principal').innerText;
+        if('speechSynthesis' in window) {
+          let utter = new SpeechSynthesisUtterance(texto);
+          utter.lang = 'es-MX';
+          window.speechSynthesis.speak(utter);
+        } else {
+          alert('Lector de pantalla no soportado en este navegador.');
+        }
+      } else {
+        this.classList.remove('active');
+        if('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    };
+  </script>
+  
+  <header>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
+    </div>
+    <nav>
+      <a href="{{ url_for('productos') }}">
+        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">Tienda
+      </a>
+      <a href="{{ url_for('contacto') }}">
+        <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
+      </a>
+      <a href="{{ url_for('carrito') }}">
+        <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
+        Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}
+      </a>
+      {% if session['usuario_nombre'] %}
+        <a href="{{ url_for('panel_cliente') }}">
+          <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">Mi Dashboard
+        </a>
+        <a href="{{ url_for('logout') }}">
+          <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">Salir
+        </a>
+      {% else %}
+        <a href="{{ url_for('login') }}">
+          <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">Ingresar
+        </a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <!-- CONTENIDO -->
+  <main class="container">
+    <h2>🛒 Tu Carrito</h2>
+    {% if productos %}
+      <ul class="carrito-lista">
+        {% for producto in productos %}
+          <li class="carrito-item">
+            <img src="{{ url_for('static', filename='images/' + producto.imagen) }}" alt="{{ producto.nombre }}">
+            <div class="carrito-detalle">
+              <p><strong>{{ producto.nombre }}</strong></p>
+              <p>Cantidad: {{ producto.cantidad }}</p>
+              <p>Precio: ${{ producto.precio }}</p>
+              <form action="{{ url_for('quitar_carrito', producto_id=producto.id) }}" method="post" onsubmit="return confirmarEliminacion()">
+                <button type="submit" class="btn-quitar">❌ Quitar</button>
+              </form>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+      <p class="total">Total: ${{ "%.2f"|format(total) }}</p>
+      <a href="{{ url_for('metodos_pago') }}" class="pagar">Proceder al Pago</a>
+    {% else %}
+      <p class="mensaje-carrito">🛒 Tu carrito de compras está vacío.</p>
+    {% endif %}
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 La Esquinita</p>
+    <p>Hecho con 🌽 y ❤️ en México</p>
+    <div class="social">
+      <a href="#"><i>📘</i></a>
+      <a href="#"><i>📸</i></a>
+      <a href="#"><i>🐦</i></a>
+    </div>
+  </footer>
+
+  <script>
+    function confirmarEliminacion() {
+      return confirm("⚠️ ¿Estás seguro de que quieres eliminar este producto del carrito?");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <style>
+    body.modo-nocturno {
+      background: #181818 !important;
+      color: #f3f3f3 !important;
+    }
+    body.modo-nocturno .container {
+      background: #232323 !important;
+      color: #f3f3f3 !important;
+    }
+    body.modo-nocturno .pedido-item {
+      background: #232323 !important;
+      color: #f3f3f3 !important;
+      box-shadow: 0px 2px 8px rgba(0,0,0,0.25) !important;
+    }
+    body.modo-nocturno input, body.modo-nocturno select {
+      background: #232323 !important;
+      color: #ffd700 !important;
+      border-color: #444 !important;
+    }
+    body.modo-nocturno input::placeholder {
+      color: #ffd700 !important;
+      opacity: 1;
+    }
+    body.modo-nocturno .buscador-form button, body.modo-nocturno button {
+      background: #444 !important;
+      color: #ffd700 !important;
+      border-color: #444 !important;
+    }
+    body.modo-nocturno .btn-eliminar {
+      background: #a93226 !important;
+      color: #fff !important;
+    }
+    body.modo-nocturno .btn-entregar {
+      background: #2e7d32 !important;
+      color: #ffd700 !important;
+    }
+    body.modo-nocturno .btn-eliminar:hover, body.modo-nocturno .btn-entregar:hover {
+      filter: brightness(1.2);
+    }
+    body.modo-nocturno .modal-content {
+      background: #232323 !important;
+      color: #ffd700 !important;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
+    }
+    body.modo-nocturno .btn-cancelar {
+      background: #444 !important;
+      color: #ffd700 !important;
+    }
+    body.modo-nocturno .btn-confirmar {
+      background: #a93226 !important;
+      color: #fff !important;
+    }
+    body.modo-nocturno footer {
+      background: #111 !important;
+      color: #ffd700 !important;
+    }
+    .accesibilidad-bar {
+      position: fixed;
+      left: 24px;
+      bottom: 24px;
+      z-index: 3000;
+      background: #222;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      padding: 14px 10px 10px 10px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+      opacity: 0.93;
+      min-width: 48px;
+      min-height: 48px;
+      transition: box-shadow 0.2s, opacity 0.2s;
+    }
+    .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+      opacity: 1;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    }
+    .accesibilidad-bar button, .accesibilidad-bar select {
+      background: #fff;
+      color: #222;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+    .accesibilidad-bar button.active {
+      background: #ffb300;
+      color: #222;
+      transform: scale(1.08);
+    }
+    .accesibilidad-bar label {
+      display: none;
+    }
+    .accesibilidad-bar select {
+      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      font-size: 0.95em;
+      padding: 0;
+      margin-bottom: 2px;
+    }
+    .accesibilidad-bar option {
+      font-size: 1em;
+    }
+    .accesibilidad-bar .icono {
+      font-size: 1.2em;
+    }
+    @media(max-width:600px){
+      .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
+      .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+    }
+  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administración de Pedidos | La Esquinita</title>
+  <style>
+    :root {
+      --primary: #ffb300;
+      --secondary: #2e7d32;
+      --accent: #ff5722;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--light);
+      color: var(--dark);
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .nav-left, .nav-right { display: flex; gap: 30px; }
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    nav a img { width: 28px; height: 28px; }
+    nav a:hover { color: var(--accent); }
+
+    .container {
+      max-width: 1000px;
+      margin: 140px auto 60px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+      padding: 36px 32px;
+    }
+    .container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--secondary);
+    }
+
+    .buscador-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 18px;
+    }
+    .buscador-form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .buscador-form input[type="text"] {
+      padding: 10px 16px;
+      border: 1.5px solid var(--secondary);
+      border-radius: 18px;
+      font-size: 1em;
+      background: #f9f9f9;
+      transition: border 0.2s;
+      width: 220px;
+    }
+    .buscador-form input[type="text"]:focus {
+      border-color: var(--primary);
+      outline: none;
+      background: #fffde7;
+    }
+    .buscador-form button {
+      background: var(--primary);
+      color: var(--secondary);
+      border: none;
+      border-radius: 18px;
+      padding: 10px 22px;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+    .buscador-form button:hover {
+      background: #FFC107;
+      color: #1B5E20;
+    }
+
+    .pedido-wrapper {
+      max-height: 450px;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .pedido-item {
+      background: #fdfdfd;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0px 2px 8px rgba(0,0,0,0.08);
+      transition: transform 0.2s;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .pedido-item:hover {
+      transform: translateY(-3px);
+    }
+    .pedido-item p {
+      margin: 6px 0;
+      text-align: left;
+    }
+    .pedido-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+    .pedido-actions form {
+      margin: 0;
+    }
+    .btn-eliminar {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .btn-eliminar:hover {
+      background: #e64a19;
+    }
+    .btn-entregar {
+      background: var(--secondary);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .btn-entregar:hover {
+      background: #1b5e20;
+    }
+    .no-result {
+      text-align: center;
+      color: #e53935;
+      font-size: 1.2em;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+
+    footer {
+      background: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      margin-top: auto;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      animation: fadeIn 0.3s ease;
+      max-width: 400px;
+    }
+    .modal-content h3 {
+      margin-bottom: 15px;
+      color: var(--secondary);
+    }
+    .modal-content p {
+      margin-bottom: 20px;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    .modal-actions button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn-cancelar {
+      background: #ccc;
+      color: #333;
+    }
+    .btn-cancelar:hover {
+      background: #bbb;
+    }
+    .btn-confirmar {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-confirmar:hover {
+      background: #e64a19;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @media(max-width:700px){
+      .container { padding: 12px 2vw; }
+      nav { padding: 12px 10px; }
+      .pedido-item { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- BARRA DE ACCESIBILIDAD -->
+  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+    <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
+    <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+    <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
+    <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
+    <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
+    <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
+    <select id="tipografiaSelect" aria-label="Cambiar tipografía">
+      <option value="default">Aa</option>
+      <option value="arial">A</option>
+      <option value="verdana">V</option>
+      <option value="comic">C</option>
+      <option value="open">O</option>
+    </select>
+    <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
+  </div>
+
+  <script>
+    // --- ACCESIBILIDAD GLOBAL ---
+    const root = document.documentElement;
+    const body = document.body;
+    let fontSize = 1;
+    let modoNocturno = false;
+    let contraste = false;
+    let grises = false;
+    let guiaLectura = false;
+    let lectorActivo = false;
+    let tipografia = 'default';
+
+    function setFontSize(mult) {
+      fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
+      body.style.fontSize = fontSize + 'em';
+    }
+    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
+    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
+
+    document.getElementById('modoNocturnoBtn').onclick = function() {
+      modoNocturno = !modoNocturno;
+      if(modoNocturno) {
+        body.classList.add('modo-nocturno');
+        this.classList.add('active');
+      } else {
+        body.classList.remove('modo-nocturno');
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('contrasteBtn').onclick = function() {
+      contraste = !contraste;
+      if(contraste) {
+        body.style.filter = 'contrast(1.7)';
+        this.classList.add('active');
+      } else {
+        body.style.filter = '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('grisesBtn').onclick = function() {
+      grises = !grises;
+      if(grises) {
+        body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
+        this.classList.add('active');
+      } else {
+        body.style.filter = contraste ? 'contrast(1.7)' : '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('guiaLecturaBtn').onclick = function() {
+      guiaLectura = !guiaLectura;
+      let contenido = document.getElementById('contenido-principal') || document.body;
+      if(guiaLectura) {
+        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+        contenido.style.background = '#fffbe7';
+        this.classList.add('active');
+      } else {
+        contenido.style.boxShadow = '';
+        contenido.style.background = '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('tipografiaSelect').onchange = function() {
+      tipografia = this.value;
+      switch(tipografia) {
+        case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
+        case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
+        case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
+        case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
+        default: body.style.fontFamily = '';
+      }
+    };
+
+    // Lector de pantalla básico
+    document.getElementById('lectorPantallaBtn').onclick = function() {
+      lectorActivo = !lectorActivo;
+      let contenido = document.getElementById('contenido-principal') || document.body;
+      if(lectorActivo) {
+        this.classList.add('active');
+        let texto = contenido.innerText;
+        if('speechSynthesis' in window) {
+          let utter = new SpeechSynthesisUtterance(texto);
+          utter.lang = 'es-MX';
+          window.speechSynthesis.speak(utter);
+        } else {
+          alert('Lector de pantalla no soportado en este navegador.');
+        }
+      } else {
+        this.classList.remove('active');
+        if('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    };
+  </script>
+  <!-- NAVBAR -->
+  <nav>
+    <div class="nav-left"></div>
+    <div class="nav-right">
+      <a href="{{ url_for('panel_admin') }}">
+        <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">Mi Dashboard
+      </a>
+      <a href="{{ url_for('logout') }}">
+        <img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">Cerrar Sesión
+      </a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>📦 Administración de Pedidos</h2>
+    <!-- Buscador -->
+    <div class="buscador-wrapper">
+      <form class="buscador-form" method="GET" action="{{ url_for('admin_pedidos') }}">
+        <input type="text" name="q" placeholder="Buscar por ID, cliente o estado..." value="{{ request.args.get('q', '') }}">
+        <button type="submit">Buscar</button>
+      </form>
+    </div>
+    <div class="pedido-wrapper">
+      {% if pedidos %}
+        {% if pedidos|length == 0 %}
+          <div class="no-result">Pedido no encontrado.</div>
+        {% else %}
+          {% for pedido in pedidos %}
+            <div class="pedido-item">
+              <p><strong>ID Pedido:</strong> {{ pedido.id }}</p>
+              <p><strong>Cliente:</strong> {{ pedido.usuario.nombre }}</p>
+              <p><strong>Estado:</strong> {{ pedido.estado }}</p>
+              <p><strong>Total:</strong> ${{ "%.2f"|format(pedido.total) }}</p>
+              <div class="pedido-actions">
+                <form action="{{ url_for('marcar_entregado', pedido_id=pedido.id) }}" method="get">
+                  {% if pedido.estado != 'Entregado' %}
+                    <button type="submit" class="btn-entregar">✅ Marcar como entregado</button>
+                  {% endif %}
+                </form>
+                <form action="{{ url_for('eliminar_pedido', pedido_id=pedido.id) }}" method="post" onsubmit="return mostrarModal(event, this)">
+                  <button type="submit" class="btn-eliminar">❌ Eliminar</button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% else %}
+        <div class="no-result">No hay pedidos registrados.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="modal" id="modalConfirmacion">
+    <div class="modal-content">
+      <h3>⚠️ Confirmar eliminación</h3>
+      <p>¿Estás seguro de que deseas eliminar este pedido?</p>
+      <div class="modal-actions">
+        <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn-confirmar" id="btnConfirmar">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 La Esquinita - Todos los derechos reservados</p>
+  </footer>
+
+  <script>
+    let formPendiente = null;
+    function mostrarModal(e, form) {
+      e.preventDefault();
+      formPendiente = form;
+      document.getElementById("modalConfirmacion").style.display = "flex";
+      return false;
+    }
+    function cerrarModal() {
+      document.getElementById("modalConfirmacion").style.display = "none";
+      formPendiente = null;
+    }
+    document.getElementById("btnConfirmar").addEventListener("click", () => {
+      if (formPendiente) formPendiente.submit();
+    });
+  </script>
+</body>
+</html>

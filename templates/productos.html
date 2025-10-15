@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <style>
+    .accesibilidad-bar {
+      position: fixed;
+      left: 24px;
+      bottom: 24px;
+      z-index: 2000;
+      background: #222;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      padding: 14px 10px 10px 10px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+      opacity: 0.93;
+      min-width: 48px;
+      min-height: 48px;
+      transition: box-shadow 0.2s, opacity 0.2s;
+    }
+    .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+      opacity: 1;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    }
+    .accesibilidad-bar button, .accesibilidad-bar select {
+      background: #fff;
+      color: #222;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+    .accesibilidad-bar button.active {
+      background: #ffb300;
+      color: #222;
+      transform: scale(1.08);
+    }
+    .accesibilidad-bar label {
+      display: none;
+    }
+    .accesibilidad-bar select {
+      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      font-size: 0.95em;
+      padding: 0;
+      margin-bottom: 2px;
+    }
+    .accesibilidad-bar option {
+      font-size: 1em;
+    }
+    .accesibilidad-bar .icono {
+      font-size: 1.2em;
+    }
+    @media(max-width:600px){
+      .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
+      .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    footer {
+      background: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 30px 20px 38px 20px;
+      margin-top: auto;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      box-sizing: border-box;
+    }
+  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Esquinita - Productos</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    :root {
+      --primary: #ffb300;
+      --secondary: #2e7d32;
+      --accent: #ff5722;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    nav {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 50px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      gap: 40px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.3s;
+    }
+
+    nav a img {
+      width: 32px;
+      height: 32px;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    .hero {
+      height: 60vh;
+      background: url('{{ url_for("static", filename="images/elote-y-esquites.jpg") }}') no-repeat center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+    }
+
+    .hero-content h1 {
+      font-size: 2.5em;
+      margin-bottom: 15px;
+    }
+
+    .hero-content p {
+      font-size: 1.2em;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    .container h2 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 40px;
+      color: var(--secondary);
+    }
+
+    .container h3 {
+      margin-top: 40px;
+      color: var(--accent);
+    }
+
+    .productos-lista {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+      margin-top: 20px;
+    }
+
+    .producto-item {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+      text-align: center;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .producto-item img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .producto-item p {
+      margin: 10px 0;
+      color: #555;
+    }
+
+    .boton-carrito {
+      background: var(--primary);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .boton-carrito:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .alert-container {
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .alert.success {
+      background: var(--secondary);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    footer {
+      background: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    footer p {
+      margin: 5px 0;
+    }
+
+    footer .social {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    footer .social a {
+      color: #fff;
+      font-size: 1.2em;
+      transition: color 0.3s;
+    }
+
+    footer .social a:hover {
+      color: var(--primary);
+    }
+
+   
+    .filtro-categorias {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+    .filtro-categorias label {
+      font-weight: bold;
+      color: var(--secondary);
+      font-size: 1.1em;
+    }
+    #filtro-categoria {
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: 2px solid var(--primary);
+      background: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1em;
+      color: var(--dark);
+      transition: border-color 0.3s;
+      outline: none;
+      box-shadow: 0 2px 8px rgba(255,179,0,0.08);
+    }
+    #filtro-categoria:focus {
+      border-color: var(--accent);
+    }
+
+    @media(max-width:768px){
+      .nav-left, .nav-right {
+        gap: 20px;
+      }
+
+      .hero-content h1 {
+        font-size: 2em;
+      }
+
+      .hero-content p {
+        font-size: 1em;
+      }
+
+      .container h2 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+    <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
+    <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+    <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
+    <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
+    <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
+    <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
+    <select id="tipografiaSelect" aria-label="Cambiar tipografía">
+      <option value="default">Aa</option>
+      <option value="arial">A</option>
+      <option value="verdana">V</option>
+      <option value="comic">C</option>
+      <option value="open">O</option>
+    </select>
+    <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
+  </div>
+  <script>
+    
+    const root = document.documentElement;
+    const body = document.body;
+    let fontSize = 1;
+    let modoNocturno = false;
+    let contraste = false;
+    let grises = false;
+    let guiaLectura = false;
+    let lectorActivo = false;
+    let tipografia = 'default';
+
+    function setFontSize(mult) {
+      fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
+      body.style.fontSize = fontSize + 'em';
+    }
+    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
+    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
+
+    document.getElementById('modoNocturnoBtn').onclick = function() {
+      modoNocturno = !modoNocturno;
+      if(modoNocturno) {
+        body.style.background = '#181818';
+        body.style.color = '#fff';
+        this.classList.add('active');
+      } else {
+        body.style.background = '';
+        body.style.color = '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('contrasteBtn').onclick = function() {
+      contraste = !contraste;
+      if(contraste) {
+        body.style.filter = 'contrast(1.7)';
+        this.classList.add('active');
+      } else {
+        body.style.filter = '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('grisesBtn').onclick = function() {
+      grises = !grises;
+      if(grises) {
+        body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
+        this.classList.add('active');
+      } else {
+        body.style.filter = contraste ? 'contrast(1.7)' : '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('guiaLecturaBtn').onclick = function() {
+      guiaLectura = !guiaLectura;
+      let contenido = document.querySelector('.container') || document.body;
+      if(guiaLectura) {
+        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+        contenido.style.background = '#fffbe7';
+        this.classList.add('active');
+      } else {
+        contenido.style.boxShadow = '';
+        contenido.style.background = '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('tipografiaSelect').onchange = function() {
+      tipografia = this.value;
+      switch(tipografia) {
+        case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
+        case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
+        case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
+        case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
+        default: body.style.fontFamily = '';
+      }
+    };
+
+    
+    document.getElementById('lectorPantallaBtn').onclick = function() {
+      lectorActivo = !lectorActivo;
+      let contenido = document.querySelector('.container') || document.body;
+      if(lectorActivo) {
+        this.classList.add('active');
+        let texto = contenido.innerText;
+        if('speechSynthesis' in window) {
+          let utter = new SpeechSynthesisUtterance(texto);
+          utter.lang = 'es-MX';
+          window.speechSynthesis.speak(utter);
+        } else {
+          alert('Lector de pantalla no soportado en este navegador.');
+        }
+      } else {
+        this.classList.remove('active');
+        if('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    };
+  </script>
+
+  
+  <nav>
+    <div class="nav-left">
+      <a href="{{ url_for('inicio') }}">
+        <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">Inicio
+      </a>
+      <a href="{{ url_for('contacto') }}">
+        <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
+      </a>
+    </div>
+    <div class="nav-right">
+      <a href="{{ url_for('carrito') }}">
+        <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">Carrito
+        {% if cantidad_carrito and cantidad_carrito > 0 %}
+          <span style="background:var(--primary);color:var(--dark);padding:2px 8px;border-radius:12px;font-weight:bold;margin-left:4px;">
+            {{ cantidad_carrito }}
+          </span>
+        {% endif %}
+      </a>
+      {% if session.get('usuario_id') %}
+        <a href="{{ url_for('logout') }}" onclick="return mostrarAlertaCerrarSesion(event)">
+          <img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">Cerrar Sesión
+        </a>
+      {% else %}
+        <a href="{{ url_for('panel_cliente') }}">
+          <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Iniciar Sesión">Iniciar Sesión
+        </a>
+      {% endif %}
+    </div>
+  </nav>
+
+  
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Te presentamos los productos que "La esquinita" te ofrece</h1>
+      <p>Llevate el mejor sabor del barrio hecho en México.</p>
+    </div>
+  </section>
+
+  
+  <div class="container">
+    <h2>🌽Productos por Categoría🤤</h2>
+
+    <!-- FILTRO DE CATEGORÍAS CON ESTILO -->
+    <div class="filtro-categorias">
+      <label for="filtro-categoria">Filtrar por categoría:</label>
+      <select id="filtro-categoria" onchange="filtrarCategoria()">
+        <option value="todas">Todas</option>
+        {% for categoria in categorias %}
+          <option value="cat{{ categoria.id }}">{{ categoria.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alert-container">
+          {% for category, message in messages %}
+            {% if category == "success" %}
+              <div class="alert {{ category }}">{{ message }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% for categoria in categorias %}
+      <h3 class="titulo-categoria" data-categoria="cat{{ categoria.id }}">{{ categoria.nombre }}</h3>
+      <div class="productos-lista" data-categoria="cat{{ categoria.id }}">
+        {% for producto in productos %}
+          {% if producto.categoria_id == categoria.id %}
+            <div class="producto-item">
+              <img src="{{ url_for('static', filename='images/' + producto.imagen) }}" alt="{{ producto.nombre }}">
+              <p><strong>{{ producto.nombre }}</strong></p>
+              <p>Descripción: {{ producto.descripcion }}</p>
+              <p>Precio: ${{ producto.precio }}</p>
+              
+              <form action="{{ url_for('agregar_carrito', producto_id=producto.id) }}" method="POST">
+                <button class="boton-carrito" type="button" onclick="verificarSesion()">🛒 Agregar al carrito</button>
+              </form>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+  
+<div id="alerta-cierre" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);justify-content:center;align-items:center;">
+  <div style="background:var(--primary);color:var(--secondary);border:2px solid var(--secondary);border-radius:14px;box-shadow:0 4px 24px rgba(44,44,44,0.18);padding:36px 32px 28px 32px;min-width:260px;max-width:90vw;text-align:center;font-size:1.18em;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:18px;">
+    <span id="alerta-cierre-mensaje">¿Seguro que quieres cerrar sesión?</span>
+    <div style="display:flex;gap:18px;margin-top:18px;">
+      <button type="button" id="btnConfirmarCerrar" style="padding:10px 28px;border:none;border-radius:16px;background:var(--secondary);color:#fff;font-size:1.08em;font-weight:bold;cursor:pointer;transition:background 0.2s;">Cerrar Sesión</button>
+      <button type="button" id="btnCancelarCerrar" style="padding:10px 28px;border:none;border-radius:16px;background:#ccc;color:#333;font-size:1.08em;font-weight:bold;cursor:pointer;transition:background 0.2s;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+  
+  <footer>
+    <p>© 2025 La Esquinita</p>
+    <p>Hecho con 🌱 y ❤️ en México</p>
+    <div class="social">
+      <a href="#"><i>📘</i></a>
+      <a href="#"><i>📸</i></a>
+      <a href="#"><i>🐦</i></a>
+    </div>
+  </footer>
+
+
+  <script>
+  var usuarioIniciado = {{ 'true' if session.get('usuario_id') else 'false' }};
+
+    function verificarSesion() {
+      if (!usuarioIniciado) {
+        alert("⚠️ Debes iniciar sesión para agregar productos al carrito.");
+        return;
+      }
+      event.target.closest("form").submit();
+    }
+
+    setTimeout(function() {
+      var alertElement = document.querySelector('.alert-container');
+      if (alertElement) {
+        alertElement.style.transition = "opacity 0.5s ease-out";
+        alertElement.style.opacity = "0";
+        setTimeout(() => alertElement.style.display = "none", 500);
+      }
+    }, 3000);
+
+    function filtrarCategoria() {
+      var filtro = document.getElementById('filtro-categoria').value;
+      var listas = document.querySelectorAll('.productos-lista');
+      var titulos = document.querySelectorAll('.titulo-categoria');
+      listas.forEach(function(lista) {
+        if (filtro === 'todas' || lista.getAttribute('data-categoria') === filtro) {
+          lista.style.display = '';
+        } else {
+          lista.style.display = 'none';
+        }
+      });
+      titulos.forEach(function(titulo) {
+        if (filtro === 'todas' || titulo.getAttribute('data-categoria') === filtro) {
+          titulo.style.display = '';
+        } else {
+          titulo.style.display = 'none';
+        }
+      });
+    }
+
+    
+    function mostrarAlertaCerrarSesion(event) {
+      event.preventDefault();
+      document.getElementById('alerta-cierre').style.display = 'flex';
+      document.getElementById('alerta-cierre-mensaje').textContent = "¿Seguro que quieres cerrar sesión?";
+
+      document.getElementById('btnConfirmarCerrar').onclick = function() {
+        // Redirige al logout y pasa un parámetro para mostrar la alerta en inicio
+        window.location.href = "{{ url_for('logout') }}?cerrada=1";
+      };
+      document.getElementById('btnCancelarCerrar').onclick = function() {
+        document.getElementById('alerta-cierre').style.display = 'none';
+      };
+      return false;
+    }
+  </script>
+
+</body>
+</html>

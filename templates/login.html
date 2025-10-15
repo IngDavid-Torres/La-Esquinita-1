@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+        <style>
+            .accesibilidad-bar {
+                position: fixed;
+                left: 24px;
+                bottom: 24px;
+                z-index: 2000;
+                background: #222;
+                color: #fff;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+                padding: 14px 10px 10px 10px;
+                border-radius: 18px;
+                box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+                opacity: 0.93;
+                min-width: 48px;
+                min-height: 48px;
+                transition: box-shadow 0.2s, opacity 0.2s;
+            }
+            .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+                opacity: 1;
+                box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+            }
+            .accesibilidad-bar button, .accesibilidad-bar select {
+                background: #fff;
+                color: #222;
+                border: none;
+                border-radius: 50%;
+                width: 38px;
+                height: 38px;
+                margin: 0;
+                font-size: 1.2em;
+                cursor: pointer;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+                transition: background 0.2s, color 0.2s, transform 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 2px;
+            }
+            .accesibilidad-bar button.active {
+                background: #ffb300;
+                color: #222;
+                transform: scale(1.08);
+            }
+            .accesibilidad-bar label {
+                display: none;
+            }
+            .accesibilidad-bar select {
+                border-radius: 8px;
+                width: 38px;
+                height: 38px;
+                font-size: 0.95em;
+                padding: 0;
+                margin-bottom: 2px;
+            }
+            .accesibilidad-bar option {
+                font-size: 1em;
+            }
+            .accesibilidad-bar .icono {
+                font-size: 1.2em;
+            }
+            @media(max-width:600px){
+                .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
+                .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+            }
+        </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | La Esquinita</title>
+    <style>
+        :root {
+            --primary: #ffb300;
+            --secondary: #2e7d32;
+            --accent: #ff5722;
+            --light: #fffdf7;
+            --dark: #1c1c1c;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 30px 40px;
+            display: flex;
+            gap: 70px;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+        nav a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s, background 0.3s;
+            padding: 10px 18px;
+            border-radius: 8px;
+        }
+        nav a img {
+            width: 40px;
+            height: 40px;
+        }
+        nav a:hover {
+            color: var(--accent);
+            background: rgba(255, 179, 0, 0.08);
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.97);
+            padding: 36px 30px 30px 30px;
+            border-radius: 18px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            margin: 140px auto 80px auto;
+        }
+        h2 {
+            color: var(--secondary);
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(46,125,50,0.08);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            border: 1.5px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            background: #fffdf7;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 2px 8px rgba(255,179,0,0.10);
+        }
+        button {
+            width: 100%;
+            background: var(--accent);
+            color: #fff;
+            font-size: 1.15em;
+            padding: 13px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background: var(--secondary);
+            transform: scale(1.04);
+        }
+        .registro {
+            margin-top: 20px;
+            font-size: 0.95em;
+        }
+        .registro a {
+            color: var(--secondary);
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .registro a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+        footer {
+            background: var(--dark);
+            color: #fff;
+            text-align: center;
+            padding: 30px 20px 38px 20px;
+            margin-top: auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            box-sizing: border-box;
+        }
+        .accesibilidad-bar {
+            /* ...existing styles... */
+            position: fixed !important;
+            left: 0; right: 0;
+            bottom: 0;
+        }
+        @media(max-width:600px){
+            .container {
+                margin-top: 110px;
+                padding: 18px 8px 18px 8px;
+            }
+            h2 { font-size: 1.3em; }
+            nav { gap: 18px; padding: 18px 8px; }
+            nav a img { width: 28px; height: 28px; }
+        }
+    </style>
+</head>
+<body>
+        <div class="accesibilidad-bar" aria-label="Barra de accesibilidad" style="left:24px;bottom:24px;top:auto;right:auto;">
+            <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
+            <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+            <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
+            <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
+            <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
+            <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
+            <select id="tipografiaSelect" aria-label="Cambiar tipografía">
+                <option value="default">Aa</option>
+                <option value="arial">A</option>
+                <option value="verdana">V</option>
+                <option value="comic">C</option>
+                <option value="open">O</option>
+            </select>
+            <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
+        </div>
+        <div id="contenido-principal">
+        <script>
+           
+            const root = document.documentElement;
+            const body = document.body;
+            let fontSize = 1;
+            let modoNocturno = false;
+            let contraste = false;
+            let grises = false;
+            let guiaLectura = false;
+            let lectorActivo = false;
+            let tipografia = 'default';
+
+            function setFontSize(mult) {
+                fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
+                body.style.fontSize = fontSize + 'em';
+            }
+            document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
+            document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
+
+            document.getElementById('modoNocturnoBtn').onclick = function() {
+                modoNocturno = !modoNocturno;
+                if(modoNocturno) {
+                    body.style.background = '#181818';
+                    body.style.color = '#fff';
+                    this.classList.add('active');
+                } else {
+                    body.style.background = '';
+                    body.style.color = '';
+                    this.classList.remove('active');
+                }
+            };
+
+            document.getElementById('contrasteBtn').onclick = function() {
+                contraste = !contraste;
+                if(contraste) {
+                    body.style.filter = 'contrast(1.7)';
+                    this.classList.add('active');
+                } else {
+                    body.style.filter = '';
+                    this.classList.remove('active');
+                }
+            };
+
+            document.getElementById('grisesBtn').onclick = function() {
+                grises = !grises;
+                if(grises) {
+                    body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
+                    this.classList.add('active');
+                } else {
+                    body.style.filter = contraste ? 'contrast(1.7)' : '';
+                    this.classList.remove('active');
+                }
+            };
+
+            document.getElementById('guiaLecturaBtn').onclick = function() {
+                guiaLectura = !guiaLectura;
+                let contenido = document.getElementById('contenido-principal') || document.body;
+                if(guiaLectura) {
+                    contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+                    contenido.style.background = '#fffbe7';
+                    this.classList.add('active');
+                } else {
+                    contenido.style.boxShadow = '';
+                    contenido.style.background = '';
+                    this.classList.remove('active');
+                }
+            };
+
+            document.getElementById('tipografiaSelect').onchange = function() {
+                tipografia = this.value;
+                switch(tipografia) {
+                    case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
+                    case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
+                    case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
+                    case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
+                    default: body.style.fontFamily = '';
+                }
+            };
+
+           
+            document.getElementById('lectorPantallaBtn').onclick = function() {
+                lectorActivo = !lectorActivo;
+                let contenido = document.getElementById('contenido-principal') || document.body;
+                if(lectorActivo) {
+                    this.classList.add('active');
+                    let texto = contenido.innerText;
+                    if('speechSynthesis' in window) {
+                        let utter = new SpeechSynthesisUtterance(texto);
+                        utter.lang = 'es-MX';
+                        window.speechSynthesis.speak(utter);
+                    } else {
+                        alert('Lector de pantalla no soportado en este navegador.');
+                    }
+                } else {
+                    this.classList.remove('active');
+                    if('speechSynthesis' in window) window.speechSynthesis.cancel();
+                }
+            };
+        </script>
+    <nav>
+        <a href="{{ url_for('inicio') }}">
+            <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">Inicio
+        </a>
+        <a href="{{ url_for('productos') }}">
+            <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">Tienda
+        </a>
+        
+        <a href="{{ url_for('contacto') }}">
+            <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
+        </a>
+    </nav>
+    <div class="container">
+        <h2>🔐 Iniciar Sesión en La Esquinita</h2>
+        <form id="loginForm" action="{{ url_for('login') }}" method="POST">
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Ingresar</button>
+        </form>
+        <div class="registro">
+            <p>¿No tienes cuenta?  
+                <a href="{{ url_for('registro') }}?tipo=Cliente">Regístrate Aqui</a>
+            </p>
+        </div>
+    </div>
+    <footer>
+        <p>© 2025 La Esquinita - Todos los derechos reservados</p>
+        <p>Hecho con 🌽 y ❤️ en México</p>
+        <div class="social">
+            <a href="#"><i>📘</i></a>
+            <a href="#"><i>📸</i></a>
+            <a href="#"><i>🐦</i></a>
+        </div>
+    </footer>
+
+    
+<div id="alerta-cargando" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);justify-content:center;align-items:center;">
+  <div style="background:var(--primary);color:var(--secondary);border:2px solid var(--secondary);border-radius:18px;box-shadow:0 4px 24px rgba(44,44,44,0.18);padding:38px 32px 28px 32px;min-width:260px;max-width:90vw;text-align:center;font-size:1.18em;font-weight:bold;display:flex;flex-direction:column;align-items:center;">
+    <span style="font-size:1.3em;">Entrando a "La Esquinita"</span>
+    <div style="margin-top:18px;">
+      <svg width="48" height="48" viewBox="0 0 50 50">
+        <circle cx="25" cy="25" r="20" stroke="#2e7d32" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="31.4 31.4">
+          <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    document.getElementById('alerta-cargando').style.display = 'flex';
+    setTimeout(() => {
+        e.target.submit();
+    }, 2000); 
+});
+</script>
+</body>
+</html>

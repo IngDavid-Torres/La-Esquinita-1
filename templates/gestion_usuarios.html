@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <style>
+    body.modo-nocturno {
+      background: #181818 !important;
+      color: #f3f3f3 !important;
+    }
+    body.modo-nocturno .container {
+      background: #232323 !important;
+      color: #f3f3f3 !important;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
+    }
+    body.modo-nocturno .table-wrapper {
+      background: #232323 !important;
+    }
+    body.modo-nocturno table {
+      background: #232323 !important;
+      color: #f3f3f3 !important;
+    }
+    body.modo-nocturno th {
+      background: #333 !important;
+      color: #ffd700 !important;
+    }
+    body.modo-nocturno td {
+      background: #232323 !important;
+      color: #f3f3f3 !important;
+    }
+    body.modo-nocturno input, body.modo-nocturno select {
+      background: #232323 !important;
+      color: #ffd700 !important;
+      border-color: #444 !important;
+    }
+    body.modo-nocturno button {
+      background: #444 !important;
+      color: #ffd700 !important;
+      border-color: #444 !important;
+    }
+    body.modo-nocturno .btn-action.btn-update {
+      background: #444 !important;
+      color: #ffd700 !important;
+    }
+    body.modo-nocturno .btn-action.btn-delete {
+      background: #a93226 !important;
+      color: #fff !important;
+    }
+    body.modo-nocturno .btn-action:hover {
+      opacity: 1 !important;
+      filter: brightness(1.2);
+    }
+    body.modo-nocturno footer {
+      background: #111 !important;
+      color: #ffd700 !important;
+    }
+    body.modo-nocturno .container {
+      background: #232323 !important;
+      color: #f3f3f3 !important;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
+    }
+    body.modo-nocturno .table-wrapper {
+      background: #232323 !important;
+    }
+    body.modo-nocturno table {
+      background: #232323 !important;
+      color: #f3f3f3 !important;
+    }
+    body.modo-nocturno th {
+      background: #333 !important;
+      color: #ffd700 !important;
+    }
+    body.modo-nocturno td {
+      background: #232323 !important;
+      color: #f3f3f3 !important;
+    }
+    body.modo-nocturno input, body.modo-nocturno button, body.modo-nocturno select {
+      background: #232323 !important;
+      color: #ffd700 !important;
+      border-color: #444 !important;
+    }
+    body.modo-nocturno .btn-action.btn-update {
+      background: #444 !important;
+      color: #ffd700 !important;
+    }
+    body.modo-nocturno .btn-action.btn-delete {
+      background: #a93226 !important;
+      color: #fff !important;
+    }
+    body.modo-nocturno .btn-action:hover {
+      opacity: 1 !important;
+      filter: brightness(1.2);
+    }
+    body.modo-nocturno footer {
+      background: #111 !important;
+      color: #ffd700 !important;
+    }
+    .accesibilidad-bar {
+      position: fixed;
+      left: 24px;
+      bottom: 24px;
+      z-index: 3000;
+      background: #222;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      padding: 14px 10px 10px 10px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+      opacity: 0.93;
+      min-width: 48px;
+      min-height: 48px;
+      transition: box-shadow 0.2s, opacity 0.2s;
+    }
+    .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+      opacity: 1;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    }
+    .accesibilidad-bar button, .accesibilidad-bar select {
+      background: #fff;
+      color: #222;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+    .accesibilidad-bar button.active {
+      background: #ffb300;
+      color: #222;
+      transform: scale(1.08);
+    }
+    .accesibilidad-bar label {
+      display: none;
+    }
+    .accesibilidad-bar select {
+      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      font-size: 0.95em;
+      padding: 0;
+      margin-bottom: 2px;
+    }
+    .accesibilidad-bar option {
+      font-size: 1em;
+    }
+    .accesibilidad-bar .icono {
+      font-size: 1.2em;
+    }
+    @media(max-width:600px){
+      .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
+      .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+    }
+  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Usuarios | La Esquinita</title>
+  <style>
+    :root {
+      --primary: #ffb300;
+      --secondary: #2e7d32;
+      --accent: #ff5722;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* NAVBAR */
+    header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .logo img {
+      height: 60px;
+      border-radius: 8px;
+    }
+    nav {
+      display: flex;
+      gap: 40px;
+    }
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    nav a img {
+      width: 28px;
+      height: 28px;
+    }
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    /* CONTENEDOR */
+    .container {
+      max-width: 1100px;
+      margin: 140px auto 40px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--secondary);
+    }
+
+    /* BUSCADOR */
+    .search-form {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .search-form input {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 320px;
+    }
+    .search-form button {
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: none;
+      background: var(--secondary);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .search-form button:hover {
+      background: var(--accent);
+    }
+
+    /* TABLA */
+    .table-wrapper {
+      max-height: 400px;
+      overflow-y: auto;
+      border-radius: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: var(--secondary);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    /* BOTONES */
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-action {
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      font-weight: bold;
+      font-size: 0.9em;
+      min-width: 110px;
+      transition: transform 0.2s, opacity 0.3s;
+    }
+    .btn-action:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+    .btn-delete {
+      background: #e53935;
+      color: white;
+    }
+    .btn-update {
+      background: var(--primary);
+      color: black;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 25px 20px;
+      margin-top: 40px;
+    }
+    footer p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- BARRA DE ACCESIBILIDAD -->
+  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+    <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
+    <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+    <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
+    <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
+    <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
+    <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
+    <select id="tipografiaSelect" aria-label="Cambiar tipografía">
+      <option value="default">Aa</option>
+      <option value="arial">A</option>
+      <option value="verdana">V</option>
+      <option value="comic">C</option>
+      <option value="open">O</option>
+    </select>
+    <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
+  </div>
+
+  <script>
+    // --- ACCESIBILIDAD GLOBAL ---
+    const root = document.documentElement;
+    const body = document.body;
+    let fontSize = 1;
+    let modoNocturno = false;
+    let contraste = false;
+    let grises = false;
+    let guiaLectura = false;
+    let lectorActivo = false;
+    let tipografia = 'default';
+
+    function setFontSize(mult) {
+      fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
+      body.style.fontSize = fontSize + 'em';
+    }
+    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
+    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
+
+    document.getElementById('modoNocturnoBtn').onclick = function() {
+      modoNocturno = !modoNocturno;
+      if(modoNocturno) {
+        body.classList.add('modo-nocturno');
+        this.classList.add('active');
+      } else {
+        body.classList.remove('modo-nocturno');
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('contrasteBtn').onclick = function() {
+      contraste = !contraste;
+      if(contraste) {
+        body.style.filter = 'contrast(1.7)';
+        this.classList.add('active');
+      } else {
+        body.style.filter = '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('grisesBtn').onclick = function() {
+      grises = !grises;
+      if(grises) {
+        body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
+        this.classList.add('active');
+      } else {
+        body.style.filter = contraste ? 'contrast(1.7)' : '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('guiaLecturaBtn').onclick = function() {
+      guiaLectura = !guiaLectura;
+      let contenido = document.getElementById('contenido-principal') || document.body;
+      if(guiaLectura) {
+        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+        contenido.style.background = '#fffbe7';
+        this.classList.add('active');
+      } else {
+        contenido.style.boxShadow = '';
+        contenido.style.background = '';
+        this.classList.remove('active');
+      }
+    };
+
+    document.getElementById('tipografiaSelect').onchange = function() {
+      tipografia = this.value;
+      switch(tipografia) {
+        case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
+        case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
+        case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
+        case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
+        default: body.style.fontFamily = '';
+      }
+    };
+
+    // Lector de pantalla básico
+    document.getElementById('lectorPantallaBtn').onclick = function() {
+      lectorActivo = !lectorActivo;
+      let contenido = document.getElementById('contenido-principal') || document.body;
+      if(lectorActivo) {
+        this.classList.add('active');
+        let texto = contenido.innerText;
+        if('speechSynthesis' in window) {
+          let utter = new SpeechSynthesisUtterance(texto);
+          utter.lang = 'es-MX';
+          window.speechSynthesis.speak(utter);
+        } else {
+          alert('Lector de pantalla no soportado en este navegador.');
+        }
+      } else {
+        this.classList.remove('active');
+        if('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    };
+  </script>
+  <!-- NAVBAR -->
+  <header>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="AgroConnect">
+    </div>
+    <nav>
+      <a href="{{ url_for('agregar_usuario') }}">
+        <img src="{{ url_for('static', filename='images/agregar.png') }}" alt="Agregar">Agregar
+      </a>
+      <a href="{{ url_for('panel_admin') }}">
+        <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Panel">Mi Dashboard
+      </a>
+      <a href="{{ url_for('logout') }}">
+        <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">Salir
+      </a>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO -->
+  <div class="container">
+    <h2>👥 Gestión de Usuarios</h2>
+
+    <!-- 🔍 Buscador -->
+    <form method="GET" action="{{ url_for('gestion_usuarios') }}" class="search-form">
+      <input type="text" name="q" placeholder="Buscar por ID, nombre o email" value="{{ request.args.get('q', '') }}">
+      <button type="submit">🔍 Buscar</button>
+    </form>
+
+    <div class="table-wrapper">
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Contraseña</th>
+          <th>Tipo</th>
+          <th>Acción</th>
+        </tr>
+        {% for usuario in usuarios %}
+        <tr>
+          <td>{{ usuario.id }}</td>
+          <td>{{ usuario.nombre }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.password }}</td>
+          <td>{{ usuario.tipo_usuario }}</td>
+          <td class="btn-container">
+            <form action="{{ url_for('actualizar_usuario', user_id=usuario.id) }}" method="GET">
+              <button type="submit" class="btn-action btn-update">✏️ Actualizar</button>
+            </form>
+            <form action="{{ url_for('eliminar_usuario', user_id=usuario.id) }}" method="POST" onsubmit="return confirmarEliminacion()">
+              <button type="submit" class="btn-action btn-delete">❌ Eliminar</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" style="text-align:center; padding: 20px;">⚠️ No se encontraron usuarios.</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function confirmarEliminacion() {
+      return confirm("⚠️ ¿Estás seguro de que deseas eliminar este usuario?");
+    }
+  </script>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 La Esquinita - Todos los derechos reservados</p>
+  </footer>
+</body>
+</html>
+

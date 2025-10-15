@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | La Esquinita</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #ffb300;
+            --secondary: #2e7d32;
+            --accent: #ff5722;
+            --light: #fffdf7;
+            --dark: #1c1c1c;
+            --sidebar: #fffde7;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Poppins', Arial, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 50%, #f7e7d7 100%);
+            color: var(--dark);
+            display: flex;
+        }
+        /* Night mode for admin */
+        body.night-mode {
+            background: #181818 !important;
+            color: #fff !important;
+        }
+        .dashboard-main.night-mode,
+        .dashboard-container.night-mode {
+            background: #232323 !important;
+            color: #fff !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        }
+        .card.night-mode, .action-box.night-mode, .graph-box.night-mode {
+            background: #232323 !important;
+            color: #fff !important;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+        }
+        .dashboard-header.night-mode h2 {
+            color: #ffb300 !important;
+            text-shadow: 1px 1px 0 #232323;
+        }
+        footer.night-mode {
+            background: #181818 !important;
+            color: #fff !important;
+        }
+        .accesibilidad-bar.night-mode {
+            background: #232323 !important;
+            color: #fff !important;
+        }
+        .sidebar {
+            width: 220px;
+            background: var(--sidebar);
+            min-height: 100vh;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px 0 18px 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1001;
+        }
+        .sidebar .logo img {
+            width: 90px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+        }
+        .sidebar .user-info {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .sidebar .user-info .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin: 0 auto 7px auto;
+            color: var(--secondary);
+        }
+        .sidebar .user-info .name {
+            font-weight: bold;
+            color: var(--secondary);
+            font-size: 1em;
+        }
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            align-items: center;
+        }
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            width: 80%;
+            transition: color 0.3s, background 0.3s;
+            font-size: 1em;
+        }
+        .sidebar nav a img {
+            width: 22px;
+            height: 22px;
+        }
+        .sidebar nav a:hover, .sidebar nav a.active {
+            color: var(--accent);
+            background: rgba(255, 179, 0, 0.13);
+        }
+        .sidebar .status {
+            margin: 18px 0 8px 0;
+            width: 80%;
+        }
+        .sidebar .status span {
+            display: block;
+            margin-bottom: 6px;
+            padding: 6px 10px;
+            border-radius: 7px;
+            font-weight: bold;
+            font-size: 0.95em;
+            box-shadow: 0 2px 8px rgba(46,125,50,0.07);
+        }
+        .sidebar .status .mensajes {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+        .sidebar .status .pedidos {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        .sidebar .export-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            margin-top: 12px;
+            width: 100%;
+        }
+        .descargar-btn {
+            background: linear-gradient(90deg, #ffb300 60%, #ffe082 100%);
+            color: var(--secondary);
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 16px;
+            font-size: 0.98em;
+            box-shadow: 0 2px 8px rgba(255,179,0,0.08);
+            margin-bottom: 2px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: background 0.3s, color 0.3s, box-shadow 0.2s;
+        }
+        .descargar-btn:hover {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(255,87,34,0.13);
+        }
+        .dashboard-main {
+            margin-left: 220px;
+            width: calc(100vw - 220px);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: rgba(255,255,255,0.55);
+            border-radius: 0 0 28px 28px;
+            box-shadow: 0 8px 32px rgba(44,44,44,0.10);
+            backdrop-filter: blur(12px);
+        }
+        .dashboard-container {
+            max-width: 900px;
+            margin: 28px auto 0 auto;
+            background: rgba(255,255,255,0.75);
+            padding: 32px 28px 28px 28px;
+            border-radius: 22px;
+            box-shadow: 0 8px 32px rgba(44,44,44,0.13);
+            flex: 1;
+            border: 1.5px solid #e0e7ef;
+            backdrop-filter: blur(8px);
+        }
+        .dashboard-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center; 
+            margin-bottom: 18px;
+        }
+        .dashboard-header h2 {
+            color: var(--secondary);
+            font-size: 1.7em;
+            margin-bottom: 0;
+            text-shadow: 1px 1px 2px rgba(46,125,50,0.08);
+            text-align: center;
+            width: 100%;
+        }
+        .export-links {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .export-links a {
+            background: var(--secondary);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s, color 0.3s;
+        }
+        .export-links a:nth-child(2) {
+            background: #1565c0;
+        }
+        .export-links a:nth-child(3) {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+        .export-links a:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        .dashboard-cards {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: stretch;
+            gap: 22px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+        .card {
+            background: rgba(255,255,255,0.85);
+            border-radius: 22px;
+            padding: 28px 20px 18px 20px;
+            font-size: 1em;
+            color: var(--secondary);
+            box-shadow: 0 8px 32px rgba(255,179,0,0.13), 0 2px 8px rgba(46,125,50,0.07);
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 160px;
+            max-width: 180px;
+            width: 100%;
+            gap: 8px;
+            border: 1.5px solid #e0e7ef;
+            backdrop-filter: blur(6px);
+        }
+        .card:hover {
+            transform: scale(1.05) translateY(-4px);
+            box-shadow: 0 12px 36px rgba(255,179,0,0.18), 0 4px 12px rgba(46,125,50,0.13);
+            background: rgba(255,255,255,0.97);
+        }
+        
+        .accesibilidad-bar {
+            position: fixed;
+            right: 32px;
+            bottom: 70px;
+            z-index: 3000;
+            background: rgba(34,34,34,0.92);
+            color: #fff;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 18px 10px 18px;
+            border-radius: 22px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+            opacity: 0.97;
+            min-width: 40px;
+            min-height: 40px;
+            transition: box-shadow 0.2s, opacity 0.2s, right 0.2s, bottom 0.2s, background 0.2s;
+            backdrop-filter: blur(6px);
+        }
+        .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+            opacity: 1;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+            background: rgba(34,34,34,1);
+        }
+        .accesibilidad-bar button, .accesibilidad-bar select {
+            background: #fff;
+            color: #222;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            margin: 0 3px;
+            font-size: 1.1em;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+            transition: background 0.2s, color 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .accesibilidad-bar button.active {
+            background: #ffb300;
+            color: #222;
+            transform: scale(1.08);
+        }
+        .accesibilidad-bar label {
+            display: none;
+        }
+        .accesibilidad-bar select {
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            font-size: 1em;
+            padding: 0;
+        }
+        .accesibilidad-bar option {
+            font-size: 1em;
+        }
+        .accesibilidad-bar .icono {
+            font-size: 1.1em;
+        }
+        @media(max-width:900px){
+            .accesibilidad-bar { right: 8px; bottom: 70px; padding: 8px 8px; }
+        }
+        @media(max-width:600px){
+            .accesibilidad-bar {right: 2px; bottom: 70px; padding: 4px 2px; min-width: 24px; min-height: 24px;}
+            .accesibilidad-bar button, .accesibilidad-bar select {width: 18px; height: 18px; font-size: 0.8em;}
+        }
+        .card .icon {
+            font-size: 2em;
+            margin-bottom: 6px;
+            background: var(--primary);
+            color: var(--secondary);
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 2px 12px rgba(255,179,0,0.10);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card .value {
+            font-size: 1.3em;
+            color: var(--accent);
+            font-weight: bold;
+            margin-bottom: 2px;
+            text-shadow: 1px 1px 0px #ffe082;
+        }
+        .card .label {
+            font-size: 0.95em;
+            color: var(--secondary);
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .card:hover {
+            transform: scale(1.05) translateY(-4px);
+            box-shadow: 0 8px 24px rgba(255,179,0,0.18), 0 4px 12px rgba(46,125,50,0.13);
+            background: linear-gradient(135deg, #ffe082 60%, #fffde7 100%);
+        }
+        .dashboard-graphs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+        .graph-box {
+            background: #fffde7;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(255,179,0,0.10);
+            padding: 14px 10px;
+            text-align: center;
+        }
+        .graph-box h3 {
+            color: var(--accent);
+            margin-bottom: 7px;
+            font-size: 1em;
+        }
+        .dashboard-actions {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 22px;
+            margin-top: 18px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .action-box {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            padding: 18px 12px 18px 12px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 200px;
+            max-width: 220px;
+            width: 100%;
+            min-height: 180px;
+            gap: 10px;
+        }
+        .action-box h3 {
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-size: 1.08em;
+        }
+        .action-box p {
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+        .action-box button {
+            padding: 8px 14px;
+            border: none;
+            background-color: var(--primary);
+            color: var(--dark);
+            border-radius: 7px;
+            font-size: 0.95em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.2s;
+            font-family: inherit;
+            margin-bottom: 0;
+            margin-top: 4px;
+            width: 90%;
+            max-width: 170px;
+            display: block;
+        }
+        .action-box button:last-child {
+            background: var(--secondary);
+            color: #fff;
+            margin-top: 8px;
+        }
+        .action-box button:hover {
+            background-color: var(--accent);
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0px 3px 10px rgba(255, 87, 34, 0.13);
+        }
+        .search-bar {
+            margin-bottom: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            justify-content: center;
+        }
+        .search-bar input, .search-bar select {
+            padding: 6px 10px;
+            border-radius: 7px;
+            border: 1.5px solid var(--secondary);
+            font-size: 0.95em;
+            min-width: 140px;
+        }
+        .search-bar button {
+            background: var(--primary);
+            color: var(--secondary);
+            padding: 6px 14px;
+            border-radius: 7px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 0.95em;
+        }
+        .search-bar button:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        .resultados {
+            margin: 18px auto;
+            max-width: 700px;
+            background: #fffde7;
+            border-radius: 10px;
+            padding: 10px 18px;
+            box-shadow: 0 2px 8px rgba(46,125,50,0.07);
+            text-align: left;
+            font-size: 0.95em;
+        }
+        .resultados h3 {
+            color: var(--secondary);
+            font-size: 1em;
+        }
+        .resultados ul {
+            color: #333;
+            font-size: 0.95em;
+        }
+        .resultados h4 {
+            color: #c62828;
+            font-size: 1em;
+        }
+        footer {
+            background: rgba(28,28,28,0.92);
+            color: #fff;
+            text-align: center;
+            padding: 16px 0 10px 0;
+            font-size: 0.95em;
+            letter-spacing: 0.5px;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100vw;
+            z-index: 2000;
+            box-shadow: 0 -2px 12px rgba(44,44,44,0.12);
+            backdrop-filter: blur(4px);
+        }
+        @media (max-width: 1000px) {
+            .dashboard-container {
+                max-width: 98vw;
+                margin: 18px 1vw 10px 1vw;
+                padding: 7px;
+            }
+            .dashboard-cards, .dashboard-actions, .dashboard-graphs {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .sidebar {
+                width: 100vw;
+                height: auto;
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 7px 0;
+                position: static;
+            }
+            .sidebar nav {
+                flex-direction: row;
+                gap: 7px;
+                width: auto;
+            }
+            .dashboard-main {
+                margin-left: 0;
+                width: 100vw;
+            }
+            footer {
+                position: fixed;
+            }
+        }
+        @media (max-width: 600px) {
+            .dashboard-container {
+                margin: 7px 1vw 7px 1vw;
+                padding: 3px;
+            }
+            .dashboard-header h2 { font-size: 1.1em; }
+            .card .icon { font-size: 1.3em; padding: 7px; }
+            .card { font-size: 0.95em; padding: 10px 2px 8px 2px; }
+            .action-box { padding: 10px 2px 10px 2px; min-width: 140px; }
+            .action-box button { font-size: 0.9em; padding: 7px 8px; }
+        }
+        .alert-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
+        .alert-content {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(255,179,0,0.18);
+            padding: 38px 32px 28px 32px;
+            text-align: center;
+            min-width: 320px;
+            max-width: 90vw;
+            font-size: 1.15em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .alert-content h3 {
+            color: var(--accent);
+            margin-bottom: 18px;
+        }
+        .alert-content p {
+            color: var(--secondary);
+            margin-bottom: 22px;
+        }
+        .alert-content .alert-btns {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .alert-content button {
+            padding: 10px 22px;
+            border-radius: 12px;
+            border: none;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            background: var(--primary);
+            color: var(--dark);
+            transition: background 0.3s;
+        }
+        .alert-content button:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+        <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
+        <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+        <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
+        <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
+        <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
+        <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
+        <select id="tipografiaSelect" aria-label="Cambiar tipografía">
+            <option value="default">Aa</option>
+            <option value="arial">A</option>
+            <option value="verdana">V</option>
+            <option value="comic">C</option>
+            <option value="open">O</option>
+        </select>
+        <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
+    </div>
+    <script>
+        
+        const root = document.documentElement;
+        const body = document.body;
+        let fontSize = 1;
+        let modoNocturno = false;
+        let contraste = false;
+        let grises = false;
+        let guiaLectura = false;
+        let lectorActivo = false;
+        let tipografia = 'default';
+
+        function setFontSize(mult) {
+            fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
+            body.style.fontSize = fontSize + 'em';
+        }
+        document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
+        document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
+
+        document.getElementById('modoNocturnoBtn').onclick = function() {
+            modoNocturno = !modoNocturno;
+            const mainContent = document.querySelector('.dashboard-main');
+            const container = document.querySelector('.dashboard-container');
+            const cards = document.querySelectorAll('.card');
+            const actions = document.querySelectorAll('.action-box');
+            const graphs = document.querySelectorAll('.graph-box');
+            const dashboardHeader = document.querySelector('.dashboard-header');
+            const footer = document.querySelector('footer');
+            const accesBar = document.querySelector('.accesibilidad-bar');
+            if(modoNocturno) {
+                body.classList.add('night-mode');
+                if(mainContent) mainContent.classList.add('night-mode');
+                if(container) container.classList.add('night-mode');
+                cards.forEach(e=>e.classList.add('night-mode'));
+                actions.forEach(e=>e.classList.add('night-mode'));
+                graphs.forEach(e=>e.classList.add('night-mode'));
+                if(dashboardHeader) dashboardHeader.classList.add('night-mode');
+                if(footer) footer.classList.add('night-mode');
+                if(accesBar) accesBar.classList.add('night-mode');
+                this.classList.add('active');
+            } else {
+                body.classList.remove('night-mode');
+                if(mainContent) mainContent.classList.remove('night-mode');
+                if(container) container.classList.remove('night-mode');
+                cards.forEach(e=>e.classList.remove('night-mode'));
+                actions.forEach(e=>e.classList.remove('night-mode'));
+                graphs.forEach(e=>e.classList.remove('night-mode'));
+                if(dashboardHeader) dashboardHeader.classList.remove('night-mode');
+                if(footer) footer.classList.remove('night-mode');
+                if(accesBar) accesBar.classList.remove('night-mode');
+                this.classList.remove('active');
+            }
+        };
+
+        document.getElementById('contrasteBtn').onclick = function() {
+            contraste = !contraste;
+            if(contraste) {
+                body.style.filter = 'contrast(1.7)';
+                this.classList.add('active');
+            } else {
+                body.style.filter = '';
+                this.classList.remove('active');
+            }
+        };
+
+        document.getElementById('grisesBtn').onclick = function() {
+            grises = !grises;
+            if(grises) {
+                body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
+                this.classList.add('active');
+            } else {
+                body.style.filter = contraste ? 'contrast(1.7)' : '';
+                this.classList.remove('active');
+            }
+        };
+
+        document.getElementById('guiaLecturaBtn').onclick = function() {
+            guiaLectura = !guiaLectura;
+            let contenido = document.querySelector('.dashboard-main') || document.body;
+            if(guiaLectura) {
+                contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+                contenido.style.background = '#fffbe7';
+                contenido.scrollIntoView({behavior:'smooth', block:'center'});
+                this.classList.add('active');
+            } else {
+                contenido.style.boxShadow = '';
+                contenido.style.background = '';
+                this.classList.remove('active');
+            }
+        };
+
+        document.getElementById('tipografiaSelect').onchange = function() {
+            tipografia = this.value;
+            switch(tipografia) {
+                case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
+                case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
+                case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
+                case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
+                default: body.style.fontFamily = '';
+            }
+        };
+
+       
+        document.getElementById('lectorPantallaBtn').onclick = function() {
+            lectorActivo = !lectorActivo;
+            let contenido = document.querySelector('.dashboard-main') || document.body;
+            if(lectorActivo) {
+                this.classList.add('active');
+                let texto = contenido.innerText;
+                if('speechSynthesis' in window) {
+                    let utter = new SpeechSynthesisUtterance(texto);
+                    utter.lang = 'es-MX';
+                    window.speechSynthesis.speak(utter);
+                } else {
+                    alert('Lector de pantalla no soportado en este navegador.');
+                }
+            } else {
+                this.classList.remove('active');
+                if('speechSynthesis' in window) window.speechSynthesis.cancel();
+            }
+        };
+    </script>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
+        </div>
+        <div class="user-info">
+            <div class="avatar">👤</div>
+            <div class="name">{{ session['usuario_nombre'] if session['usuario_nombre'] else "Admin" }}</div>
+        </div>
+        <nav>
+            <a href="{{ url_for('gestion_usuarios') }}"><img src="{{ url_for('static', filename='images/user.png') }}" alt="Usuarios">Usuarios</a>
+            <a href="{{ url_for('admin_pedidos') }}"><img src="{{ url_for('static', filename='images/pedido.png') }}" alt="Pedidos">Pedidos</a>
+            <a href="{{ url_for('admin_productos') }}"><img src="{{ url_for('static', filename='images/producto.png') }}" alt="Productos">Productos</a>
+            <a href="{{ url_for('admin_mensajes') }}"><img src="{{ url_for('static', filename='images/mesajes.png') }}" alt="Mensajes">Mensajes</a>
+            <div class="export-links">
+                <a href="{{ url_for('exportar_reporte', tipo='usuarios') }}" class="descargar-btn"><img src="{{ url_for('static', filename='images/excel.png') }}" alt="Excel">Usuarios</a>
+                <a href="{{ url_for('exportar_reporte', tipo='pedidos') }}" class="descargar-btn"><img src="{{ url_for('static', filename='images/excel.png') }}" alt="Excel">Pedidos</a>
+                <a href="{{ url_for('exportar_reporte', tipo='productos') }}" class="descargar-btn"><img src="{{ url_for('static', filename='images/excel.png') }}" alt="Excel">Productos</a>
+            </div>
+            <a href="#" id="logoutBtn"><img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">Cerrar Sesión</a>
+        </nav>
+        <div class="status">
+            {% if mensajes_pendientes > 0 %}
+                <span class="mensajes">✉️ {{ mensajes_pendientes }} mensaje{{ mensajes_pendientes != 1 and 's' or '' }} pendiente{{ mensajes_pendientes != 1 and 's' or '' }}</span>
+            {% endif %}
+            {% if pedidos_activos > 0 %}
+                <span class="pedidos">📦 {{ pedidos_activos }} pedido{{ pedidos_activos != 1 and 's' or '' }} activo{{ pedidos_activos != 1 and 's' or '' }}</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="dashboard-main">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h2>📊 Dashboard de Administración</h2>
+            </div>
+            <form class="search-bar" id="searchForm" action="{{ url_for('panel_admin') }}" method="get" onsubmit="return validarFiltro()">
+                <input type="text" name="q" id="searchInput" placeholder="Buscar usuarios, pedidos o productos..." value="{{ q }}">
+                <select name="filtro" id="filtroSelect">
+                    <option value="usuarios" {% if filtro == "usuarios" %}selected{% endif %}>Usuarios</option>
+                    <option value="pedidos" {% if filtro == "pedidos" %}selected{% endif %}>Pedidos</option>
+                    <option value="productos" {% if filtro == "productos" %}selected{% endif %}>Productos</option>
+                </select>
+                <button type="submit">Buscar</button>
+            </form>
+            {% if resultados is defined and resultados %}
+            <div class="resultados">
+                <h3>🔎 Resultados de la búsqueda</h3>
+                <ul>
+                    {% for r in resultados %}
+                        {% if filtro == "usuarios" or (not filtro and r.__class__.__name__ == "Usuario") %}
+                            <li>👤 <b>{{ r.nombre }}</b> ({{ r.email }}) - Rol: {{ r.tipo_usuario }}</li>
+                        {% elif filtro == "pedidos" or (not filtro and r.__class__.__name__ == "Pedido") %}
+                            <li>📦 Pedido #{{ r.id }} - Usuario: {{ r.usuario_id }} - Estado: {{ r.estado }} - Fecha: {{ r.fecha.strftime('%d/%m/%Y %H:%M') }}</li>
+                        {% elif filtro == "productos" or (not filtro and r.__class__.__name__ == "Producto") %}
+                            <li>🛒 <b>{{ r.nombre }}</b> - Precio: ${{ r.precio }} - Productor: {{ r.productor_id }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% elif resultados is defined and q %}
+            <div class="resultados">
+                <h4>No se encontraron resultados.</h4>
+            </div>
+            {% endif %}
+            <div class="dashboard-cards">
+                <div class="card">
+                    <span class="icon">👥</span>
+                    <span class="value">{{ total_usuarios }}</span>
+                    <span class="label">Usuarios</span>
+                </div>
+                <div class="card">
+                    <span class="icon">📦</span>
+                    <span class="value">{{ pedidos_activos }}</span>
+                    <span class="label">Pedidos Activos</span>
+                </div>
+                <div class="card">
+                    <span class="icon">🛒</span>
+                    <span class="value">{{ total_productos }}</span>
+                    <span class="label">Productos</span>
+                </div>
+                <div class="card">
+                    <span class="icon">✉️</span>
+                    <span class="value">{{ mensajes_pendientes }}</span>
+                    <span class="label">Mensajes Pendientes</span>
+                </div>
+            </div>
+            <div class="dashboard-graphs">
+                <div class="graph-box">
+                    <h3>Crecimiento de Usuarios</h3>
+                    <canvas id="usuariosChart" height="120"></canvas>
+                </div>
+                <div class="graph-box">
+                    <h3>Pedidos por Mes</h3>
+                    <canvas id="pedidosChart" height="120"></canvas>
+                </div>
+                <div class="graph-box">
+                    <h3>Productos por Categoría</h3>
+                    <canvas id="productosChart" height="120"></canvas>
+                </div>
+            </div>
+            <div class="dashboard-actions">
+                <div class="action-box">
+                    <h3>👥 Gestión de Usuarios</h3>
+                    <p>Controla clientes y productores registrados en la plataforma.</p>
+                    <button onclick="window.location.href='{{ url_for('gestion_usuarios') }}'">Administrar Usuarios</button>
+                    <button onclick="window.location.href='{{ url_for('agregar_usuario') }}'" style="background:var(--secondary);color:#fff;">Agregar Usuario</button>
+                </div>
+                <div class="action-box">
+                    <h3>📦 Administración de Pedidos</h3>
+                    <p>Consulta y gestiona todos los pedidos activos y su historial.</p>
+                    <button onclick="window.location.href='{{ url_for('admin_pedidos') }}'" style="background:var(--secondary);color:#fff;">Ver Estatus de Pedidos</button>
+                </div>
+                <div class="action-box">
+                    <h3>🛒 Supervisión de Productos</h3>
+                    <p>Revisa y administra los productos publicados por los productores.</p>
+                    <button onclick="window.location.href='{{ url_for('admin_productos') }}'">Ver Productos</button>
+                </div>
+                <div class="action-box">
+                    <h3>✉️ Mensajes de Usuarios</h3>
+                    <p>Consulta y elimina mensajes enviados por clientes y productores.</p>
+                    <button onclick="window.location.href='{{ url_for('admin_mensajes') }}'">Ver Mensajes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p style="margin:0; font-weight:500;">
+            © 2025 La Esquinita - Todos los derechos reservados &nbsp;|&nbsp; Hecho con 🌽 y ❤️ en México
+        </p>
+    </footer>
+    <div id="logoutModal" class="alert-modal" style="display:none;">
+        <div class="alert-content">
+            <h3>¿Seguro que quieres cerrar sesión?</h3>
+            <p>Tu sesión se cerrará y volverás a la pantalla de inicio de sesión.</p>
+            <div class="alert-btns">
+                <button onclick="closeLogoutModal()">Cancelar</button>
+                <button onclick="window.location.href='{{ url_for('logout') }}'">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        
+        const usuariosData = {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            datasets: [{
+                label: 'Nuevos Usuarios',
+                data: [120, 150, 180, 200, 170, 220, 250, 300, 280, 320, 350, 400],
+                backgroundColor: 'rgba(255, 179, 0, 0.6)',
+                borderColor: 'rgba(255, 179, 0, 1)',
+                borderWidth: 2,
+                fill: true,
+            }]
+        };
+
+        const pedidosData = {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            datasets: [{
+                label: 'Pedidos Realizados',
+                data: [80, 90, 110, 130, 120, 150, 170, 200, 190, 220, 250, 300],
+                backgroundColor: 'rgba(46, 125, 50, 0.6)',
+                borderColor: 'rgba(46, 125, 50, 1)',
+                borderWidth: 2,
+                fill: true,
+            }]
+        };
+
+        const productosData = {
+            labels: ['Elotes', 'Esquites', 'Patitas', 'Maruchan'],
+            datasets: [{
+                label: 'Productos por Categoría',
+                data: [300, 250, 200, 150, 100, 50],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 2,
+                fill: true,
+            }]
+        };
+
+        const configUsuarios = {
+            type: 'line',
+            data: usuariosData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Meses'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Cantidad'
+                        }
+                    }
+                }
+            },
+        };
+
+        const configPedidos = {
+            type: 'line',
+            data: pedidosData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Meses'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Cantidad'
+                        }
+                    }
+                }
+            },
+        };
+
+        const configProductos = {
+            type: 'bar',
+            data: productosData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Categorías'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Cantidad'
+                        }
+                    }
+                }
+            },
+        };
+
+        // Renderizar gráficos
+        const usuariosChart = new Chart(
+            document.getElementById('usuariosChart'),
+            configUsuarios
+        );
+
+        const pedidosChart = new Chart(
+            document.getElementById('pedidosChart'),
+            configPedidos
+        );
+
+        const productosChart = new Chart(
+            document.getElementById('productosChart'),
+            configProductos
+        );
+
+        // Funciones para manejar el modal de cierre de sesión
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('logoutModal').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>

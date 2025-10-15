@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro | La Esquinita</title>
+    <style>
+        :root {
+            --primary: #FFD700;
+            --secondary: #2e7d32;
+            --accent: #ff5722;
+            --light: #fffdf7;
+            --dark: #1c1c1c;
+            --success: #28a745;
+            --error: #e53935;
+        }
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--light) 0%, #e6f2d8 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        header {
+            width: 100vw;
+            background: rgba(255,255,255,0.92);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 16px 0 12px 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+        nav {
+            display: flex;
+            gap: 38px;
+            margin-right: 40px;
+        }
+        nav a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 1.08em;
+            transition: color 0.3s;
+        }
+        nav a img {
+            width: 28px;
+            height: 28px;
+        }
+        nav a:hover {
+            color: var(--accent);
+        }
+        .container {
+            background: rgba(255,255,255,0.98);
+            padding: 38px 28px 32px 28px;
+            border-radius: 22px;
+            box-shadow: 0px 8px 32px rgba(44,44,44,0.13);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            margin: 90px 0 60px 0;
+        }
+        .logo {
+            margin-bottom: 10px;
+        }
+        .logo img {
+            height: 60px;
+            border-radius: 8px;
+        }
+        h2 {
+            color: var(--secondary);
+            font-size: 1.7em;
+            margin-bottom: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input, select {
+            width: 96%;
+            padding: 13px;
+            margin-bottom: 16px;
+            border: 1.5px solid var(--secondary);
+            border-radius: 10px;
+            font-size: 1.08em;
+            background: #f9f9f9;
+            transition: border 0.2s;
+            font-family: inherit;
+            text-align: left;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #fffde7;
+        }
+        #password-info {
+            font-size: 0.92em;
+            color: #666;
+            margin-bottom: 10px;
+            background: #fffbe7;
+            border-radius: 7px;
+            padding: 7px 10px;
+            border: 1px dashed var(--primary);
+            width: 96%;
+            text-align: left;
+        }
+        .msg-error, .msg-success {
+            width: 96%;
+            margin: 0 auto 14px auto;
+            padding: 12px 10px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            text-align: left;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        .msg-success {
+            background: var(--success);
+            color: #fff;
+            border: 1.5px solid #1e7e34;
+            display: none;
+        }
+        .msg-error {
+            background: var(--error);
+            color: #fff;
+            border: 1.5px solid #b71c1c;
+            display: none;
+        }
+        .msg-exito {
+            width: 96%;
+            margin: 0 auto 18px auto;
+            padding: 14px 12px;
+            border-radius: 8px;
+            font-size: 1.08em;
+            font-weight: bold;
+            text-align: center;
+            background: var(--primary);
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+            box-shadow: 0 2px 8px rgba(255,215,0,0.10);
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 13px 0;
+            border: none;
+            border-radius: 20px;
+            background-color: var(--primary);
+            color: var(--secondary);
+            font-weight: bold;
+            font-size: 1.15em;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s, color 0.3s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(255,215,0,0.08);
+        }
+        button[type="submit"]:hover {
+            background-color: #FFC107;
+            color: #1B5E20;
+            box-shadow: 0 4px 16px rgba(255,215,0,0.13);
+        }
+        .login-link {
+            margin-top: 18px;
+            font-size: 0.98em;
+            width: 100%;
+            text-align: center;
+        }
+        .login-link a {
+            color: var(--secondary);
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .login-link a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+        footer {
+            background: var(--dark);
+            color: #fff;
+            text-align: center;
+            padding: 7px 10px 4px 10px;
+            width: 100vw;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            font-size: 0.98em;
+            letter-spacing: 0.5px;
+            box-shadow: 0 -2px 12px rgba(44,44,44,0.10);
+        }
+        @media (max-width: 500px) {
+            .container { padding: 18px 4vw 18px 4vw; }
+            .logo img { height: 42px; }
+            nav { gap: 18px; margin-right: 10px; }
+            nav a img { width: 22px; height: 22px; }
+        }
+    </style>
+</head>
+<body>
+    
+    <header>
+        <nav>
+            <a href="{{ url_for('inicio') }}">
+                <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">
+                Inicio
+            </a>
+            <a href="{{ url_for('login') }}">
+                <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">
+                Iniciar sesión
+            </a>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
+        </div>
+        <h2>Registro en La Esquinita</h2>
+        <div id="msg-error" class="msg-error">❌ La contraseña no cumple con los requerimientos.</div>
+        <div id="msg-success" class="msg-success">✅ Registro exitoso.</div>
+        <div id="msg-exito" class="msg-exito" style="
+    display:none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 9999;
+    background: rgba(44,44,44,0.18);
+    justify-content: center;
+    align-items: center;
+">
+    <div style="
+        background: var(--primary);
+        color: var(--secondary);
+        border: 2px solid var(--secondary);
+        border-radius: 14px;
+        box-shadow: 0 4px 24px rgba(44,44,44,0.18);
+        padding: 36px 32px 28px 32px;
+        min-width: 260px;
+        max-width: 90vw;
+        text-align: center;
+        font-size: 1.18em;
+        font-weight: bold;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+    ">
+        🎉 Registro Exitoso.
+        <button type="button" id="btnAceptar" style="
+            margin-top:12px;
+            padding:10px 38px;
+            border:none;
+            border-radius:16px;
+            background: var(--secondary);
+            color: #fff;
+            font-size: 1.08em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        ">Aceptar</button>
+    </div>
+</div>
+        <form id="registroForm" action="{{ url_for('registro') }}" method="POST" onsubmit="return validarRegistro(event)">
+            <input type="text" name="nombre" placeholder="Nombre completo" required>
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <input type="password" name="password" id="password" placeholder="Contraseña" required
+                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$"
+                title="Debe contener al menos 8 caracteres, una mayúscula, una minúscula y un carácter especial">
+            <div id="password-info">
+                🔹 La contraseña debe contener al menos:
+                <br>✔️ 8 caracteres
+                <br>✔️ Una mayúscula
+                <br>✔️ Una minúscula
+                <br>✔️ Un carácter especial (!@#$%^&*)
+            </div>
+            <!-- Elimina el select de tipo_usuario -->
+            <input type="hidden" name="tipo_usuario" value="Cliente">
+            <button type="submit">Registrarse</button>
+        </form>
+        <div class="login-link">
+            ¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí</a>
+        </div>
+    </div>
+    <footer>
+        <p>© 2025 La Esquinita - Todos los derechos reservados</p>
+    </footer>
+    <script>
+        function validarRegistro(event) {
+            const password = document.getElementById('password').value;
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
+            const msgError = document.getElementById('msg-error');
+            msgError.style.display = "none";
+            if (!regex.test(password)) {
+                msgError.style.display = "flex";
+                setTimeout(() => { msgError.style.display = "none"; }, 3500);
+                event.preventDefault();
+                return false;
+            }
+            
+            return true;
+        }
+    </script>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="modal-exito" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);display:flex;justify-content:center;align-items:center;">
+      <div style="background:var(--primary);color:var(--secondary);border:2px solid var(--secondary);border-radius:18px;box-shadow:0 4px 24px rgba(44,44,44,0.18);padding:38px 32px 28px 32px;min-width:260px;max-width:90vw;text-align:center;font-size:1.18em;font-weight:bold;display:flex;flex-direction:column;align-items:center;">
+        🎉 {{ messages[0][1] if messages[0][1] else messages[0] }}
+        <button type="button" onclick="window.location.href='{{ url_for('login') }}';" style="margin-top:18px;padding:10px 38px;border:none;border-radius:16px;background:var(--secondary);color:#fff;font-size:1.08em;font-weight:bold;cursor:pointer;transition:background 0.2s;">OK</button>
+      </div>
+    </div>
+  {% endif %}
+{% endwith %}
+</body>
+</html>

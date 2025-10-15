@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agregar Producto | La Esquinita</title>
+  <style>
+    :root {
+      --primary: #ffb300;
+      --secondary: #2e7d32;
+      --accent: #ff5722;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NAVBAR */
+    header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .logo img {
+      height: 60px;
+      border-radius: 8px;
+    }
+    nav {
+      display: flex;
+      gap: 40px;
+    }
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    nav a img {
+      width: 32px;
+      height: 32px;
+    }
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    /* CONTENEDOR */
+    .container {
+      max-width: 500px;
+      width: 100%;
+      margin: 140px auto 60px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+      padding: 36px 32px;
+      text-align: center;
+    }
+    .container h2 {
+      color: var(--secondary);
+      margin-bottom: 25px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    form input, form textarea, form select {
+      padding: 12px;
+      border: 1.5px solid var(--secondary);
+      border-radius: 8px;
+      font-size: 1em;
+      background: #f9f9f9;
+    }
+    form input:focus, form textarea:focus, form select:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    form button {
+      background: var(--primary);
+      color: var(--dark);
+      font-weight: bold;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    form button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .volver {
+      display: inline-block;
+      margin-top: 15px;
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .volver:hover {
+      color: var(--accent);
+    }
+
+    
+    footer {
+      background: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      margin-top: auto;
+    }
+
+    
+    .alerta {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .alerta-content {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      animation: fadeIn 0.4s ease;
+    }
+    .alerta-content h3 {
+      color: var(--secondary);
+      margin-bottom: 15px;
+    }
+    .alerta-content p {
+      font-size: 1.1em;
+      margin-bottom: 20px;
+    }
+    .alerta-content button {
+      background: var(--primary);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .alerta-content button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  
+  <header>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="AgroConnect">
+    </div>
+    <nav>
+      <a href="{{ url_for('admin_productos') }}">
+        <img src="{{ url_for('static', filename='images/pr.png') }}" alt="Productos">
+        Supervisión Productos
+      </a>
+      <a href="{{ url_for('admin_pedidos') }}">
+        <img src="{{ url_for('static', filename='images/misp.png') }}" alt="Pedidos">
+        Pedidos
+      </a>
+      <a href="{{ url_for('panel_admin') }}">
+        <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Cuenta">
+        Mi Dashboard
+      </a>
+      <a href="{{ url_for('logout') }}">
+        <img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Salir">
+        Cerrar Sesión
+      </a>
+    </nav>
+  </header>
+
+  
+  <div class="container">
+    <h2>Agregar Producto</h2>
+    <form method="POST" enctype="multipart/form-data" onsubmit="mostrarAlerta(event)">
+      <input type="text" name="nombre" placeholder="Nombre del producto" required>
+      <textarea name="descripcion" placeholder="Descripción" required></textarea>
+      <input type="number" name="precio" placeholder="Precio" step="0.01" required>
+      <input type="file" name="imagen" accept="image/*" required>
+      <!-- Elimina el select de productor -->
+      <select name="categoria_id" required>
+        <option value="" disabled selected>Selecciona una categoría</option>
+        {% for categoria in categorias %}
+          <option value="{{ categoria.id }}">{{ categoria.id }} - {{ categoria.nombre }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Agregar</button>
+    </form>
+    <a class="volver" href="{{ url_for('admin_productos') }}">← Volver</a>
+  </div>
+
+  
+  <div class="alerta" id="alerta">
+    <div class="alerta-content">
+      <h3>✅ Producto agregado correctamente</h3>
+      <p>Tu producto ha sido registrado en La Esquinita.</p>
+      <button onclick="cerrarAlerta()">Aceptar</button>
+    </div>
+  </div>
+
+  
+  <footer>
+    <p>© 2025 La Esquinita - Todos los derechos reservados</p>
+  </footer>
+
+  <script>
+    function mostrarAlerta(e) {
+      e.preventDefault(); 
+      document.getElementById("alerta").style.display = "flex";
+    }
+    function cerrarAlerta() {
+      document.getElementById("alerta").style.display = "none";
+      document.querySelector("form").submit(); 
+    }
+  </script>
+</body>
+</html>

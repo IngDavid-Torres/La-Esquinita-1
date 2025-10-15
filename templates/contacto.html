@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <style>
+        .accesibilidad-bar {
+            position: fixed;
+            left: 24px;
+            bottom: 24px;
+            z-index: 3000;
+            background: #222;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            padding: 14px 10px 10px 10px;
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+            opacity: 0.93;
+            min-width: 48px;
+            min-height: 48px;
+            transition: box-shadow 0.2s, opacity 0.2s;
+        }
+        .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+            opacity: 1;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+        }
+        .accesibilidad-bar button, .accesibilidad-bar select {
+            background: #fff;
+            color: #222;
+            border: none;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            margin: 0;
+            font-size: 1.2em;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+            transition: background 0.2s, color 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2px;
+        }
+        .accesibilidad-bar button.active {
+            background: #ffb300;
+            color: #222;
+            transform: scale(1.08);
+        }
+        .accesibilidad-bar label {
+            display: none;
+        }
+        .accesibilidad-bar select {
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            font-size: 0.95em;
+            padding: 0;
+            margin-bottom: 2px;
+        }
+        .accesibilidad-bar option {
+            font-size: 1em;
+        }
+        .accesibilidad-bar .icono {
+            font-size: 1.2em;
+        }
+        @media(max-width:600px){
+            .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
+            .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Esquinita - Contacto</title>
+    <style>
+        :root {
+            --primary: #ffb300;
+            --secondary: #2e7d32;
+            --accent: #ff5722;
+            --light: #fffdf7;
+            --dark: #1c1c1c;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .logo img {
+            height: 80px;
+            border-radius: 8px;
+        }
+        nav {
+            display: flex;
+            gap: 70px;
+        }
+        nav a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s, background 0.3s;
+            padding: 10px 18px;
+            border-radius: 8px;
+        }
+        nav a img {
+            width: 40px;
+            height: 40px;
+        }
+        nav a:hover {
+            color: var(--accent);
+            background: rgba(255, 179, 0, 0.08);
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.97);
+            padding: 36px 30px 30px 30px;
+            border-radius: 18px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+            text-align: center;
+            margin: 140px auto 80px auto;
+        }
+        h2 {
+            color: var(--secondary);
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(46,125,50,0.08);
+        }
+        p {
+            margin-bottom: 18px;
+            color: #555;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+            color: var(--secondary);
+            text-align: left;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1.5px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: #fffdf7;
+        }
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 2px 8px rgba(255,179,0,0.10);
+        }
+        .boton-enviar {
+            width: 100%;
+            background: var(--accent);
+            color: #fff;
+            font-size: 1.15em;
+            padding: 13px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 24px;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .boton-enviar:hover {
+            background: var(--secondary);
+            transform: scale(1.04);
+        }
+        .alert-container {
+            margin-bottom: 12px;
+        }
+        .alert {
+            background: #e8f5e9;
+            color: var(--secondary);
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(46,125,50,0.10);
+            margin-bottom: 8px;
+        }
+        footer {
+            background: var(--dark);
+            color: #fff;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: auto;
+        }
+        footer p {
+            margin: 5px 0;
+        }
+        footer .social {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        footer .social a {
+            color: #fff;
+            font-size: 1.2em;
+            transition: color 0.3s;
+        }
+        footer .social a:hover {
+            color: var(--primary);
+        }
+        @media(max-width:600px){
+            .container {
+                margin-top: 110px;
+                padding: 18px 8px 18px 8px;
+            }
+            h2 { font-size: 1.3em; }
+            nav { gap: 18px; }
+            nav a img { width: 28px; height: 28px; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+        <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
+        <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+        <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
+        <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
+        <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
+        <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
+        <select id="tipografiaSelect" aria-label="Cambiar tipografía">
+            <option value="default">Aa</option>
+            <option value="arial">A</option>
+            <option value="verdana">V</option>
+            <option value="comic">C</option>
+            <option value="open">O</option>
+        </select>
+        <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
+    </div>
+
+    <script>
+        
+        const root = document.documentElement;
+        const body = document.body;
+        let fontSize = 1;
+        let modoNocturno = false;
+        let contraste = false;
+        let grises = false;
+        let guiaLectura = false;
+        let lectorActivo = false;
+        let tipografia = 'default';
+
+        function setFontSize(mult) {
+            fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
+            body.style.fontSize = fontSize + 'em';
+        }
+        document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
+        document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
+
+        document.getElementById('modoNocturnoBtn').onclick = function() {
+            modoNocturno = !modoNocturno;
+            if(modoNocturno) {
+                body.style.background = '#181818';
+                body.style.color = '#fff';
+                this.classList.add('active');
+            } else {
+                body.style.background = '';
+                body.style.color = '';
+                this.classList.remove('active');
+            }
+        };
+
+        document.getElementById('contrasteBtn').onclick = function() {
+            contraste = !contraste;
+            if(contraste) {
+                body.style.filter = 'contrast(1.7)';
+                this.classList.add('active');
+            } else {
+                body.style.filter = '';
+                this.classList.remove('active');
+            }
+        };
+
+        document.getElementById('grisesBtn').onclick = function() {
+            grises = !grises;
+            if(grises) {
+                body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
+                this.classList.add('active');
+            } else {
+                body.style.filter = contraste ? 'contrast(1.7)' : '';
+                this.classList.remove('active');
+            }
+        };
+
+        document.getElementById('guiaLecturaBtn').onclick = function() {
+            guiaLectura = !guiaLectura;
+            let contenido = document.getElementById('contenido-principal') || document.body;
+            if(guiaLectura) {
+                contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+                contenido.style.background = '#fffbe7';
+                this.classList.add('active');
+            } else {
+                contenido.style.boxShadow = '';
+                contenido.style.background = '';
+                this.classList.remove('active');
+            }
+        };
+
+        document.getElementById('tipografiaSelect').onchange = function() {
+            tipografia = this.value;
+            switch(tipografia) {
+                case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
+                case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
+                case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
+                case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
+                default: body.style.fontFamily = '';
+            }
+        };
+
+        
+        document.getElementById('lectorPantallaBtn').onclick = function() {
+            lectorActivo = !lectorActivo;
+            let contenido = document.getElementById('contenido-principal') || document.body;
+            if(lectorActivo) {
+                this.classList.add('active');
+                let texto = contenido.innerText;
+                if('speechSynthesis' in window) {
+                    let utter = new SpeechSynthesisUtterance(texto);
+                    utter.lang = 'es-MX';
+                    window.speechSynthesis.speak(utter);
+                } else {
+                    alert('Lector de pantalla no soportado en este navegador.');
+                }
+            } else {
+                this.classList.remove('active');
+                if('speechSynthesis' in window) window.speechSynthesis.cancel();
+            }
+        };
+    </script>
+    
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
+        </div>
+        <nav>
+            <a href="{{ url_for('productos') }}">
+                <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">
+                Tienda
+            </a>
+            <a href="{{ url_for('contacto') }}">
+                <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">
+                Contacto
+            </a>
+            <a href="{{ url_for('carrito') }}">
+                <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
+                Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}
+            </a>
+            {% if session['usuario_nombre'] %}
+                <a href="{{ url_for('panel_cliente') }}">
+                    <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Cuenta">
+                    Mi Dashboard
+                </a>
+                <a href="{{ url_for('logout') }}">
+                    <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">
+                    Cerrar Sesión
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}">
+                    <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">
+                    Ingresar
+                </a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>📩 Contáctanos</h2>
+        <p>¿Tienes dudas, comentarios o sugerencias? ¡Estamos aquí para ayudarte!</p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert-container">
+                    {% for category, message in messages %}
+                        {% if category == "success" %}
+                            <div class="alert {{ category }}">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <form action="{{ url_for('enviar_mensaje') }}" method="POST">
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" id="nombre" required>
+
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" name="email" id="email" required>
+
+            <label for="mensaje">Mensaje:</label>
+            <textarea name="mensaje" id="mensaje" rows="5" required></textarea>
+
+            <button type="submit" class="boton-enviar">Enviar Mensaje</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>© 2025 La Esquinita</p>
+        <p>Hecho con 🌽 y ❤️ en México</p>
+        <div class="social">
+            <a href="#"><i>📘</i></a>
+            <a href="#"><i>📸</i></a>
+            <a href="#"><i>🐦</i></a>
+        </div>
+    </footer>
+</body>
+</html>

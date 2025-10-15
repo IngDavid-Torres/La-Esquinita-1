@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Cliente | La Esquinita</title>
+    <style>
+        :root {
+            --primary: #FFD700;
+            --secondary: #2e7d32;
+            --accent: #ff5722;
+            --light: #fffdf7;
+            --dark: #1c1c1c;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--light) 0%, #e6f2d8 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 80px; 
+        }
+        header {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .logo img {
+            height: 70px;
+            border-radius: 8px;
+        }
+        nav {
+            display: flex;
+            gap: 50px;
+        }
+        nav a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s;
+            font-size: 1.08em;
+        }
+        nav a img {
+            width: 34px;
+            height: 34px;
+        }
+        nav a:hover {
+            color: var(--accent);
+        }
+        .main-section {
+            margin: 120px auto 40px auto;
+            max-width: 480px;
+            background: rgba(255,255,255,0.98);
+            padding: 38px 28px 32px 28px;
+            border-radius: 18px;
+            box-shadow: 0px 8px 32px rgba(44,44,44,0.13);
+            text-align: center;
+        }
+        h2 {
+            color: var(--secondary);
+            font-size: 1.7em;
+            margin-bottom: 25px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        label {
+            display: block;
+            margin-top: 18px;
+            font-weight: 600;
+            color: var(--secondary);
+            text-align: left;
+        }
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-top: 7px;
+            border: 1.5px solid var(--secondary);
+            border-radius: 8px;
+            font-size: 1.08em;
+            background: #f9f9f9;
+            transition: border 0.2s;
+            font-family: inherit;
+        }
+        input[readonly] {
+            background: #f3f3f3;
+            color: #888;
+            border-style: dashed;
+            cursor: not-allowed;
+        }
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #fffde7;
+        }
+        .boton-guardar, .boton-editar {
+            display: inline-block;
+            font-size: 1.08em;
+            font-weight: bold;
+            border: none;
+            border-radius: 20px;
+            padding: 13px 0;
+            width: 48%;
+            margin: 28px 1% 0 1%;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s, box-shadow 0.2s;
+        }
+        .boton-guardar {
+            background-color: var(--primary);
+            color: var(--secondary);
+            box-shadow: 0 2px 8px rgba(255,215,0,0.08);
+        }
+        .boton-guardar:hover {
+            background-color: #FFC107;
+            color: #1B5E20;
+            box-shadow: 0 4px 16px rgba(255,215,0,0.13);
+        }
+        .boton-editar {
+            background-color: var(--secondary);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(46,125,50,0.08);
+        }
+        .boton-editar:hover {
+            background-color: #388E3C;
+            color: var(--primary);
+        }
+        .alerta {
+            display: none;
+            background: #28a745;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            margin-bottom: 18px;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .modal-alerta {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            animation: fadeIn 0.3s;
+        }
+        .modal-contenido {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(255,215,0,0.18);
+            padding: 38px 32px 28px 32px;
+            text-align: center;
+            min-width: 320px;
+            max-width: 90vw;
+            font-size: 1.15em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-contenido h3 {
+            color: var(--secondary);
+            margin-bottom: 18px;
+        }
+        .modal-contenido p {
+            color: var(--accent);
+            margin-bottom: 22px;
+        }
+        .modal-contenido .modal-btns {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .modal-contenido button {
+            padding: 10px 22px;
+            border-radius: 12px;
+            border: none;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            background: var(--primary);
+            color: var(--dark);
+            transition: background 0.3s;
+        }
+        .modal-contenido button:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        .modal-exito {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            animation: fadeIn 0.3s;
+        }
+        .modal-exito-contenido {
+            background: #e6f2d8;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(46,125,50,0.18);
+            padding: 32px 28px;
+            text-align: center;
+            min-width: 260px;
+            max-width: 80vw;
+            font-size: 1.1em;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        footer {
+            background: var(--dark);
+            color: #fff;
+            text-align: center;
+            padding: 24px 20px 18px 20px;
+            font-size: 1.05em;
+            letter-spacing: 0.5px;
+            box-shadow: 0 -2px 12px rgba(44,44,44,0.10);
+            width: 100vw;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            z-index: 2000;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media(max-width:768px){
+            header { padding: 14px 10px; }
+            .logo img { height: 48px; }
+            nav { gap: 18px; }
+            .main-section { margin: 90px 8px 20px 8px; padding: 18px 6vw 18px 6vw; }
+            .boton-guardar, .boton-editar { width: 100%; margin: 18px 0 0 0; }
+            footer { padding: 16px 8px 12px 8px; font-size: 0.95em; }
+            body { padding-bottom: 70px; }
+        }
+        @media(max-width:500px){
+            .main-section { margin: 80px 2vw 20px 2vw; }
+            nav a img { width: 26px; height: 26px; }
+        }
+    </style>
+</head>
+<body>
+    
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
+        </div>
+        <nav>
+            <a href="{{ url_for('inicio') }}">
+                <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">
+                Inicio
+            </a>
+            <a href="{{ url_for('panel_cliente') }}">
+                <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Cuenta">
+                Mi Dashboard
+            </a>
+            {% if session['usuario_id'] %}
+            <a href="{{ url_for('logout') }}">
+                <img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar">
+                Cerrar Sesión
+            </a>
+            {% else %}
+            <a href="{{ url_for('login') }}">
+                <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">
+                Iniciar Sesión
+            </a>
+            {% endif %}
+        </nav>
+    </header>
+    
+    <section class="main-section">
+        <h2>👤 Mi Perfil</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alerta" style="display:block;opacity:1;">
+                {% for category, message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+        <div id="alerta" class="alerta">
+            ✅ Cambios guardados exitosamente.
+        </div>
+        <form id="perfilForm" action="{{ url_for('guardar_perfil') }}" method="POST" onsubmit="return mostrarConfirmacion()">
+            <label>Nombre:</label>
+            <input type="text" name="nombre" value="{{ usuario.nombre }}" required readonly>
+
+            <label>Correo Electrónico:</label>
+            <input type="email" name="email" value="{{ usuario.email }}" required readonly>
+
+            <label>Contraseña:</label>
+            <input type="password" name="password" placeholder="••••••••••••" readonly>
+
+            <label>Dirección:</label>
+            <input type="text" name="direccion" value="{{ direccion.direccion if direccion else '' }}" readonly>
+
+            <button type="button" class="boton-editar" id="btnEditar" onclick="habilitarEdicion()">Editar información</button>
+            <button type="submit" class="boton-guardar" id="btnGuardar" style="display:none;">Guardar Cambios</button>
+        </form>
+    </section>
+    <!-- MODAL CONFIRMACIÓN -->
+    <div id="modalConfirmacion" class="modal-alerta" style="display:none;">
+        <div class="modal-contenido">
+            <h3>¿Guardar cambios?</h3>
+            <p>¿Estás seguro que deseas guardar los cambios en tu perfil?</p>
+            <div class="modal-btns">
+                <button onclick="cerrarConfirmacion()">Cancelar</button>
+                <button onclick="confirmarGuardado()">Guardar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modalExito" class="modal-exito" style="display:none;">
+        <div class="modal-exito-contenido">
+            ✅ Cambios guardados exitosamente.
+        </div>
+    </div>
+    
+    <footer>
+        <p style="margin:0; font-weight:500;">
+            © 2025 La Esquinita - Todos los derechos reservados &nbsp;|&nbsp; Hecho con 🥕 y ❤️ en México
+        </p>
+    </footer>
+    <script>
+        function habilitarEdicion() {
+            const form = document.getElementById('perfilForm');
+            const inputs = form.querySelectorAll('input');
+            inputs.forEach(input => input.removeAttribute('readonly'));
+            document.getElementById('btnEditar').style.display = 'none';
+            document.getElementById('btnGuardar').style.display = 'inline-block';
+            inputs[0].focus();
+        }
+
+        
+        function mostrarConfirmacion() {
+            document.getElementById('modalConfirmacion').style.display = 'flex';
+            return false; 
+        }
+        function cerrarConfirmacion() {
+            document.getElementById('modalConfirmacion').style.display = 'none';
+        }
+        function confirmarGuardado() {
+            document.getElementById('modalConfirmacion').style.display = 'none';
+            
+            document.getElementById('modalExito').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('modalExito').style.display = 'none';
+                document.getElementById('perfilForm').submit();
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

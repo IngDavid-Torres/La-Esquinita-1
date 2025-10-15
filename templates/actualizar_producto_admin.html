@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actualizar Producto | AgroConnect</title>
+  <style>
+    :root {
+      --primary: #ffb300;
+      --secondary: #2e7d32;
+      --accent: #ff5722;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+  
+    nav {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .nav-left, .nav-right {
+      display: flex;
+      gap: 30px;
+    }
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    nav a img {
+      width: 28px;
+      height: 28px;
+    }
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    
+    .container {
+      max-width: 500px;
+      width: 100%;
+      margin: 140px auto 60px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+      padding: 36px 32px;
+      text-align: center;
+    }
+    .container h2 {
+      color: var(--secondary);
+      margin-bottom: 25px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    form input, form textarea {
+      padding: 12px;
+      border: 1.5px solid var(--secondary);
+      border-radius: 8px;
+      font-size: 1em;
+      background: #f9f9f9;
+    }
+    form input:focus, form textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    .imagen-actual {
+      text-align: center;
+      margin: 15px 0;
+    }
+    .imagen-actual img {
+      max-width: 120px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    form button {
+      background: var(--primary);
+      color: var(--dark);
+      font-weight: bold;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    form button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .volver {
+      display: inline-block;
+      margin-top: 15px;
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .volver:hover {
+      color: var(--accent);
+    }
+
+    
+    footer {
+      background: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      margin-top: auto;
+    }
+
+    
+    .alerta {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .alerta-content {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      animation: fadeIn 0.4s ease;
+    }
+    .alerta-content h3 {
+      color: var(--secondary);
+      margin-bottom: 15px;
+    }
+    .alerta-content p {
+      font-size: 1.1em;
+      margin-bottom: 20px;
+    }
+    .alerta-content button {
+      background: var(--primary);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .alerta-content button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  
+  <nav>
+    <div class="nav-left">
+      <a href="{{ url_for('admin_productos') }}">
+        <img src="{{ url_for('static', filename='images/pr.png') }}" alt="Productos">
+        Supervisión Productos
+      </a>
+      <a href="{{ url_for('admin_pedidos') }}">
+        <img src="{{ url_for('static', filename='images/misp.png') }}" alt="Pedidos">
+        Pedidos
+      </a>
+    </div>
+    <div class="nav-right">
+      <a href="{{ url_for('panel_admin') }}">
+        <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Panel">
+        Mi Panel
+      </a>
+      <a href="{{ url_for('logout') }}">
+        <img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">
+        Cerrar Sesión
+      </a>
+    </div>
+  </nav>
+
+  
+  <div class="container">
+    <h2>Actualizar Producto</h2>
+    <form method="POST" enctype="multipart/form-data" onsubmit="mostrarAlerta(event)">
+      <input type="text" name="nombre" value="{{ producto.nombre }}" required>
+      <textarea name="descripcion" required>{{ producto.descripcion }}</textarea>
+      <input type="number" name="precio" value="{{ producto.precio }}" step="0.01" required>
+
+      <div class="imagen-actual">
+        <label>Imagen actual:</label><br>
+        {% if producto.imagen %}
+          <img src="{{ url_for('static', filename='images/' + producto.imagen) }}" alt="Imagen actual">
+        {% else %}
+          <span>No hay imagen</span>
+        {% endif %}
+      </div>
+
+      <input type="file" name="imagen" accept="image/*">
+      <button type="submit">✅ Actualizar Producto</button>
+    </form>
+    <a class="volver" href="{{ url_for('admin_productos') }}">← Volver</a>
+  </div>
+
+  
+  <div class="alerta" id="alerta">
+    <div class="alerta-content">
+      <h3>✅ Producto actualizado correctamente</h3>
+      <p>Los cambios se han guardado con éxito.</p>
+      <button onclick="cerrarAlerta()">Aceptar</button>
+    </div>
+  </div>
+
+  
+  <footer>
+    <p>© 2025 La Esquinita - Todos los derechos reservados</p>
+  </footer>
+
+  <script>
+    function mostrarAlerta(e) {
+      e.preventDefault(); 
+      document.getElementById("alerta").style.display = "flex";
+    }
+    function cerrarAlerta() {
+      document.getElementById("alerta").style.display = "none";
+      document.querySelector("form").submit(); 
+    }
+  </script>
+</body>
+</html>

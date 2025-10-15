@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisión de Productos | La Esquinita</title>
+    <style>
+        :root {
+            --primary: #FFD700;
+            --secondary: #2e7d32;
+            --accent: #ff5722;
+            --light: #fffdf7;
+            --dark: #1c1c1c;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--light) 0%, #e6f2d8 100%);
+            color: var(--dark);
+        }
+        /* NAVBAR */
+        header {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .logo img {
+            height: 70px;
+            border-radius: 8px;
+        }
+        nav {
+            display: flex;
+            gap: 28px;
+            margin-right: 30px;
+        }
+        nav a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s;
+            font-size: 1.08em;
+            padding: 6px 12px;
+        }
+        nav a img {
+            width: 32px;
+            height: 32px;
+        }
+        nav a:hover {
+            color: var(--accent);
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 130px auto 40px auto;
+            background: rgba(255,255,255,0.98);
+            padding: 38px 28px 32px 28px;
+            border-radius: 18px;
+            box-shadow: 0px 8px 32px rgba(44,44,44,0.13);
+            min-height: 600px;
+        }
+        h2 {
+            color: var(--secondary);
+            font-size: 2em;
+            margin-bottom: 30px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        
+        .buscador-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 22px;
+        }
+        .buscador-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .buscador-form input[type="text"] {
+            padding: 10px 16px;
+            border: 1.5px solid var(--secondary);
+            border-radius: 18px;
+            font-size: 1em;
+            background: #f9f9f9;
+            transition: border 0.2s;
+            width: 220px;
+        }
+        .buscador-form input[type="text"]:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #fffde7;
+        }
+        .buscador-form button {
+            background: var(--primary);
+            color: var(--secondary);
+            border: none;
+            border-radius: 18px;
+            padding: 10px 22px;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+        }
+        .buscador-form button:hover {
+            background: #FFC107;
+            color: #1B5E20;
+        }
+        
+        .producto-wrapper {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .producto-item {
+            background: rgba(255,255,255,0.93);
+            padding: 18px 20px;
+            border-radius: 14px;
+            box-shadow: 0px 3px 10px rgba(0,0,0,0.09);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .producto-item:last-child {
+            margin-bottom: 20px;
+        }
+        .producto-item strong {
+            color: var(--secondary);
+        }
+        .botones-container {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .boton {
+            width: 140px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin: 5px 0;
+            font-size: 1em;
+        }
+        .boton-eliminar {
+            background: #e53935;
+            color: white;
+        }
+        .boton-eliminar:hover {
+            background: #b71c1c;
+        }
+        .boton-actualizar {
+            background: #007BFF;
+            color: white;
+        }
+        .boton-actualizar:hover {
+            background: #0056b3;
+        }
+        .boton-agregar {
+            background: #28a745;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.3s ease-in-out;
+            border: none;
+            margin-bottom: 18px;
+        }
+        .boton-agregar:hover {
+            background: #218838;
+        }
+        .boton-agregar-wrapper {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        
+        footer {
+            background: var(--dark);
+            color: #fff;
+            text-align: center;
+            padding: 18px 0 10px 0;
+            margin-top: auto;
+            font-size: 1em;
+            letter-spacing: 0.5px;
+            box-shadow: 0 -2px 12px rgba(44,44,44,0.10);
+        }
+        @media(max-width:900px){
+            .container { padding: 18px 2vw 18px 2vw; }
+            .logo img { height: 48px; }
+            nav { gap: 12px; margin-right: 5px;}
+        }
+        @media(max-width:600px){
+            .container { margin: 110px 2vw 20px 2vw; }
+            nav a img { width: 26px; height: 26px; }
+            .buscador-form input[type="text"] { width: 120px; }
+        }
+    </style>
+    <script>
+        function confirmarEliminacion() {
+            return confirm("⚠️ ¿Estás seguro de que deseas eliminar este producto?");
+        }
+
+        
+        function filtrarProductos() {
+            const input = document.getElementById('buscadorInput').value.trim().toLowerCase();
+            const items = document.querySelectorAll('.producto-item');
+            let algunoVisible = false;
+            items.forEach(item => {
+                // Busca el nombre correctamente
+                const id = item.querySelector('.id-producto').textContent.toLowerCase();
+                // Selecciona el span, no el strong
+                const nombre = item.querySelector('span.nombre-producto').textContent.toLowerCase();
+                const precio = item.querySelector('.precio-producto').textContent.toLowerCase();
+                if (
+                    id.includes(input) ||
+                    nombre.includes(input) ||
+                    precio.includes(input)
+                ) {
+                    item.style.display = '';
+                    algunoVisible = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            document.getElementById('noResultados').style.display = algunoVisible ? 'none' : 'block';
+        }
+
+        window.onload = function() {
+            var listaProductos = document.querySelector(".producto-wrapper");
+            var ultimoProducto = document.querySelector(".producto-item:last-child");
+            if (listaProductos && ultimoProducto) {
+                setTimeout(() => {
+                    ultimoProducto.scrollIntoView({ behavior: "smooth", block: "end" });
+                }, 500);
+            }
+            filtrarProductos();
+        };
+    </script>
+</head>
+<body>
+    
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
+        </div>
+        <nav>
+            <a href="{{ url_for('panel_admin') }}">
+                <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">Mi Dashboard
+            </a>
+            <a href="{{ url_for('logout') }}">
+                <img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">Cerrar Sesión
+            </a>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="boton-agregar-wrapper">
+            <a href="{{ url_for('agregar_producto_admin') }}" class="boton boton-agregar">➕ Agregar Producto</a>
+        </div>
+        <h2>🔍 Supervisión de Productos</h2>
+        
+        <div class="buscador-wrapper">
+            <form class="buscador-form" method="GET" action="{{ url_for('admin_productos') }}" onsubmit="return false;">
+                <input type="text" id="buscadorInput" name="q" placeholder="Buscar por ID, nombre o precio..." value="{{ request.args.get('q', '') }}" oninput="filtrarProductos()">
+                <button type="button" onclick="filtrarProductos()">Buscar</button>
+            </form>
+        </div>
+        <div class="producto-wrapper" id="productosLista">
+            {% for producto in productos %}
+                <div class="producto-item">
+                    <p><strong>ID Producto:</strong> <span class="id-producto">{{ producto.id }}</span></p>
+                    <p><strong class="nombre-producto">Nombre:</strong> <span class="nombre-producto">{{ producto.nombre }}</span></p>
+                    <p><strong>Precio:</strong> $<span class="precio-producto">{{ producto.precio }}</span></p>
+                    <div class="botones-container">
+                        <form action="{{ url_for('eliminar_producto_admin', producto_id=producto.id) }}" method="post" onsubmit="return confirmarEliminacion()">
+                            <button type="submit" class="boton boton-eliminar">❌ Eliminar</button>
+                        </form>
+                        <a href="{{ url_for('actualizar_producto_admin', producto_id=producto.id) }}">
+                            <button class="boton boton-actualizar">✏️ Actualizar</button>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div id="noResultados" style="display:none;text-align:center;color:#e53935;font-weight:bold;font-size:1.15em;margin-top:20px;">
+            No se encontraron productos.
+        </div>
+    </div>
+    <footer>
+        <p>© 2025 La Esquinita - Todos los derechos reservados</p>
+        <p>Hecho con 🌽 y ❤️ en México</p>
+    </footer>
+</body>
+</html>

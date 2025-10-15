@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle del Pedido | La Esquinita</title>
+  <style>
+    :root {
+      --primary: #ffb300;
+      --secondary: #2e7d32;
+      --accent: #ff5722;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    
+    header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .logo img {
+      height: 60px;
+      border-radius: 8px;
+    }
+    nav {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      transition: color 0.3s, background 0.3s;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+    nav a img {
+      width: 32px;
+      height: 32px;
+    }
+    nav a:hover {
+      color: var(--accent);
+      background: rgba(255,87,34,0.1);
+    }
+
+    
+    .container {
+      max-width: 700px;
+      margin: 120px auto 40px auto;
+      background: rgba(255,255,255,0.97);
+      padding: 30px 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+      text-align: center;
+    }
+
+    h2 {
+      color: var(--secondary);
+      margin-bottom: 25px;
+    }
+
+    .pedido-info {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .pedido-info p {
+      margin-bottom: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 8px;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: var(--secondary);
+      color: #fff;
+    }
+    .total-row td {
+      font-size: 1.2em;
+      font-weight: bold;
+      background: #F9FBE7;
+    }
+
+    .volver {
+      display: inline-block;
+      background-color: var(--primary);
+      color: var(--secondary);
+      font-weight: bold;
+      padding: 12px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      margin-top: 18px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .volver:hover {
+      background-color: var(--accent);
+      color: #fff;
+    }
+
+    
+    footer {
+      background: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 30px 20px;
+      margin-top: auto;
+    }
+
+    @media(max-width:768px){
+      .container {
+        margin: 140px 10px 40px 10px;
+        padding: 20px;
+      }
+      nav {
+        gap: 10px;
+      }
+      nav a {
+        font-size: 0.9em;
+      }
+      table, th, td {
+        font-size: 0.95em;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <header>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
+    </div>
+    <nav>
+      <a href="{{ url_for('inicio') }}">
+        <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">Inicio
+      </a>
+      <a href="{{ url_for('productos') }}">
+        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Mercado">Tienda
+      </a>
+      <a href="{{ url_for('contacto') }}">
+        <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
+      </a>
+      {% if session['usuario_id'] %}
+        <a href="{{ url_for('carrito') }}">
+          <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">Carrito
+          {% if cantidad_carrito and cantidad_carrito > 0 %}
+            <span style="background: var(--primary); color: var(--secondary); padding:2px 8px; border-radius:12px; font-weight:bold; margin-left:4px;">
+              {{ cantidad_carrito }}
+            </span>
+          {% endif %}
+        </a>
+        <a href="{{ url_for('pedidos_cliente') }}">
+          <img src="{{ url_for('static', filename='images/misp.png') }}" alt="Mis Pedidos">Mis Pedidos
+        </a>
+        <a href="{{ url_for('panel_cliente') }}">
+          <img src="{{ url_for('static', filename='images/perfil.png')}}" alt="Mi Cuenta">Mi Dashboard
+        </a>
+      {% else %}
+        <a href="{{ url_for('login') }}">
+          <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">Ingresar
+        </a>
+      {% endif %}
+    </nav>
+  </header>
+
+  
+  <div class="container">
+    <h2>📦 Detalle del Pedido</h2>
+    <div class="pedido-info">
+      <p><strong>ID del pedido:</strong> {{ pedido.id }}</p>
+      <p><strong>Fecha:</strong> {{ pedido.fecha.strftime('%d/%m/%Y %H:%M') }}</p>
+      <p><strong>Total:</strong> ${{ "%.2f"|format(pedido.total) }}</p>
+      <p><strong>Estado:</strong> {{ pedido.estado }}</p>
+    </div>
+
+    {# Tabla de productos por si la vamos a activar #}
+    {# 
+    <table>
+      <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Precio unitario</th>
+        <th>Subtotal</th>
+      </tr>
+      {% for producto in pedido.productos %}
+      <tr>
+        <td>{{ producto.nombre }}</td>
+        <td>{{ producto.cantidad }}</td>
+        <td>${{ producto.precio }}</td>
+        <td>${{ producto.precio * producto.cantidad }}</td>
+      </tr>
+      {% endfor %}
+      <tr class="total-row">
+        <td colspan="3" align="right">Total:</td>
+        <td>${{ pedido.total }}</td>
+      </tr>
+    </table>
+    #}
+
+    <a href="{{ url_for('pedidos_cliente') }}" class="volver">← Volver a Mis Pedidos</a>
+  </div>
+
+  
+  <footer>
+    <p>© 2025 La Esquinita</p>
+    <p>Hecho con 🌽 y ❤️ en México</p>
+  </footer>
+</body>
+</html>
