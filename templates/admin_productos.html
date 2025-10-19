@@ -263,10 +263,10 @@
     </script>
 </head>
 <body>
-        <div class="accesibilidad-overlay" id="accOverlay"></div>
-    <button class="accesibilidad-toggle" id="accToggle" aria-label="Abrir menú de accesibilidad">
+   <div class="accesibilidad-overlay" id="accOverlay"></div>
+  <button class="accesibilidad-toggle" id="accToggle" aria-label="Abrir menú de accesibilidad">
         ♿
-    </button>
+  </button>
     <div class="accesibilidad-panel" id="accPanel" role="dialog" aria-label="Panel de accesibilidad">
         <div class="panel-header">
             Accesibilidad
@@ -316,8 +316,7 @@
             </div>
         </div>
     </div>
-   
- <script src="{{ url_for('static', filename='js/accesibilidad.js') }}"></script>
+    
     <header>
         <div class="logo">
             <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
@@ -368,8 +367,10 @@
         <p>© 2025 La Esquinita - Todos los derechos reservados</p>
         <p>Hecho con 🌽 y ❤️ en México</p>
     </footer>
+
+
+       <!-- Scripts de accesibilidad -->
     <script src="{{ url_for('static', filename='js/accesibilidad.js') }}"></script>
-     <script src="{{ url_for('static', filename='js/accesibilidad.js') }}"></script>
     <script>
         // Toggle del panel de accesibilidad
         const toggle = document.getElementById('accToggle');
@@ -397,6 +398,7 @@
             }
         });
 
+        // Actualizar texto del lector
         const lectorBtn = document.getElementById('lectorPantallaBtn');
         const lectorTexto = document.getElementById('lectorTexto');
         
@@ -412,6 +414,7 @@
             });
         }
 
+        // Botón de reset
         const resetBtn = document.getElementById('resetAccesibilidadBtn');
         if(resetBtn) {
             resetBtn.addEventListener('click', () => {
@@ -422,6 +425,7 @@
             });
         }
 
+        // Aplicar modo nocturno al panel cuando esté activo
         const observer = new MutationObserver(() => {
             if(document.body.classList.contains('night-mode')) {
                 panel.classList.add('night-mode');

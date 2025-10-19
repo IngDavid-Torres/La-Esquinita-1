@@ -1,76 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <style>
-        .accesibilidad-bar {
-            position: fixed;
-            left: 24px;
-            bottom: 24px;
-            z-index: 3000;
-            background: #222;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: center;
-            padding: 14px 10px 10px 10px;
-            border-radius: 18px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-            opacity: 0.93;
-            min-width: 48px;
-            min-height: 48px;
-            transition: box-shadow 0.2s, opacity 0.2s;
-        }
-        .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
-            opacity: 1;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.22);
-        }
-        .accesibilidad-bar button, .accesibilidad-bar select {
-            background: #fff;
-            color: #222;
-            border: none;
-            border-radius: 50%;
-            width: 38px;
-            height: 38px;
-            margin: 0;
-            font-size: 1.2em;
-            cursor: pointer;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
-            transition: background 0.2s, color 0.2s, transform 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2px;
-        }
-        .accesibilidad-bar button.active {
-            background: #ffb300;
-            color: #222;
-            transform: scale(1.08);
-        }
-        .accesibilidad-bar label {
-            display: none;
-        }
-        .accesibilidad-bar select {
-            border-radius: 8px;
-            width: 38px;
-            height: 38px;
-            font-size: 0.95em;
-            padding: 0;
-            margin-bottom: 2px;
-        }
-        .accesibilidad-bar option {
-            font-size: 1em;
-        }
-        .accesibilidad-bar .icono {
-            font-size: 1.2em;
-        }
-        @media(max-width:600px){
-            .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
-            .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
-        }
-    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/accesibilidad.css') }}">
     <title>La Esquinita - Contacto</title>
     <style>
         :root {
@@ -239,123 +172,61 @@
 </head>
 <body>
     
-    <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
-        <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
-        <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
-        <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
-        <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
-        <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
-        <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
-        <select id="tipografiaSelect" aria-label="Cambiar tipografía">
-            <option value="default">Aa</option>
-            <option value="arial">A</option>
-            <option value="verdana">V</option>
-            <option value="comic">C</option>
-            <option value="open">O</option>
-        </select>
-        <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
+     // Accesibilidad Panel
+  <div class="accesibilidad-overlay" id="accOverlay"></div>
+  <button class="accesibilidad-toggle" id="accToggle" aria-label="Abrir menú de accesibilidad">
+        ♿
+  </button>
+    <div class="accesibilidad-panel" id="accPanel" role="dialog" aria-label="Panel de accesibilidad">
+        <div class="panel-header">
+            Accesibilidad
+        </div>
+
+        <div class="panel-content">
+            <div class="control-group">
+                <h3>Tamaño de Texto</h3>
+                <div class="control-row">
+                    <button class="control-btn" id="disminuirLetraBtn" title="Disminuir letra">A-</button>
+                    <button class="control-btn" id="aumentarLetraBtn" title="Aumentar letra">A+</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3> Modos Visuales</h3>
+                <div class="control-row">
+                    <button class="control-btn" id="modoNocturnoBtn" title="Modo nocturno">🌙</button>
+                    <button class="control-btn" id="contrasteBtn" title="Alto contraste">🔳</button>
+                    <button class="control-btn" id="grisesBtn" title="Escala de grises">🌑</button>
+                    <button class="control-btn" id="guiaLecturaBtn" title="Guía de lectura">📖</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Tipografía</h3>
+                <select class="control-select" id="tipografiaSelect" aria-label="Cambiar tipografía">
+                    <option value="default">Tipografía por defecto</option>
+                    <option value="arial">Arial (Sans-serif)</option>
+                    <option value="verdana">Verdana (Legible)</option>
+                    <option value="comic">Comic Sans (Amigable)</option>
+                    <option value="open">OpenDyslexic (Dislexia)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <h3>Audio</h3>
+                <button class="control-btn special" id="lectorPantallaBtn">
+                    <span id="lectorTexto">Leer Página</span>
+                </button>
+            </div>
+
+            <div class="control-group">
+                <button class="control-btn special" id="resetAccesibilidadBtn" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">
+                    Restablecer Todo
+                </button>
+            </div>
+        </div>
     </div>
 
-    <script>
-        
-        const root = document.documentElement;
-        const body = document.body;
-        let fontSize = 1;
-        let modoNocturno = false;
-        let contraste = false;
-        let grises = false;
-        let guiaLectura = false;
-        let lectorActivo = false;
-        let tipografia = 'default';
-
-        function setFontSize(mult) {
-            fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-            body.style.fontSize = fontSize + 'em';
-        }
-        document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-        document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
-
-        document.getElementById('modoNocturnoBtn').onclick = function() {
-            modoNocturno = !modoNocturno;
-            if(modoNocturno) {
-                body.style.background = '#181818';
-                body.style.color = '#fff';
-                this.classList.add('active');
-            } else {
-                body.style.background = '';
-                body.style.color = '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('contrasteBtn').onclick = function() {
-            contraste = !contraste;
-            if(contraste) {
-                body.style.filter = 'contrast(1.7)';
-                this.classList.add('active');
-            } else {
-                body.style.filter = '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('grisesBtn').onclick = function() {
-            grises = !grises;
-            if(grises) {
-                body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
-                this.classList.add('active');
-            } else {
-                body.style.filter = contraste ? 'contrast(1.7)' : '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('guiaLecturaBtn').onclick = function() {
-            guiaLectura = !guiaLectura;
-            let contenido = document.getElementById('contenido-principal') || document.body;
-            if(guiaLectura) {
-                contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-                contenido.style.background = '#fffbe7';
-                this.classList.add('active');
-            } else {
-                contenido.style.boxShadow = '';
-                contenido.style.background = '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('tipografiaSelect').onchange = function() {
-            tipografia = this.value;
-            switch(tipografia) {
-                case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-                case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-                case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-                case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-                default: body.style.fontFamily = '';
-            }
-        };
-
-        
-        document.getElementById('lectorPantallaBtn').onclick = function() {
-            lectorActivo = !lectorActivo;
-            let contenido = document.getElementById('contenido-principal') || document.body;
-            if(lectorActivo) {
-                this.classList.add('active');
-                let texto = contenido.innerText;
-                if('speechSynthesis' in window) {
-                    let utter = new SpeechSynthesisUtterance(texto);
-                    utter.lang = 'es-MX';
-                    window.speechSynthesis.speak(utter);
-                } else {
-                    alert('Lector de pantalla no soportado en este navegador.');
-                }
-            } else {
-                this.classList.remove('active');
-                if('speechSynthesis' in window) window.speechSynthesis.cancel();
-            }
-        };
-    </script>
-    
     <header>
         <div class="logo">
             <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
@@ -428,5 +299,74 @@
             <a href="#"><i>🐦</i></a>
         </div>
     </footer>
+      <!-- Scripts de accesibilidad -->
+    <script src="{{ url_for('static', filename='js/accesibilidad.js') }}"></script>
+    <script>
+        // Toggle del panel de accesibilidad
+        const toggle = document.getElementById('accToggle');
+        const panel = document.getElementById('accPanel');
+        const overlay = document.getElementById('accOverlay');
+
+        toggle.addEventListener('click', () => {
+            toggle.classList.toggle('active');
+            panel.classList.toggle('show');
+            overlay.classList.toggle('show');
+        });
+
+        overlay.addEventListener('click', () => {
+            toggle.classList.remove('active');
+            panel.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+
+        // Cerrar con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && panel.classList.contains('show')) {
+                toggle.classList.remove('active');
+                panel.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+
+        // Actualizar texto del lector
+        const lectorBtn = document.getElementById('lectorPantallaBtn');
+        const lectorTexto = document.getElementById('lectorTexto');
+        
+        if(lectorBtn) {
+            lectorBtn.addEventListener('click', function() {
+                setTimeout(() => {
+                    if(this.classList.contains('active')) {
+                        lectorTexto.textContent = '⏸️ Detener Lectura';
+                    } else {
+                        lectorTexto.textContent = '▶️ Leer Página';
+                    }
+                }, 100);
+            });
+        }
+
+        // Botón de reset
+        const resetBtn = document.getElementById('resetAccesibilidadBtn');
+        if(resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                if(confirm('¿Deseas restablecer todas las configuraciones de accesibilidad?')) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            });
+        }
+
+        // Aplicar modo nocturno al panel cuando esté activo
+        const observer = new MutationObserver(() => {
+            if(document.body.classList.contains('night-mode')) {
+                panel.classList.add('night-mode');
+                document.querySelectorAll('.control-group').forEach(el => el.classList.add('night-mode'));
+            } else {
+                panel.classList.remove('night-mode');
+                document.querySelectorAll('.control-group').forEach(el => el.classList.remove('night-mode'));
+            }
+        });
+        
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    </script>
 </body>
 </html>
