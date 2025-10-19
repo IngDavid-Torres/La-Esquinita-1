@@ -25,7 +25,7 @@
 
 .accesibilidad-toggle.active {
     transform: rotate(135deg);
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg,  #2e7d32 0%, #f5576c 100%);
 }
 
 /* Panel deslizable */
@@ -57,7 +57,7 @@
 
 /* Header del panel */
 .panel-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FFD700 0%,  #2e7d32 100%);
     color: white;
     padding: 20px;
     text-align: center;
@@ -83,7 +83,7 @@
 }
 
 .panel-content::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FFD700 0%,  #2e7d32 100%);
     border-radius: 10px;
 }
 
@@ -104,7 +104,7 @@
 .control-group h3 {
     margin: 0 0 12px 0;
     font-size: 0.95em;
-    color: #667eea;
+    color: #FFD700;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -136,11 +136,11 @@
 .control-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-    border-color: #667eea;
+    border-color: #FFD700;
 }
 
 .control-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FFD700 0%,  #2e7d32 100%);
     color: white;
     border-color: transparent;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
@@ -177,7 +177,7 @@
 }
 
 .control-select:hover, .control-select:focus {
-    border-color: #667eea;
+    border-color: #FFD700;
     outline: none;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
@@ -185,7 +185,7 @@
 /* Botón especial (lector y reset) */
 .control-btn.special {
     width: 100%;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #FFD700 0%, #f5576c 100%);
     color: white;
     border: none;
     font-weight: bold;
