@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | La Esquinita</title>
+
+    <!-- CSS de accesibilidad -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/accesibilidad.css') }}">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -48,10 +52,6 @@
         }
         footer.night-mode {
             background: #181818 !important;
-            color: #fff !important;
-        }
-        .accesibilidad-bar.night-mode {
-            background: #232323 !important;
             color: #fff !important;
         }
         .sidebar {
@@ -210,34 +210,6 @@
             text-align: center;
             width: 100%;
         }
-        .export-links {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        .export-links a {
-            background: var(--secondary);
-            color: #fff;
-            padding: 8px 18px;
-            border-radius: 8px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: background 0.3s, color 0.3s;
-        }
-        .export-links a:nth-child(2) {
-            background: #1565c0;
-        }
-        .export-links a:nth-child(3) {
-            background: var(--primary);
-            color: var(--secondary);
-        }
-        .export-links a:hover {
-            background: var(--accent);
-            color: #fff;
-        }
         .dashboard-cards {
             display: flex;
             flex-direction: row;
@@ -271,76 +243,6 @@
             box-shadow: 0 12px 36px rgba(255,179,0,0.18), 0 4px 12px rgba(46,125,50,0.13);
             background: rgba(255,255,255,0.97);
         }
-        
-        .accesibilidad-bar {
-            position: fixed;
-            right: 32px;
-            bottom: 70px;
-            z-index: 3000;
-            background: rgba(34,34,34,0.92);
-            color: #fff;
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
-            align-items: center;
-            padding: 10px 18px 10px 18px;
-            border-radius: 22px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-            opacity: 0.97;
-            min-width: 40px;
-            min-height: 40px;
-            transition: box-shadow 0.2s, opacity 0.2s, right 0.2s, bottom 0.2s, background 0.2s;
-            backdrop-filter: blur(6px);
-        }
-        .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
-            opacity: 1;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.22);
-            background: rgba(34,34,34,1);
-        }
-        .accesibilidad-bar button, .accesibilidad-bar select {
-            background: #fff;
-            color: #222;
-            border: none;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            margin: 0 3px;
-            font-size: 1.1em;
-            cursor: pointer;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
-            transition: background 0.2s, color 0.2s, transform 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .accesibilidad-bar button.active {
-            background: #ffb300;
-            color: #222;
-            transform: scale(1.08);
-        }
-        .accesibilidad-bar label {
-            display: none;
-        }
-        .accesibilidad-bar select {
-            border-radius: 8px;
-            width: 36px;
-            height: 36px;
-            font-size: 1em;
-            padding: 0;
-        }
-        .accesibilidad-bar option {
-            font-size: 1em;
-        }
-        .accesibilidad-bar .icono {
-            font-size: 1.1em;
-        }
-        @media(max-width:900px){
-            .accesibilidad-bar { right: 8px; bottom: 70px; padding: 8px 8px; }
-        }
-        @media(max-width:600px){
-            .accesibilidad-bar {right: 2px; bottom: 70px; padding: 4px 2px; min-width: 24px; min-height: 24px;}
-            .accesibilidad-bar button, .accesibilidad-bar select {width: 18px; height: 18px; font-size: 0.8em;}
-        }
         .card .icon {
             font-size: 2em;
             margin-bottom: 6px;
@@ -367,11 +269,6 @@
             letter-spacing: 0.5px;
             font-weight: 600;
             text-align: center;
-        }
-        .card:hover {
-            transform: scale(1.05) translateY(-4px);
-            box-shadow: 0 8px 24px rgba(255,179,0,0.18), 0 4px 12px rgba(46,125,50,0.13);
-            background: linear-gradient(135deg, #ffe082 60%, #fffde7 100%);
         }
         .dashboard-graphs {
             display: grid;
@@ -521,48 +418,6 @@
             box-shadow: 0 -2px 12px rgba(44,44,44,0.12);
             backdrop-filter: blur(4px);
         }
-        @media (max-width: 1000px) {
-            .dashboard-container {
-                max-width: 98vw;
-                margin: 18px 1vw 10px 1vw;
-                padding: 7px;
-            }
-            .dashboard-cards, .dashboard-actions, .dashboard-graphs {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            .sidebar {
-                width: 100vw;
-                height: auto;
-                flex-direction: row;
-                justify-content: flex-start;
-                padding: 7px 0;
-                position: static;
-            }
-            .sidebar nav {
-                flex-direction: row;
-                gap: 7px;
-                width: auto;
-            }
-            .dashboard-main {
-                margin-left: 0;
-                width: 100vw;
-            }
-            footer {
-                position: fixed;
-            }
-        }
-        @media (max-width: 600px) {
-            .dashboard-container {
-                margin: 7px 1vw 7px 1vw;
-                padding: 3px;
-            }
-            .dashboard-header h2 { font-size: 1.1em; }
-            .card .icon { font-size: 1.3em; padding: 7px; }
-            .card { font-size: 0.95em; padding: 10px 2px 8px 2px; }
-            .action-box { padding: 10px 2px 10px 2px; min-width: 140px; }
-            .action-box button { font-size: 0.9em; padding: 7px 8px; }
-        }
         .alert-modal {
             position: fixed;
             top: 0; left: 0;
@@ -616,152 +471,105 @@
             background: var(--accent);
             color: #fff;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        @media (max-width: 1000px) {
+            .dashboard-container {
+                max-width: 98vw;
+                margin: 18px 1vw 10px 1vw;
+                padding: 7px;
+            }
+            .dashboard-cards, .dashboard-actions, .dashboard-graphs {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .sidebar {
+                width: 100vw;
+                height: auto;
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 7px 0;
+                position: static;
+            }
+            .sidebar nav {
+                flex-direction: row;
+                gap: 7px;
+                width: auto;
+            }
+            .dashboard-main {
+                margin-left: 0;
+                width: 100vw;
+            }
+            footer {
+                position: fixed;
+            }
+        }
+        @media (max-width: 600px) {
+            .dashboard-container {
+                margin: 7px 1vw 7px 1vw;
+                padding: 3px;
+            }
+            .dashboard-header h2 { font-size: 1.1em; }
+            .card .icon { font-size: 1.3em; padding: 7px; }
+            .card { font-size: 0.95em; padding: 10px 2px 8px 2px; }
+            .action-box { padding: 10px 2px 10px 2px; min-width: 140px; }
+            .action-box button { font-size: 0.9em; padding: 7px 8px; }
         }
     </style>
 </head>
 <body>
-    
-    <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
-        <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
-        <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
-        <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
-        <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
-        <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
-        <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
-        <select id="tipografiaSelect" aria-label="Cambiar tipografía">
-            <option value="default">Aa</option>
-            <option value="arial">A</option>
-            <option value="verdana">V</option>
-            <option value="comic">C</option>
-            <option value="open">O</option>
-        </select>
-        <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
+    <div class="accesibilidad-overlay" id="accOverlay"></div>
+    <button class="accesibilidad-toggle" id="accToggle" aria-label="Abrir menú de accesibilidad">
+        ♿
+    </button>
+    <div class="accesibilidad-panel" id="accPanel" role="dialog" aria-label="Panel de accesibilidad">
+        <div class="panel-header">
+            Accesibilidad
+        </div>
+
+        <div class="panel-content">
+            <div class="control-group">
+                <h3>Tamaño de Texto</h3>
+                <div class="control-row">
+                    <button class="control-btn" id="disminuirLetraBtn" title="Disminuir letra">A-</button>
+                    <button class="control-btn" id="aumentarLetraBtn" title="Aumentar letra">A+</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3> Modos Visuales</h3>
+                <div class="control-row">
+                    <button class="control-btn" id="modoNocturnoBtn" title="Modo nocturno">🌙</button>
+                    <button class="control-btn" id="contrasteBtn" title="Alto contraste">🔳</button>
+                    <button class="control-btn" id="grisesBtn" title="Escala de grises">🌑</button>
+                    <button class="control-btn" id="guiaLecturaBtn" title="Guía de lectura">📖</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Tipografía</h3>
+                <select class="control-select" id="tipografiaSelect" aria-label="Cambiar tipografía">
+                    <option value="default">Tipografía por defecto</option>
+                    <option value="arial">Arial (Sans-serif)</option>
+                    <option value="verdana">Verdana (Legible)</option>
+                    <option value="comic">Comic Sans (Amigable)</option>
+                    <option value="open">OpenDyslexic (Dislexia)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <h3>Audio</h3>
+                <button class="control-btn special" id="lectorPantallaBtn">
+                    <span id="lectorTexto">Leer Página</span>
+                </button>
+            </div>
+
+            <div class="control-group">
+                <button class="control-btn special" id="resetAccesibilidadBtn" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">
+                    Restablecer Todo
+                </button>
+            </div>
+        </div>
     </div>
-    <script>
-        
-        const root = document.documentElement;
-        const body = document.body;
-        let fontSize = 1;
-        let modoNocturno = false;
-        let contraste = false;
-        let grises = false;
-        let guiaLectura = false;
-        let lectorActivo = false;
-        let tipografia = 'default';
-
-        function setFontSize(mult) {
-            fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-            body.style.fontSize = fontSize + 'em';
-        }
-        document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-        document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
-
-        document.getElementById('modoNocturnoBtn').onclick = function() {
-            modoNocturno = !modoNocturno;
-            const mainContent = document.querySelector('.dashboard-main');
-            const container = document.querySelector('.dashboard-container');
-            const cards = document.querySelectorAll('.card');
-            const actions = document.querySelectorAll('.action-box');
-            const graphs = document.querySelectorAll('.graph-box');
-            const dashboardHeader = document.querySelector('.dashboard-header');
-            const footer = document.querySelector('footer');
-            const accesBar = document.querySelector('.accesibilidad-bar');
-            if(modoNocturno) {
-                body.classList.add('night-mode');
-                if(mainContent) mainContent.classList.add('night-mode');
-                if(container) container.classList.add('night-mode');
-                cards.forEach(e=>e.classList.add('night-mode'));
-                actions.forEach(e=>e.classList.add('night-mode'));
-                graphs.forEach(e=>e.classList.add('night-mode'));
-                if(dashboardHeader) dashboardHeader.classList.add('night-mode');
-                if(footer) footer.classList.add('night-mode');
-                if(accesBar) accesBar.classList.add('night-mode');
-                this.classList.add('active');
-            } else {
-                body.classList.remove('night-mode');
-                if(mainContent) mainContent.classList.remove('night-mode');
-                if(container) container.classList.remove('night-mode');
-                cards.forEach(e=>e.classList.remove('night-mode'));
-                actions.forEach(e=>e.classList.remove('night-mode'));
-                graphs.forEach(e=>e.classList.remove('night-mode'));
-                if(dashboardHeader) dashboardHeader.classList.remove('night-mode');
-                if(footer) footer.classList.remove('night-mode');
-                if(accesBar) accesBar.classList.remove('night-mode');
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('contrasteBtn').onclick = function() {
-            contraste = !contraste;
-            if(contraste) {
-                body.style.filter = 'contrast(1.7)';
-                this.classList.add('active');
-            } else {
-                body.style.filter = '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('grisesBtn').onclick = function() {
-            grises = !grises;
-            if(grises) {
-                body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
-                this.classList.add('active');
-            } else {
-                body.style.filter = contraste ? 'contrast(1.7)' : '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('guiaLecturaBtn').onclick = function() {
-            guiaLectura = !guiaLectura;
-            let contenido = document.querySelector('.dashboard-main') || document.body;
-            if(guiaLectura) {
-                contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-                contenido.style.background = '#fffbe7';
-                contenido.scrollIntoView({behavior:'smooth', block:'center'});
-                this.classList.add('active');
-            } else {
-                contenido.style.boxShadow = '';
-                contenido.style.background = '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('tipografiaSelect').onchange = function() {
-            tipografia = this.value;
-            switch(tipografia) {
-                case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-                case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-                case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-                case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-                default: body.style.fontFamily = '';
-            }
-        };
-
-       
-        document.getElementById('lectorPantallaBtn').onclick = function() {
-            lectorActivo = !lectorActivo;
-            let contenido = document.querySelector('.dashboard-main') || document.body;
-            if(lectorActivo) {
-                this.classList.add('active');
-                let texto = contenido.innerText;
-                if('speechSynthesis' in window) {
-                    let utter = new SpeechSynthesisUtterance(texto);
-                    utter.lang = 'es-MX';
-                    window.speechSynthesis.speak(utter);
-                } else {
-                    alert('Lector de pantalla no soportado en este navegador.');
-                }
-            } else {
-                this.classList.remove('active');
-                if('speechSynthesis' in window) window.speechSynthesis.cancel();
-            }
-        };
-    </script>
+   
     <div class="sidebar">
         <div class="logo">
             <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
@@ -791,6 +599,7 @@
             {% endif %}
         </div>
     </div>
+
     <div class="dashboard-main">
         <div class="dashboard-container">
             <div class="dashboard-header">
@@ -886,11 +695,13 @@
             </div>
         </div>
     </div>
+
     <footer>
         <p style="margin:0; font-weight:500;">
             © 2025 La Esquinita - Todos los derechos reservados &nbsp;|&nbsp; Hecho con 🌽 y ❤️ en México
         </p>
     </footer>
+
     <div id="logoutModal" class="alert-modal" style="display:none;">
         <div class="alert-content">
             <h3>¿Seguro que quieres cerrar sesión?</h3>
@@ -901,8 +712,9 @@
             </div>
         </div>
     </div>
+
     <script>
-        
+        // Datos de gráficos
         const usuariosData = {
             labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
             datasets: [{
@@ -931,58 +743,38 @@
             labels: ['Elotes', 'Esquites', 'Patitas', 'Maruchan'],
             datasets: [{
                 label: 'Productos por Categoría',
-                data: [300, 250, 200, 150, 100, 50],
+                data: [300, 250, 200, 150],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.6)',
                     'rgba(54, 162, 235, 0.6)',
                     'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)'
+                    'rgba(75, 192, 192, 0.6)'
                 ],
                 borderColor: [
                     'rgba(255, 99, 132, 1)',
                     'rgba(54, 162, 235, 1)',
                     'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
+                    'rgba(75, 192, 192, 1)'
                 ],
                 borderWidth: 2,
-                fill: true,
             }]
         };
 
+        // Configuración de gráficos
         const configUsuarios = {
             type: 'line',
             data: usuariosData,
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                    }
+                    legend: { display: true, position: 'top' },
+                    tooltip: { mode: 'index', intersect: false }
                 },
                 scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Meses'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Cantidad'
-                        }
-                    }
+                    x: { title: { display: true, text: 'Meses' } },
+                    y: { title: { display: true, text: 'Cantidad' } }
                 }
-            },
+            }
         };
 
         const configPedidos = {
@@ -991,30 +783,14 @@
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                    }
+                    legend: { display: true, position: 'top' },
+                    tooltip: { mode: 'index', intersect: false }
                 },
                 scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Meses'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Cantidad'
-                        }
-                    }
+                    x: { title: { display: true, text: 'Meses' } },
+                    y: { title: { display: true, text: 'Cantidad' } }
                 }
-            },
+            }
         };
 
         const configProductos = {
@@ -1023,49 +799,22 @@
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                    }
+                    legend: { display: true, position: 'top' },
+                    tooltip: { mode: 'index', intersect: false }
                 },
                 scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Categorías'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Cantidad'
-                        }
-                    }
+                    x: { title: { display: true, text: 'Categorías' } },
+                    y: { title: { display: true, text: 'Cantidad' } }
                 }
-            },
+            }
         };
 
         // Renderizar gráficos
-        const usuariosChart = new Chart(
-            document.getElementById('usuariosChart'),
-            configUsuarios
-        );
+        new Chart(document.getElementById('usuariosChart'), configUsuarios);
+        new Chart(document.getElementById('pedidosChart'), configPedidos);
+        new Chart(document.getElementById('productosChart'), configProductos);
 
-        const pedidosChart = new Chart(
-            document.getElementById('pedidosChart'),
-            configPedidos
-        );
-
-        const productosChart = new Chart(
-            document.getElementById('productosChart'),
-            configProductos
-        );
-
-        // Funciones para manejar el modal de cierre de sesión
+        // Modal de cierre de sesión
         function closeLogoutModal() {
             document.getElementById('logoutModal').style.display = 'none';
         }
@@ -1074,6 +823,76 @@
             event.preventDefault();
             document.getElementById('logoutModal').style.display = 'flex';
         });
+    </script>
+
+    <!-- Scripts de accesibilidad -->
+    <script src="{{ url_for('static', filename='js/accesibilidad.js') }}"></script>
+    <script>
+        // Toggle del panel de accesibilidad
+        const toggle = document.getElementById('accToggle');
+        const panel = document.getElementById('accPanel');
+        const overlay = document.getElementById('accOverlay');
+
+        toggle.addEventListener('click', () => {
+            toggle.classList.toggle('active');
+            panel.classList.toggle('show');
+            overlay.classList.toggle('show');
+        });
+
+        overlay.addEventListener('click', () => {
+            toggle.classList.remove('active');
+            panel.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+
+        // Cerrar con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && panel.classList.contains('show')) {
+                toggle.classList.remove('active');
+                panel.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+
+        // Actualizar texto del lector
+        const lectorBtn = document.getElementById('lectorPantallaBtn');
+        const lectorTexto = document.getElementById('lectorTexto');
+        
+        if(lectorBtn) {
+            lectorBtn.addEventListener('click', function() {
+                setTimeout(() => {
+                    if(this.classList.contains('active')) {
+                        lectorTexto.textContent = '⏸️ Detener Lectura';
+                    } else {
+                        lectorTexto.textContent = '▶️ Leer Página';
+                    }
+                }, 100);
+            });
+        }
+
+        // Botón de reset
+        const resetBtn = document.getElementById('resetAccesibilidadBtn');
+        if(resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                if(confirm('¿Deseas restablecer todas las configuraciones de accesibilidad?')) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            });
+        }
+
+        // Aplicar modo nocturno al panel cuando esté activo
+        const observer = new MutationObserver(() => {
+            if(document.body.classList.contains('night-mode')) {
+                panel.classList.add('night-mode');
+                document.querySelectorAll('.control-group').forEach(el => el.classList.add('night-mode'));
+            } else {
+                panel.classList.remove('night-mode');
+                document.querySelectorAll('.control-group').forEach(el => el.classList.remove('night-mode'));
+            }
+        });
+        
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     </script>
 </body>
 </html>

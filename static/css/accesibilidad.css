@@ -1,0 +1,295 @@
+.accesibilidad-toggle {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 3001;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg,  #FFD700 0%, #2e7d32 100%);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(113, 234, 102, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8em;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    color: white;
+}
+
+.accesibilidad-toggle:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+}
+
+.accesibilidad-toggle.active {
+    transform: rotate(135deg);
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+/* Panel deslizable */
+.accesibilidad-panel {
+    position: fixed;
+    right: -400px;
+    bottom: 90px;
+    z-index: 3000;
+    width: 350px;
+    max-height: 80vh;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.15);
+    transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    overflow: hidden;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.accesibilidad-panel.show {
+    right: 20px;
+}
+
+/* Modo nocturno para el panel */
+.accesibilidad-panel.night-mode {
+    background: rgba(35, 35, 35, 0.98) !important;
+    border-color: rgba(102, 126, 234, 0.4);
+}
+
+/* Header del panel */
+.panel-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    border-radius: 22px 22px 0 0;
+}
+
+/* Contenido del panel */
+.panel-content {
+    padding: 20px;
+    max-height: calc(80vh - 80px);
+    overflow-y: auto;
+}
+
+.panel-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+}
+
+/* Grupos de controles */
+.control-group {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.control-group.night-mode {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.control-group h3 {
+    margin: 0 0 12px 0;
+    font-size: 0.95em;
+    color: #667eea;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.control-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Botones de control */
+.control-btn {
+    flex: 1;
+    min-width: 45px;
+    height: 45px;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.3em;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    border-color: #667eea;
+}
+
+.control-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.control-btn.active::after {
+    content: '✓';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #4ade80;
+    color: white;
+    font-size: 0.7em;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* Select de tipografía */
+.control-select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    background: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.control-select:hover, .control-select:focus {
+    border-color: #667eea;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Botón especial (lector y reset) */
+.control-btn.special {
+    width: 100%;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    font-weight: bold;
+    font-size: 1em;
+    padding: 12px;
+    height: auto;
+}
+
+.control-btn.special:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 87, 108, 0.3);
+}
+
+.control-btn.special.active {
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+}
+
+/* Overlay oscuro (opcional) */
+.accesibilidad-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 2999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.accesibilidad-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Tooltip */
+.control-btn[title]:hover::before {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75em;
+    white-space: nowrap;
+    margin-bottom: 8px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .accesibilidad-panel {
+        width: calc(100vw - 40px);
+        right: -100vw;
+    }
+
+    .accesibilidad-panel.show {
+        right: 20px;
+    }
+
+    .accesibilidad-toggle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+        right: 15px;
+        bottom: 80px;
+    }
+
+    .control-btn {
+        min-width: 40px;
+        height: 40px;
+        font-size: 1.1em;
+    }
+
+    .panel-header {
+        font-size: 1em;
+        padding: 15px;
+    }
+
+    .control-group {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .accesibilidad-toggle {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3em;
+        right: 10px;
+        bottom: 75px;
+    }
+
+    .accesibilidad-panel {
+        width: calc(100vw - 20px);
+        bottom: 70px;
+    }
+
+    .accesibilidad-panel.show {
+        right: 10px;
+    }
+}
