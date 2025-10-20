@@ -338,6 +338,59 @@
       }
     }
   </style>
+  <div class="accesibilidad-overlay" id="accOverlay"></div>
+  <button class="accesibilidad-toggle" id="accToggle" aria-label="Abrir menú de accesibilidad">
+        ♿
+  </button>
+    <div class="accesibilidad-panel" id="accPanel" role="dialog" aria-label="Panel de accesibilidad">
+        <div class="panel-header">
+            Accesibilidad
+        </div>
+
+        <div class="panel-content">
+            <div class="control-group">
+                <h3>Tamaño de Texto</h3>
+                <div class="control-row">
+                    <button class="control-btn" id="disminuirLetraBtn" title="Disminuir letra">A-</button>
+                    <button class="control-btn" id="aumentarLetraBtn" title="Aumentar letra">A+</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3> Modos Visuales</h3>
+                <div class="control-row">
+                    <button class="control-btn" id="modoNocturnoBtn" title="Modo nocturno">🌙</button>
+                    <button class="control-btn" id="contrasteBtn" title="Alto contraste">🔳</button>
+                    <button class="control-btn" id="grisesBtn" title="Escala de grises">🌑</button>
+                    <button class="control-btn" id="guiaLecturaBtn" title="Guía de lectura">📖</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Tipografía</h3>
+                <select class="control-select" id="tipografiaSelect" aria-label="Cambiar tipografía">
+                    <option value="default">Tipografía por defecto</option>
+                    <option value="arial">Arial (Sans-serif)</option>
+                    <option value="verdana">Verdana (Legible)</option>
+                    <option value="comic">Comic Sans (Amigable)</option>
+                    <option value="open">OpenDyslexic (Dislexia)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <h3>Audio</h3>
+                <button class="control-btn special" id="lectorPantallaBtn">
+                    <span id="lectorTexto">Leer Página</span>
+                </button>
+            </div>
+
+            <div class="control-group">
+                <button class="control-btn special" id="resetAccesibilidadBtn" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">
+                    Restablecer Todo
+                </button>
+            </div>
+        </div>
+    </div>
 </head>
 <body>
   <div class="accesibilidad-overlay" id="accOverlay"></div>
