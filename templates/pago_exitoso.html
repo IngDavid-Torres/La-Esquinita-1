@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Pago Exitoso! | La Esquinita</title>
+  <style>
+    :root {
+      --primary: #00a650;
+      --secondary: #2e7d32;
+      --accent: #ff5722;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+      color: var(--dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .success-icon {
+      font-size: 4em;
+      color: var(--primary);
+      margin-bottom: 20px;
+      animation: bounce 1s ease-in-out;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-30px); }
+      60% { transform: translateY(-15px); }
+    }
+
+    h1 {
+      color: var(--primary);
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    .mensaje-exito {
+      font-size: 1.2em;
+      color: var(--secondary);
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .info-pedido {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px 0;
+      border-left: 4px solid var(--primary);
+      text-align: left;
+    }
+
+    .info-pedido h3 {
+      color: var(--secondary);
+      margin-bottom: 15px;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+      font-weight: bold;
+    }
+
+    .botones-accion {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .boton {
+      padding: 15px 25px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .boton-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .boton-secondary {
+      background: white;
+      color: var(--secondary);
+      border: 2px solid var(--secondary);
+    }
+
+    .boton:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .footer-mensaje {
+      margin-top: 30px;
+      padding: 20px;
+      background: #e8f5e8;
+      border-radius: 8px;
+      font-size: 0.9em;
+      color: var(--secondary);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 20px;
+        padding: 25px;
+      }
+      
+      .botones-accion {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .boton {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="success-icon">✅</div>
+    
+    <h1>¡Pago Exitoso!</h1>
+    
+    <div class="mensaje-exito">
+      🎉 <strong>¡Felicidades!</strong> Tu pago se ha procesado correctamente.<br>
+      Hemos recibido tu pedido y pronto comenzaremos a prepararlo.
+    </div>
+
+    <div class="info-pedido">
+      <h3>📋 Detalles de tu pedido</h3>
+      <div class="info-item">
+        <span>Número de pedido:</span>
+        <span>#{{ pedido.id }}</span>
+      </div>
+      <div class="info-item">
+        <span>Fecha:</span>
+        <span>{{ pedido.fecha.strftime('%d/%m/%Y %H:%M') }}</span>
+      </div>
+      <div class="info-item">
+        <span>Estado:</span>
+        <span>{{ pedido.estado }}</span>
+      </div>
+      <div class="info-item">
+        <span>Total pagado:</span>
+        <span>${{ "%.2f"|format(pedido.total) }}</span>
+      </div>
+    </div>
+
+    <div class="botones-accion">
+      <a href="{{ url_for('historial_pedidos') }}" class="boton boton-primary">
+        📦 Ver mis pedidos
+      </a>
+      <a href="{{ url_for('productos') }}" class="boton boton-secondary">
+        🛒 Seguir comprando
+      </a>
+    </div>
+
+    <div class="footer-mensaje">
+      📧 <strong>Confirmación enviada</strong><br>
+      Hemos enviado un email de confirmación con todos los detalles de tu compra.<br>
+      Si tienes alguna pregunta, no dudes en contactarnos.
+    </div>
+  </div>
+</body>
+</html>

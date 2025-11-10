@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error en el Pago | AgroConnect</title>
+  <style>
+    :root {
+      --primary: #00a650;
+      --error: #f44336;
+      --error-dark: #d32f2f;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+      --gray: #6c757d;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffeaea, #fff5f5);
+      color: var(--dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .error-icon {
+      font-size: 4em;
+      color: var(--error);
+      margin-bottom: 20px;
+      animation: shake 0.8s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+      20%, 40%, 60%, 80% { transform: translateX(10px); }
+    }
+
+    h1 {
+      color: var(--error);
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    .mensaje-error {
+      font-size: 1.2em;
+      color: var(--error-dark);
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .info-error {
+      background: #ffebee;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px 0;
+      border-left: 4px solid var(--error);
+      text-align: left;
+    }
+
+    .info-error h3 {
+      color: var(--error-dark);
+      margin-bottom: 15px;
+    }
+
+    .posibles-causas {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px 0;
+      text-align: left;
+    }
+
+    .posibles-causas h3 {
+      color: var(--dark);
+      margin-bottom: 15px;
+    }
+
+    .causas-lista {
+      list-style: none;
+      padding: 0;
+    }
+
+    .causas-lista li {
+      padding: 8px 0;
+      padding-left: 25px;
+      position: relative;
+    }
+
+    .causas-lista li:before {
+      content: "⚠️";
+      position: absolute;
+      left: 0;
+    }
+
+    .botones-accion {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .boton {
+      padding: 15px 25px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .boton-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .boton-error {
+      background: var(--error);
+      color: white;
+    }
+
+    .boton-secondary {
+      background: white;
+      color: var(--gray);
+      border: 2px solid var(--gray);
+    }
+
+    .boton:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .ayuda-contacto {
+      margin-top: 30px;
+      padding: 20px;
+      background: #e3f2fd;
+      border-radius: 8px;
+      font-size: 0.9em;
+      color: var(--dark);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 20px;
+        padding: 25px;
+      }
+      
+      .botones-accion {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .boton {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="error-icon">❌</div>
+    
+    <h1>Error en el Pago</h1>
+    
+    <div class="mensaje-error">
+      😔 <strong>Lo sentimos,</strong> tu pago no pudo ser procesado.<br>
+      No te preocupes, no se realizó ningún cargo a tu cuenta.
+    </div>
+
+    <div class="info-error">
+      <h3>🚫 Información del error</h3>
+      <p><strong>Código de error:</strong> {{ error_code if error_code else 'No especificado' }}</p>
+      <p><strong>Descripción:</strong> {{ error_message if error_message else 'Error al procesar el pago' }}</p>
+      <p><strong>Fecha y hora:</strong> {{ moment().format('DD/MM/YYYY HH:mm') }}</p>
+    </div>
+
+    <div class="posibles-causas">
+      <h3>🤔 Posibles causas del error</h3>
+      <ul class="causas-lista">
+        <li>Fondos insuficientes en la cuenta</li>
+        <li>Datos de la tarjeta incorrectos</li>
+        <li>Tarjeta vencida o bloqueada</li>
+        <li>Límite de compra excedido</li>
+        <li>Problema temporal con el banco</li>
+        <li>Error de conexión durante el proceso</li>
+      </ul>
+    </div>
+
+    <div class="botones-accion">
+      <a href="{{ url_for('carrito') }}" class="boton boton-error">
+        🔄 Reintentar pago
+      </a>
+      <a href="{{ url_for('productos') }}" class="boton boton-secondary">
+        🛒 Seguir comprando
+      </a>
+      <a href="{{ url_for('contacto') }}" class="boton boton-primary">
+        💬 Obtener ayuda
+      </a>
+    </div>
+
+    <div class="ayuda-contacto">
+      <strong>💡 ¿Necesitas ayuda?</strong><br>
+      Si el problema persiste, contáctanos y te ayudaremos a resolver tu compra.<br>
+      Nuestro equipo de soporte está disponible para asistirte.
+    </div>
+  </div>
+</body>
+</html>

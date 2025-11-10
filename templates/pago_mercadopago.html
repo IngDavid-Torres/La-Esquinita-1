@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagar con MercadoPago | AgroConnect</title>
+  <style>
+    :root {
+      --primary: #00a650;
+      --secondary: #2e7d32;
+      --accent: #ff5722;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .logo img {
+      height: 60px;
+      border-radius: 8px;
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      transition: color 0.3s, background 0.3s;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+      background: rgba(255,87,34,0.1);
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 120px auto 40px auto;
+      background: rgba(255,255,255,0.97);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+
+    .header-pago {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header-pago h2 {
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-size: 2em;
+    }
+
+    .header-pago .mercadopago-logo {
+      background: var(--primary);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .resumen-pedido {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .resumen-pedido h3 {
+      color: var(--secondary);
+      margin-bottom: 15px;
+    }
+
+    .producto-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .producto-item:last-child {
+      border-bottom: none;
+      font-weight: bold;
+      font-size: 1.2em;
+      color: var(--primary);
+    }
+
+    .form-pago {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .form-pago input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+
+    .form-pago input:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    .boton-pago {
+      background: linear-gradient(135deg, var(--primary), #00d566);
+      color: white;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-top: 20px;
+    }
+
+    .boton-pago:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 166, 80, 0.3);
+    }
+
+    .seguridad-info {
+      background: #e8f5e8;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.9em;
+      color: var(--secondary);
+    }
+
+    .volver-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .volver-link:hover {
+      color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 140px 15px 40px 15px;
+        padding: 20px;
+      }
+      
+      header {
+        padding: 15px 20px;
+      }
+      
+      nav {
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="AgroConnect">
+    </div>
+    <nav>
+      <a href="{{ url_for('inicio') }}">🏠 Inicio</a>
+      <a href="{{ url_for('productos') }}">🛒 Tienda</a>
+      <a href="{{ url_for('carrito') }}">🛍️ Carrito</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="header-pago">
+      <h2>💳 Finalizar Compra</h2>
+      <div class="mercadopago-logo">🔒 Pago Seguro con MercadoPago</div>
+      <p>Completa tus datos para proceder al pago seguro</p>
+    </div>
+
+    <div class="resumen-pedido">
+      <h3>📋 Resumen de tu pedido</h3>
+      {% for producto in productos %}
+      <div class="producto-item">
+        <span>{{ producto.nombre }} x{{ producto.cantidad }}</span>
+        <span>${{ "%.2f"|format(producto.precio * producto.cantidad) }}</span>
+      </div>
+      {% endfor %}
+      <div class="producto-item">
+        <span>TOTAL A PAGAR</span>
+        <span>${{ "%.2f"|format(total) }}</span>
+      </div>
+    </div>
+
+    <form class="form-pago" action="{{ url_for('pago_mercadopago') }}" method="post">
+      <input type="text" name="nombre" placeholder="📝 Nombre completo" required>
+      <input type="email" name="correo" placeholder="📧 Correo electrónico" required>
+      <input type="text" name="direccion" placeholder="📍 Dirección de envío completa" required>
+      
+      <button type="submit" class="boton-pago">
+        🚀 Continuar con MercadoPago - ${{ "%.2f"|format(total) }}
+      </button>
+    </form>
+
+    <div class="seguridad-info">
+      🔐 <strong>Pago 100% Seguro</strong><br>
+      Tus datos están protegidos con encriptación SSL.<br>
+      Procesado por MercadoPago, líder en pagos en línea.
+    </div>
+
+    <a href="{{ url_for('carrito') }}" class="volver-link">← Volver al carrito</a>
+  </div>
+</body>
+</html>

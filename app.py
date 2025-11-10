@@ -13,21 +13,39 @@ from flask_login import login_required, current_user
 from sqlalchemy import and_, not_, exists, cast, String, or_
 from sqlalchemy.orm import aliased
 import pandas as pd
+import mercadopago
+import time
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:789@localhost/agroconnect'
-app.secret_key = 'clave_secreta_super_segura' 
+
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL or 'postgresql://postgres:789@localhost/laesquinita'
+app.secret_key = os.environ.get('SECRET_KEY') or 'clave_secreta_super_segura'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 UPLOAD_FOLDER = 'static/images'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+
+MP_ACCESS_TOKEN = os.environ.get('MP_ACCESS_TOKEN') or "TEST-7916427332588639-102718-00ee5129ad06c2ceba14e4e44b94d22e-191563398"
+sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
+
+
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'xhencho.taallegas@gmail.com'
-app.config['MAIL_PASSWORD'] = 'jmvg qrvw zchs zmhx'
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') or 'laesquinita.antojitos.mx@gmail.com'
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD') or 'pnyy wnaj yisq wtgv'
+
+
 mail = Mail(app)
 
 def allowed_file(filename):
@@ -73,7 +91,8 @@ class Pedido(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id', name="fk_pedido_usuario"), nullable=False)
     total = db.Column(db.Float, nullable=False)
     fecha = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    estado = db.Column(db.String(50), default="Pendiente")  
+    estado = db.Column(db.String(50), default="Pendiente")
+    direccion = db.Column(db.String(500), nullable=True)  # Campo para la dirección de envío  
     
 
 
@@ -112,9 +131,9 @@ class Pago(db.Model):
 
 def crear_admin():
     with app.app_context():  
-        admin_existente = Administrador.query.filter_by(email="admin@agroconnect.com").first()
+        admin_existente = Administrador.query.filter_by(email="admin@laesquinita.com").first()
         if not admin_existente:
-            nuevo_admin = Administrador(nombre="Admin", email="admin@agroconnect.com", password="securepassword")
+            nuevo_admin = Administrador(nombre="Admin La Esquinita", email="admin@laesquinita.com", password="securepassword")
             db.session.add(nuevo_admin)
             db.session.commit()
 
@@ -402,6 +421,233 @@ def calcular_total_carrito(usuario_id):
     total = sum(item.producto.precio * item.cantidad for item in carrito_items)
     return total
 
+@app.route('/pago_mercadopago', methods=['GET', 'POST'])
+def pago_mercadopago():
+    if 'usuario_id' not in session:
+        return redirect(url_for('login'))
+
+    usuario_id = session['usuario_id']
+    carrito_items = Carrito.query.filter_by(usuario_id=usuario_id).all()
+    
+    if not carrito_items:
+        flash("Tu carrito está vacío", "error")
+        return redirect(url_for('carrito'))
+    
+    # Calcular productos y total
+    productos = []
+    total = 0
+    items_mp = []
+    
+    for item in carrito_items:
+        producto = Producto.query.get(item.producto_id)
+        if producto:
+            producto.cantidad = item.cantidad
+            productos.append(producto)
+            subtotal = producto.precio * item.cantidad
+            total += subtotal
+            
+            # Formato para MercadoPago
+            items_mp.append({
+                "title": producto.nombre,
+                "quantity": item.cantidad,
+                "unit_price": float(producto.precio),
+                "currency_id": "MXN"
+            })
+
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        correo = request.form['correo']
+        direccion = request.form['direccion']
+        
+        # Crear preferencia de pago en MercadoPago
+        preference_data = {
+            "items": items_mp,
+            "payer": {
+                "name": nombre,
+                "email": correo
+            },
+            "back_urls": {
+                "success": url_for('pago_exitoso', _external=True),
+                "failure": url_for('pago_fallido', _external=True),
+                "pending": url_for('pago_pendiente', _external=True)
+            },
+            "auto_return": "approved",
+            "external_reference": f"laesquinita-{usuario_id}-{int(datetime.now().timestamp())}"
+        }
+        
+        try:
+            print(f"🔧 DEBUG: Creando preferencia con datos: {preference_data}")
+            preference_response = sdk.preference().create(preference_data)
+            print(f"🔧 DEBUG: Respuesta de MercadoPago: {preference_response}")
+            preference = preference_response["response"]
+            
+            if preference_response["status"] == 201:
+                
+                session['pedido_temp'] = {
+                    'nombre': nombre,
+                    'correo': correo,
+                    'direccion': direccion,
+                    'total': total,
+                    'productos': [{'id': p.id, 'cantidad': p.cantidad} for p in productos]
+                }
+                
+                
+                print(f"🔧 DEBUG: Redirigiendo a: {preference['init_point']}")
+                return redirect(preference["init_point"])
+            else:
+                print(f"❌ DEBUG: Error en status: {preference_response}")
+                flash("Error al procesar el pago", "error")
+                return redirect(url_for('carrito'))
+                
+        except Exception as e:
+            print(f"❌ DEBUG: Excepción: {str(e)}")
+            flash(f"Error: {str(e)}", "error")
+            return redirect(url_for('carrito'))
+    
+    return render_template('pago_mercadopago.html', productos=productos, total=total)
+
+
+@app.route('/pago_exitoso')
+def pago_exitoso():
+    if 'usuario_id' not in session or 'pedido_temp' not in session:
+        return redirect(url_for('inicio'))
+    
+    
+    pedido_data = session['pedido_temp']
+    usuario_id = session['usuario_id']
+    
+    try:
+        print(f"🔧 DEBUG: Procesando pago exitoso para usuario {usuario_id}")
+        print(f"🔧 DEBUG: Datos del pedido: {pedido_data}")
+        
+        
+        carrito_antes = Carrito.query.filter_by(usuario_id=usuario_id).all()
+        print(f"🔧 DEBUG: Items en carrito ANTES: {len(carrito_antes)}")
+        
+        
+        nuevo_pedido = Pedido(
+            usuario_id=usuario_id,
+            estado='Confirmado',
+            total=pedido_data['total'],
+            fecha=datetime.now(),
+            direccion=pedido_data['direccion']
+        )
+        db.session.add(nuevo_pedido)
+        db.session.flush()  # Para obtener el ID del pedido
+        print(f"🔧 DEBUG: Pedido creado con ID: {nuevo_pedido.id}")
+        
+       
+        for producto_info in pedido_data['productos']:
+            pedido_item = PedidoItem(
+                pedido_id=nuevo_pedido.id,
+                producto_id=producto_info['id'],
+                cantidad=producto_info['cantidad']
+            )
+            db.session.add(pedido_item)
+            print(f"🔧 DEBUG: Agregado item: Producto {producto_info['id']}, Cantidad {producto_info['cantidad']}")
+        
+       
+        print(f"🔧 DEBUG: Limpiando carrito para usuario {usuario_id}")
+        items_eliminados = Carrito.query.filter_by(usuario_id=usuario_id).delete()
+        print(f"🔧 DEBUG: Items eliminados del carrito: {items_eliminados}")
+        
+        
+        db.session.commit()
+        print(f"🔧 DEBUG: Transacción confirmada en base de datos")
+        
+        # Verificar carrito después de procesar
+        carrito_despues = Carrito.query.filter_by(usuario_id=usuario_id).all()
+        print(f"🔧 DEBUG: Items en carrito DESPUÉS: {len(carrito_despues)}")
+        
+        
+        try:
+            send_confirmation_email(pedido_data['correo'], pedido_data['nombre'], nuevo_pedido)
+        except Exception as email_error:
+            print(f"Error enviando email: {email_error}")
+        
+        
+        session.pop('pedido_temp', None)
+        print(f"🔧 DEBUG: Datos temporales limpiados")
+        
+        flash('¡Pago procesado exitosamente!', 'success')
+        return render_template('pago_exitoso.html', pedido=nuevo_pedido)
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error al procesar el pedido: {str(e)}', 'error')
+        return redirect(url_for('carrito'))
+
+@app.route('/pago_fallido')
+def pago_fallido():
+    error_code = request.args.get('error_code', 'No especificado')
+    error_message = request.args.get('error_message', 'Error al procesar el pago')
+    
+    # Limpiar datos temporales si existen
+    session.pop('pedido_temp', None)
+    
+    flash('El pago no pudo ser procesado', 'error')
+    return render_template('pago_fallido.html', 
+                         error_code=error_code, 
+                         error_message=error_message)
+
+@app.route('/pago_pendiente')
+def pago_pendiente():
+    if 'pedido_temp' not in session:
+        return redirect(url_for('inicio'))
+    
+    pedido_data = session['pedido_temp']
+    payment_id = request.args.get('payment_id', '')
+    payment_method = request.args.get('payment_type', 'MercadoPago')
+    
+    return render_template('pago_pendiente.html',
+                         payment_id=payment_id,
+                         payment_method=payment_method,
+                         total=pedido_data.get('total', 0))
+
+
+def send_confirmation_email(email, nombre, pedido):
+    try:
+        msg = Message(
+            'Confirmación de Pedido - La Esquinita',
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email]
+        )
+        
+        msg.html = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: #00a650; color: white; padding: 20px; text-align: center;">
+                <h1> La Esquinita</h1>
+                <h2>¡Pedido Confirmado!</h2>
+            </div>
+            <div style="padding: 20px;">
+                <p>Hola <strong>{nombre}</strong>,</p>
+                <p>¡Gracias por tu compra! Tu pedido ha sido confirmado y pronto comenzaremos a prepararlo.</p>
+                
+                <div style="background: #f8f9fa; padding: 15px; margin: 20px 0; border-radius: 8px;">
+                    <h3>📋 Detalles del pedido</h3>
+                    <p><strong>Número de pedido:</strong> #{pedido.id}</p>
+                    <p><strong>Fecha:</strong> {pedido.fecha.strftime('%d/%m/%Y %H:%M')}</p>
+                    <p><strong>Total:</strong> ${pedido.total:.2f}</p>
+                    <p><strong>Estado:</strong> {pedido.estado}</p>
+                </div>
+                
+                <p>Te mantendremos informado sobre el estado de tu pedido.</p>
+                <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <p>¡Gracias por elegir La Esquinita!</p>
+                </div>
+            </div>
+        </div>
+        """
+        
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Error enviando email: {e}")
+        return False
+
+
 @app.route('/pago', methods=['GET', 'POST'])
 def pago():
     if 'usuario_id' not in session:
@@ -483,8 +729,8 @@ def pago():
                 productos_detalle += f"- {producto.nombre} x{producto.cantidad} = ${producto.precio * producto.cantidad:.2f}\n"
 
             msg = Message(
-                'Confirmación de compra - AgroConnect',
-                sender='xhencho.taallegas@gmail.com',
+                'Confirmación de compra - La Esquinita',
+                sender='laesquinita.antojitos.mx@gmail.com',
                 recipients=[correo]
             )
             msg.body = (
@@ -493,7 +739,7 @@ def pago():
                 f"Detalle de tu compra:\n"
                 f"{productos_detalle}\n"
                 f"Total pagado: ${total:.2f}\n\n"
-                f"¡Gracias por comprar en AgroConnect!"
+                f"¡Gracias por comprar en La Esquinita!"
             )
             mail.send(msg)
         except Exception as e:
@@ -867,7 +1113,7 @@ def descargar_factura_pdf():
         return redirect(url_for('pago'))
 
     result.seek(0)
-    return send_file(result, mimetype='application/pdf', as_attachment=True, download_name='factura_agroconnect.pdf')
+    return send_file(result, mimetype='application/pdf', as_attachment=True, download_name='factura_laesquinita.pdf')
 
 
 @app.route('/agregar_usuario', methods=['GET', 'POST'])
@@ -1123,10 +1369,10 @@ def actualizar_usuario(user_id):
 
 
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
     with app.app_context():
         db.create_all()
         crear_admin()  
         print("✅ Tablas creadas y administrador registrado 🚀")
-
     
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=port, debug=False)

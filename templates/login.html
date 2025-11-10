@@ -42,6 +42,26 @@
                 justify-content: center;
                 margin-bottom: 2px;
             }
+            .accesibilidad-bar input[type="range"] {
+                width: 38px;
+                height: 18px;
+                margin: 4px 0 2px 0;
+                background: transparent;
+                display: block;
+                padding: 0;
+            }
+            .accesibilidad-bar input[type="range"]::-webkit-slider-thumb {
+                background: #ffb300;
+            }
+            .accesibilidad-bar input[type="range"]::-moz-range-thumb {
+                background: #ffb300;
+            }
+            .accesibilidad-bar input[type="range"]::-ms-thumb {
+                background: #ffb300;
+            }
+            .accesibilidad-bar input[type="range"]:focus {
+                outline: 2px solid #ffb300;
+            }
             .accesibilidad-bar button.active {
                 background: #ffb300;
                 color: #222;
@@ -90,6 +110,29 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: stretch;
+        }
+        body.night-mode, .night-mode #contenido-principal {
+            background: #181818 !important;
+            color: #fff !important;
+        }
+        .night-mode input, body.night-mode input {
+            background: #232323 !important;
+            color: #fff !important;
+            border-color: #444 !important;
+        }
+        .night-mode input::placeholder, body.night-mode input::placeholder {
+            color: #ccc !important;
+        }
+        .night-mode .container, body.night-mode .container {
+            background: #232323 !important;
+            color: #fff !important;
+        }
+        .night-mode .accesibilidad-bar, body.night-mode .accesibilidad-bar {
+            background: #222 !important;
+            color: #fff !important;
+        }
+        .night-mode .accesibilidad-bar input[type="range"] {
+            background: #444 !important;
         }
         nav {
             position: fixed;
@@ -223,7 +266,10 @@
 <body>
         <div class="accesibilidad-bar" aria-label="Barra de accesibilidad" style="left:24px;bottom:24px;top:auto;right:auto;">
             <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
-            <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+            <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+                <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
+                <input id="contrasteRange" type="range" min="1" max="3" step="0.1" value="1" style="width:38px;margin:0 0 2px 0;" title="Nivel de contraste" aria-label="Nivel de contraste">
+            </div>
             <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
             <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
             <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
@@ -239,16 +285,20 @@
         </div>
         <div id="contenido-principal">
         <script>
-           
+            // --- ACCESIBILIDAD GLOBAL ---
             const root = document.documentElement;
             const body = document.body;
             let fontSize = 1;
             let modoNocturno = false;
             let contraste = false;
+            let contrasteValor = 1;
             let grises = false;
             let guiaLectura = false;
             let lectorActivo = false;
             let tipografia = 'default';
+
+            // El filtro de contraste y grises se aplica a este contenedor, no al body
+            const contenidoApp = document.getElementById('contenido-principal');
 
             function setFontSize(mult) {
                 fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
@@ -260,41 +310,51 @@
             document.getElementById('modoNocturnoBtn').onclick = function() {
                 modoNocturno = !modoNocturno;
                 if(modoNocturno) {
-                    body.style.background = '#181818';
-                    body.style.color = '#fff';
+                    body.classList.add('night-mode');
                     this.classList.add('active');
                 } else {
-                    body.style.background = '';
-                    body.style.color = '';
+                    body.classList.remove('night-mode');
                     this.classList.remove('active');
                 }
             };
 
-            document.getElementById('contrasteBtn').onclick = function() {
+            const contrasteRange = document.getElementById('contrasteRange');
+            const contrasteBtn = document.getElementById('contrasteBtn');
+            contrasteBtn.onclick = function() {
                 contraste = !contraste;
                 if(contraste) {
-                    body.style.filter = 'contrast(1.7)';
+                    contrasteValor = parseFloat(contrasteRange.value);
+                    contenidoApp.style.filter = `contrast(${contrasteValor})`;
+                    contrasteRange.disabled = false;
                     this.classList.add('active');
                 } else {
-                    body.style.filter = '';
+                    contenidoApp.style.filter = '';
+                    contrasteRange.disabled = true;
                     this.classList.remove('active');
                 }
             };
+            contrasteRange.oninput = function() {
+                contrasteValor = parseFloat(this.value);
+                if(contraste) {
+                    contenidoApp.style.filter = `contrast(${contrasteValor})`;
+                }
+            };
+            contrasteRange.disabled = true;
 
             document.getElementById('grisesBtn').onclick = function() {
                 grises = !grises;
                 if(grises) {
-                    body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
+                    contenidoApp.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
                     this.classList.add('active');
                 } else {
-                    body.style.filter = contraste ? 'contrast(1.7)' : '';
+                    contenidoApp.style.filter = contraste ? `contrast(${contrasteValor})` : '';
                     this.classList.remove('active');
                 }
             };
 
             document.getElementById('guiaLecturaBtn').onclick = function() {
                 guiaLectura = !guiaLectura;
-                let contenido = document.getElementById('contenido-principal') || document.body;
+                let contenido = document.getElementById('contenido-principal') || contenidoApp;
                 if(guiaLectura) {
                     contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
                     contenido.style.background = '#fffbe7';
@@ -317,10 +377,9 @@
                 }
             };
 
-           
             document.getElementById('lectorPantallaBtn').onclick = function() {
                 lectorActivo = !lectorActivo;
-                let contenido = document.getElementById('contenido-principal') || document.body;
+                let contenido = document.getElementById('contenido-principal') || contenidoApp;
                 if(lectorActivo) {
                     this.classList.add('active');
                     let texto = contenido.innerText;

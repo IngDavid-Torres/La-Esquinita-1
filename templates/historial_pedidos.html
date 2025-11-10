@@ -5,6 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Historial de Pedidos | La Esquinita</title>
 <style>
+:root {
+    --primary: #ffd700;
+    --secondary: #2e7d32;
+    --accent: #d32f2f;
+    --light: #fffdf7;
+    --dark: #1c1c1c;
+}
+
+body.night-mode {
+    background: #181818 !important;
+    color: #fff !important;
+}
+.container.night-mode {
+    background: rgba(35,35,35,0.85) !important;
+    color: #fff !important;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.35);
+}
+.container.night-mode h2 {
+    color: #ffd700 !important;
+}
+.container.night-mode p,
+.container.night-mode .total,
+.container.night-mode .pedido p {
+    color: #fff !important;
+}
+.container.night-mode .pedidos-scroll {
+    background: #232323 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+.container.night-mode .pedido {
+    background: #232323 !important;
+    border-bottom: 1px solid #444 !important;
+}
+.estado.entregado {
+    color: #00e676 !important;
+}
+.estado.pendiente {
+    color: #ff5252 !important;
+}
     .accesibilidad-bar {
         position: fixed;
         left: 24px;
@@ -230,7 +269,10 @@ footer .social a:hover {
    
     <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
         <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
-        <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+        <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+            <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
+            <input id="contrasteRange" type="range" min="1" max="3" step="0.1" value="1" style="width:38px;margin:0 0 2px 0;" title="Nivel de contraste" aria-label="Nivel de contraste">
+        </div>
         <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
         <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
         <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
@@ -252,6 +294,7 @@ footer .social a:hover {
         let fontSize = 1;
         let modoNocturno = false;
         let contraste = false;
+        let contrasteValor = 1;
         let grises = false;
         let guiaLectura = false;
         let lectorActivo = false;
@@ -266,35 +309,48 @@ footer .social a:hover {
 
         document.getElementById('modoNocturnoBtn').onclick = function() {
             modoNocturno = !modoNocturno;
+            const container = document.querySelector('.container');
             if(modoNocturno) {
-                body.style.background = '#181818';
-                body.style.color = '#fff';
+                body.classList.add('night-mode');
+                if(container) container.classList.add('night-mode');
                 this.classList.add('active');
             } else {
-                body.style.background = '';
-                body.style.color = '';
+                body.classList.remove('night-mode');
+                if(container) container.classList.remove('night-mode');
                 this.classList.remove('active');
             }
         };
 
-        document.getElementById('contrasteBtn').onclick = function() {
+        const contrasteRange = document.getElementById('contrasteRange');
+        const contrasteBtn = document.getElementById('contrasteBtn');
+        contrasteBtn.onclick = function() {
             contraste = !contraste;
             if(contraste) {
-                body.style.filter = 'contrast(1.7)';
+                contrasteValor = parseFloat(contrasteRange.value);
+                body.style.filter = `contrast(${contrasteValor})`;
+                contrasteRange.disabled = false;
                 this.classList.add('active');
             } else {
                 body.style.filter = '';
+                contrasteRange.disabled = true;
                 this.classList.remove('active');
             }
         };
+        contrasteRange.oninput = function() {
+            contrasteValor = parseFloat(this.value);
+            if(contraste) {
+                body.style.filter = `contrast(${contrasteValor})`;
+            }
+        };
+        contrasteRange.disabled = true;
 
         document.getElementById('grisesBtn').onclick = function() {
             grises = !grises;
             if(grises) {
-                body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
+                body.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
                 this.classList.add('active');
             } else {
-                body.style.filter = contraste ? 'contrast(1.7)' : '';
+                body.style.filter = contraste ? `contrast(${contrasteValor})` : '';
                 this.classList.remove('active');
             }
         };
@@ -324,7 +380,6 @@ footer .social a:hover {
             }
         };
 
-        
         document.getElementById('lectorPantallaBtn').onclick = function() {
             lectorActivo = !lectorActivo;
             let contenido = document.getElementById('contenido-principal') || document.body;

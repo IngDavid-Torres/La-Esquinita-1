@@ -320,9 +320,12 @@
   </style>
 </head>
 <body>
-  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad" style="z-index:3001;">
     <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
-    <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+      <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
+      <input id="contrasteRange" type="range" min="1" max="3" step="0.1" value="1" style="width:38px;margin:0 0 2px 0;" title="Nivel de contraste" aria-label="Nivel de contraste">
+    </div>
     <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
     <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
     <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
@@ -336,105 +339,123 @@
     </select>
     <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
   </div>
-  <script>
-    // --- ACCESIBILIDAD GLOBAL ---
-    const root = document.documentElement;
-    const body = document.body;
-    let fontSize = 1;
-    let modoNocturno = false;
-    let contraste = false;
-    let grises = false;
-    let guiaLectura = false;
-    let lectorActivo = false;
-    let tipografia = 'default';
 
-    function setFontSize(mult) {
-      fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-      body.style.fontSize = fontSize + 'em';
-    }
-    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
+  <div id="contenido-app">
+    <script>
+      // --- ACCESIBILIDAD GLOBAL ---
+      const root = document.documentElement;
+      const body = document.body;
+      let fontSize = 1;
+      let modoNocturno = false;
+      let contraste = false;
+      let contrasteValor = 1;
+      let grises = false;
+      let guiaLectura = false;
+      let lectorActivo = false;
+      let tipografia = 'default';
 
-    document.getElementById('modoNocturnoBtn').onclick = function() {
-      modoNocturno = !modoNocturno;
-      if(modoNocturno) {
-        body.style.background = '#181818';
-        body.style.color = '#fff';
-        this.classList.add('active');
-      } else {
-        body.style.background = '';
-        body.style.color = '';
-        this.classList.remove('active');
+      // El filtro de contraste y grises se aplica a este contenedor, no al body
+      const contenidoApp = document.getElementById('contenido-app');
+
+      function setFontSize(mult) {
+        fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
+        body.style.fontSize = fontSize + 'em';
       }
-    };
+      document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
+      document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
 
-    document.getElementById('contrasteBtn').onclick = function() {
-      contraste = !contraste;
-      if(contraste) {
-        body.style.filter = 'contrast(1.7)';
-        this.classList.add('active');
-      } else {
-        body.style.filter = '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('grisesBtn').onclick = function() {
-      grises = !grises;
-      if(grises) {
-        body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
-        this.classList.add('active');
-      } else {
-        body.style.filter = contraste ? 'contrast(1.7)' : '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('guiaLecturaBtn').onclick = function() {
-      guiaLectura = !guiaLectura;
-      let contenido = document.getElementById('contenido-principal') || document.body;
-      if(guiaLectura) {
-        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-        contenido.style.background = '#fffbe7';
-        this.classList.add('active');
-      } else {
-        contenido.style.boxShadow = '';
-        contenido.style.background = '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('tipografiaSelect').onchange = function() {
-      tipografia = this.value;
-      switch(tipografia) {
-        case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-        case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-        case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-        case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-        default: body.style.fontFamily = '';
-      }
-    };
-
-    // Lector de pantalla básico
-    document.getElementById('lectorPantallaBtn').onclick = function() {
-      lectorActivo = !lectorActivo;
-      let contenido = document.getElementById('contenido-principal') || document.body;
-      if(lectorActivo) {
-        this.classList.add('active');
-        let texto = contenido.innerText;
-        if('speechSynthesis' in window) {
-          let utter = new SpeechSynthesisUtterance(texto);
-          utter.lang = 'es-MX';
-          window.speechSynthesis.speak(utter);
+      document.getElementById('modoNocturnoBtn').onclick = function() {
+        modoNocturno = !modoNocturno;
+        if(modoNocturno) {
+          body.style.background = '#181818';
+          body.style.color = '#fff';
+          this.classList.add('active');
         } else {
-          alert('Lector de pantalla no soportado en este navegador.');
+          body.style.background = '';
+          body.style.color = '';
+          this.classList.remove('active');
         }
-      } else {
-        this.classList.remove('active');
-        if('speechSynthesis' in window) window.speechSynthesis.cancel();
-      }
-    };
-  </script>
+      };
+
+      const contrasteRange = document.getElementById('contrasteRange');
+      const contrasteBtn = document.getElementById('contrasteBtn');
+      contrasteBtn.onclick = function() {
+        contraste = !contraste;
+        if(contraste) {
+          contrasteValor = parseFloat(contrasteRange.value);
+          contenidoApp.style.filter = `contrast(${contrasteValor})`;
+          contrasteRange.disabled = false;
+          this.classList.add('active');
+        } else {
+          contenidoApp.style.filter = '';
+          contrasteRange.disabled = true;
+          this.classList.remove('active');
+        }
+      };
+      contrasteRange.oninput = function() {
+        contrasteValor = parseFloat(this.value);
+        if(contraste) {
+          contenidoApp.style.filter = `contrast(${contrasteValor})`;
+        }
+      };
+      contrasteRange.disabled = true;
+
+      document.getElementById('grisesBtn').onclick = function() {
+        grises = !grises;
+        if(grises) {
+          contenidoApp.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
+          this.classList.add('active');
+        } else {
+          contenidoApp.style.filter = contraste ? `contrast(${contrasteValor})` : '';
+          this.classList.remove('active');
+        }
+      };
+
+      document.getElementById('guiaLecturaBtn').onclick = function() {
+        guiaLectura = !guiaLectura;
+        let contenido = document.getElementById('contenido-principal') || contenidoApp;
+        if(guiaLectura) {
+          contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+          contenido.style.background = '#fffbe7';
+          this.classList.add('active');
+        } else {
+          contenido.style.boxShadow = '';
+          contenido.style.background = '';
+          this.classList.remove('active');
+        }
+      };
+
+      document.getElementById('tipografiaSelect').onchange = function() {
+        tipografia = this.value;
+        switch(tipografia) {
+          case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
+          case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
+          case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
+          case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
+          default: body.style.fontFamily = '';
+        }
+      };
+
+      // Lector de pantalla básico
+      document.getElementById('lectorPantallaBtn').onclick = function() {
+        lectorActivo = !lectorActivo;
+        let contenido = document.getElementById('contenido-principal') || contenidoApp;
+        if(lectorActivo) {
+          this.classList.add('active');
+          let texto = contenido.innerText;
+          if('speechSynthesis' in window) {
+            let utter = new SpeechSynthesisUtterance(texto);
+            utter.lang = 'es-MX';
+            window.speechSynthesis.speak(utter);
+          } else {
+            alert('Lector de pantalla no soportado en este navegador.');
+          }
+        } else {
+          this.classList.remove('active');
+          if('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+      };
+    </script>
   <!-- NAVBAR -->
   <header>
     <div class="logo">
@@ -523,6 +544,7 @@
       <a href="#"><i>🐦</i></a>
     </div>
   </footer>
+  </div> <!-- cierre de #contenido-app -->
 
   {% if request.args.get('cerrada') %}
   <div id="alerta-sesion-cerrada" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);display:flex;justify-content:center;align-items:center;">
@@ -532,54 +554,3 @@
     </div>
   </div>
   {% endif %}
-
-  {% if request.args.get('no_sesion') %}
-  <div id="alerta-iniciar-sesion" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);display:flex;justify-content:center;align-items:center;">
-    <div style="background:var(--primary);color:var(--secondary);border:2px solid var(--accent);border-radius:18px;box-shadow:0 4px 24px rgba(44,44,44,0.18);padding:38px 32px 28px 32px;min-width:260px;max-width:90vw;text-align:center;font-size:1.18em;font-weight:bold;display:flex;flex-direction:column;align-items:center;">
-      <span style="font-size:1.3em;">😋 Necesitas iniciar sesión para hacer tu ricolino pedido</span>
-      <button type="button" onclick="window.location.href='{{ url_for('login') }}';" style="margin-top:18px;padding:10px 38px;border:none;border-radius:16px;background:var(--accent);color:#fff;font-size:1.08em;font-weight:bold;cursor:pointer;transition:background 0.2s;">OK</button>
-    </div>
-  </div>
-  {% endif %}
-
-  <script>
-    
-    function mostrarAlertaCerrarSesion(event) {
-      event.preventDefault();
-      
-      if (!document.getElementById('alerta-cierre')) {
-        var div = document.createElement('div');
-        div.id = 'alerta-cierre';
-        div.style = "position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);display:flex;justify-content:center;align-items:center;";
-        div.innerHTML = `
-          <div style="background:var(--primary);color:var(--secondary);border:2px solid var(--secondary);border-radius:14px;box-shadow:0 4px 24px rgba(44,44,44,0.18);padding:36px 32px 28px 32px;min-width:260px;max-width:90vw;text-align:center;font-size:1.18em;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:18px;">
-            <span>¿Seguro que quieres cerrar sesión?</span>
-            <div style="display:flex;gap:18px;margin-top:18px;">
-              <button type="button" id="btnConfirmarCerrar" style="padding:10px 28px;border:none;border-radius:16px;background:var(--secondary);color:#fff;font-size:1.08em;font-weight:bold;cursor:pointer;transition:background 0.2s;">Cerrar Sesión</button>
-              <button type="button" id="btnCancelarCerrar" style="padding:10px 28px;border:none;border-radius:16px;background:#ccc;color:#333;font-size:1.08em;font-weight:bold;cursor:pointer;transition:background 0.2s;">Cancelar</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(div);
-      } else {
-        document.getElementById('alerta-cierre').style.display = 'flex';
-      }
-      document.getElementById('btnConfirmarCerrar').onclick = function() {
-        window.location.href = "{{ url_for('logout') }}?cerrada=1";
-      };
-      document.getElementById('btnCancelarCerrar').onclick = function() {
-        document.getElementById('alerta-cierre').style.display = 'none';
-      };
-      return false;
-    }
-
-    
-    document.addEventListener('DOMContentLoaded', function() {
-      var cerrarSesionLink = document.querySelector('a[href="{{ url_for("logout") }}"]');
-      if (cerrarSesionLink) {
-        cerrarSesionLink.onclick = mostrarAlertaCerrarSesion;
-      }
-    });
-  </script>
-</body>
-</html>

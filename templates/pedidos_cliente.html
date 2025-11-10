@@ -5,6 +5,91 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mis Pedidos | La Esquinita</title>
   <style>
+    /* NIGHT MODE REFINED */
+    body.night-mode {
+      background: #181818 !important;
+      color: #fff !important;
+    }
+    header.night-mode {
+      background: #232323 !important;
+      color: #fff !important;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+    }
+    .container.night-mode {
+      background: rgba(35,35,35,0.85) !important;
+      color: #fff !important;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.35);
+    }
+    .container.night-mode,
+    .container.night-mode .pedidos-scroll,
+    .container.night-mode .pedido {
+      background: #232323 !important;
+    }
+    .container.night-mode h2 {
+      color: #ffb300 !important;
+    }
+    .container.night-mode p,
+    .container.night-mode .total,
+    .container.night-mode .pedido p {
+      color: #fff !important;
+    }
+    .pedidos-scroll.night-mode {
+      background: #232323 !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+    /* Forzar fondo oscuro en modo nocturno aunque no tenga night-mode en el div */
+    .container.night-mode .pedidos-scroll {
+      background: #232323 !important;
+    }
+    .container.night-mode .pedido {
+      background: #232323 !important;
+      border-bottom: 1px solid #444 !important;
+    }
+    .pedido.night-mode {
+      background: #232323 !important;
+      color: #fff !important;
+      border-bottom: 1px solid #444 !important;
+    }
+    .pedido.night-mode p {
+      color: #fff !important;
+    }
+    .pedido.night-mode .estado-pendiente {
+      color: #ff5252 !important;
+      font-weight: bold;
+    }
+    .pedido.night-mode .estado-entregado {
+      color: #00e676 !important;
+      font-weight: bold;
+    }
+    .pedido .estado-pendiente {
+      color: #c62828;
+      font-weight: bold;
+    }
+    .pedido .estado-entregado {
+      color: #2e7d32;
+      font-weight: bold;
+    }
+    .boton-ver-detalle.night-mode {
+      background-color: #ffb300 !important;
+      color: #232323 !important;
+      border: 2px solid #ffb300 !important;
+    }
+    .boton-ver-detalle.night-mode:hover {
+      background-color: #ffd54f !important;
+      color: #232323 !important;
+    }
+    nav.night-mode a {
+      color: #fff !important;
+    }
+    nav.night-mode a:hover {
+      color: #ffb300 !important;
+      background: rgba(255,179,0,0.13) !important;
+    }
+    /* No aplicar night-mode al footer ni a la barra de accesibilidad */
+    footer, .accesibilidad-bar {
+      background: var(--dark);
+      color: #fff;
+    }
     :root {
       --primary: #ffb300;
       --secondary: #2e7d32;
@@ -146,11 +231,93 @@
         font-size: 0.9em;
       }
     }
+
+    
+    .accesibilidad-bar {
+      position: fixed;
+      left: 24px;
+      bottom: 24px;
+      z-index: 2000;
+      background: #222;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      padding: 14px 10px 10px 10px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+      opacity: 0.93;
+      min-width: 48px;
+      min-height: 48px;
+      transition: box-shadow 0.2s, opacity 0.2s;
+    }
+    .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+      opacity: 1;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+    }
+    .accesibilidad-bar button, .accesibilidad-bar select {
+      background: #fff;
+      color: #222;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+    .accesibilidad-bar button.active {
+      background: #ffb300;
+      color: #222;
+      transform: scale(1.08);
+    }
+    .accesibilidad-bar label { display: none; }
+    .accesibilidad-bar select {
+      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      font-size: 0.95em;
+      padding: 0;
+      margin-bottom: 2px;
+    }
+    .accesibilidad-bar option { font-size: 1em; }
+    .accesibilidad-bar .icono { font-size: 1.2em; }
+    @media(max-width:600px){
+      .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
+      .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+    }
   </style>
 </head>
 <body>
   
-  <header>
+  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+    <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+      <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
+      <input id="contrasteRange" type="range" min="1" max="3" step="0.1" value="1" style="width:38px;margin:0 0 2px 0;" title="Nivel de contraste" aria-label="Nivel de contraste">
+    </div>
+    <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
+    <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
+    <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
+    <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
+    <select id="tipografiaSelect" aria-label="Cambiar tipografía">
+      <option value="default">Aa</option>
+      <option value="arial">A</option>
+      <option value="verdana">V</option>
+      <option value="comic">C</option>
+      <option value="open">O</option>
+    </select>
+    <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
+  </div>
+  <div id="contenidoPedidos">
+    <header>
     <div class="logo">
       <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
     </div>
@@ -188,7 +355,7 @@
   </header>
 
   
-  <div class="container">
+    <div class="container">
     <h2>📦 Mis Pedidos</h2>
     <div class="pedidos-scroll">
       {% if pedidos %}
@@ -207,8 +374,123 @@
     </div>
   </div>
 
-  <!-- FOOTER -->
+ 
+  </div>
   <footer>
+</body>
+<script>
+    // --- ACCESIBILIDAD GLOBAL ---
+    const root = document.documentElement;
+    const body = document.body;
+    let fontSize = 1;
+    let modoNocturno = false;
+    let contraste = false;
+    let contrasteValor = 1;
+    let grises = false;
+    let guiaLectura = false;
+    let lectorActivo = false;
+    let tipografia = 'default';
+
+    function setFontSize(mult) {
+        fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
+        body.style.fontSize = fontSize + 'em';
+    }
+    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
+    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
+
+    document.getElementById('modoNocturnoBtn').onclick = function() {
+        modoNocturno = !modoNocturno;
+        const container = document.querySelector('.container');
+        if(modoNocturno) {
+            body.classList.add('night-mode');
+            if(container) container.classList.add('night-mode');
+            this.classList.add('active');
+        } else {
+            body.classList.remove('night-mode');
+            if(container) container.classList.remove('night-mode');
+            this.classList.remove('active');
+        }
+    };
+
+    const contrasteRange = document.getElementById('contrasteRange');
+    const contrasteBtn = document.getElementById('contrasteBtn');
+    contrasteBtn.onclick = function() {
+        contraste = !contraste;
+        if(contraste) {
+            contrasteValor = parseFloat(contrasteRange.value);
+            body.style.filter = `contrast(${contrasteValor})`;
+            contrasteRange.disabled = false;
+            this.classList.add('active');
+        } else {
+            body.style.filter = '';
+            contrasteRange.disabled = true;
+            this.classList.remove('active');
+        }
+    };
+    contrasteRange.oninput = function() {
+        contrasteValor = parseFloat(this.value);
+        if(contraste) {
+            body.style.filter = `contrast(${contrasteValor})`;
+        }
+    };
+    contrasteRange.disabled = true;
+
+    document.getElementById('grisesBtn').onclick = function() {
+        grises = !grises;
+        if(grises) {
+            body.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
+            this.classList.add('active');
+        } else {
+            body.style.filter = contraste ? `contrast(${contrasteValor})` : '';
+            this.classList.remove('active');
+        }
+    };
+
+    document.getElementById('guiaLecturaBtn').onclick = function() {
+        guiaLectura = !guiaLectura;
+        let contenido = document.querySelector('.container') || document.body;
+        if(guiaLectura) {
+            contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+            contenido.style.background = '#fffbe7';
+            contenido.scrollIntoView({behavior:'smooth', block:'center'});
+            this.classList.add('active');
+        } else {
+            contenido.style.boxShadow = '';
+            contenido.style.background = '';
+            this.classList.remove('active');
+        }
+    };
+
+    document.getElementById('tipografiaSelect').onchange = function() {
+        tipografia = this.value;
+        switch(tipografia) {
+            case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
+            case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
+            case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
+            case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
+            default: body.style.fontFamily = '';
+        }
+    };
+
+    document.getElementById('lectorPantallaBtn').onclick = function() {
+        lectorActivo = !lectorActivo;
+        let contenido = document.querySelector('.container') || document.body;
+        if(lectorActivo) {
+            this.classList.add('active');
+            let texto = contenido.innerText;
+            if('speechSynthesis' in window) {
+                let utter = new SpeechSynthesisUtterance(texto);
+                utter.lang = 'es-MX';
+                window.speechSynthesis.speak(utter);
+            } else {
+                alert('Lector de pantalla no soportado en este navegador.');
+            }
+        } else {
+            this.classList.remove('active');
+            if('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+    };
+</script>
     <p>© 2025 La Esquinita</p>
     <p>Hecho con 🌽 y ❤️ en México</p>
   </footer>

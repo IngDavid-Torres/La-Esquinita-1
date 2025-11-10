@@ -1,6 +1,181 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+        <style>
+        /* ACCESIBILIDAD BAR ESTILOS */
+        .accesibilidad-bar {
+            position: fixed;
+            left: 24px;
+            bottom: 24px;
+            z-index: 3001;
+            background: #222;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            padding: 14px 10px 10px 10px;
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+            opacity: 0.93;
+            min-width: 48px;
+            min-height: 48px;
+            transition: box-shadow 0.2s, opacity 0.2s;
+        }
+        .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+            opacity: 1;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+        }
+        .accesibilidad-bar button, .accesibilidad-bar select {
+            background: #fff;
+            color: #222;
+            border: none;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            margin: 0;
+            font-size: 1.2em;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+            transition: background 0.2s, color 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2px;
+        }
+        .accesibilidad-bar .contraste-slider-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+        .accesibilidad-bar input[type="range"]#contrasteRange {
+            width: 38px;
+            margin: 0 0 2px 0;
+            accent-color: #FFD700;
+            cursor: pointer;
+            border-radius: 8px;
+            background: #eee;
+            height: 4px;
+            padding: 0;
+            display: block;
+        }
+        /* Elimina cualquier regla extra de thumb para evitar errores de visualización */
+        @media(max-width:600px){
+            .accesibilidad-bar input[type="range"]#contrasteRange {width: 30px;}
+        }
+        }
+        .accesibilidad-bar .contraste-slider-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+        .accesibilidad-bar input[type="range"]#contrasteRange {
+            width: 90px;
+            margin: 4px 0 2px 0;
+            accent-color: #FFD700;
+            cursor: pointer;
+            border-radius: 8px;
+            background: #eee;
+            height: 4px;
+            padding: 0;
+            display: block;
+        }
+        .accesibilidad-bar input[type="range"]#contrasteRange::-webkit-slider-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #FFD700;
+            border: 2px solid #222;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+        }
+        .accesibilidad-bar input[type="range"]#contrasteRange::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #FFD700;
+            border: 2px solid #222;
+        }
+        .accesibilidad-bar input[type="range"]#contrasteRange::-ms-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #FFD700;
+            border: 2px solid #222;
+        }
+        @media(max-width:600px){
+            .accesibilidad-bar input[type="range"]#contrasteRange {width: 60px;}
+        }
+        }
+        .accesibilidad-bar button.active {
+            background: #FFD700;
+            color: #222;
+            transform: scale(1.08);
+        }
+        .accesibilidad-bar label { display: none; }
+        .accesibilidad-bar select {
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            font-size: 0.95em;
+            padding: 0;
+            margin-bottom: 2px;
+        }
+        .accesibilidad-bar option { font-size: 1em; }
+        .accesibilidad-bar .icono { font-size: 1.2em; }
+        @media(max-width:600px){
+            .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
+            .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+        }
+        /* NIGHT MODE PERFIL */
+        body.night-mode {
+            background: #181818 !important;
+            color: #fff !important;
+        }
+        .main-section.night-mode {
+            background: rgba(35,35,35,0.85) !important;
+            color: #fff !important;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.35);
+        }
+        .main-section.night-mode h2 {
+            color: #FFD700 !important;
+        }
+        .main-section.night-mode label,
+        .main-section.night-mode p,
+        .main-section.night-mode input,
+        .main-section.night-mode .alerta {
+            color: #fff !important;
+        }
+        .main-section.night-mode input {
+            background: #232323 !important;
+            border-color: #FFD700 !important;
+        }
+        .main-section.night-mode input[readonly] {
+            background: #232323 !important;
+            color: #aaa !important;
+            border-style: dashed;
+        }
+        .main-section.night-mode .boton-guardar {
+            background-color: #FFD700 !important;
+            color: #232323 !important;
+        }
+        .main-section.night-mode .boton-editar {
+            background-color: #2e7d32 !important;
+            color: #fff !important;
+        }
+        footer.night-mode {
+            background: #181818 !important;
+            color: #fff !important;
+        }
+        /* No aplicar night-mode a la barra de accesibilidad */
+        footer, .accesibilidad-bar {
+            background: var(--dark);
+            color: #fff;
+        }
+        </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil del Cliente | La Esquinita</title>
@@ -261,6 +436,25 @@
     </style>
 </head>
 <body>
+        <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+            <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
+            <div class="contraste-slider-container">
+                <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
+                <input id="contrasteRange" type="range" min="1" max="3" step="0.1" value="1" style="width:38px;margin:0 0 2px 0;" title="Nivel de contraste" aria-label="Nivel de contraste">
+            </div>
+            <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
+            <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
+            <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
+            <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
+            <select id="tipografiaSelect" aria-label="Cambiar tipografía">
+                <option value="default">Aa</option>
+                <option value="arial">A</option>
+                <option value="verdana">V</option>
+                <option value="comic">C</option>
+                <option value="open">O</option>
+            </select>
+            <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
+        </div>
     
     <header>
         <div class="logo">
@@ -339,6 +533,114 @@
     </div>
     
     <footer>
+    <script>
+        const root = document.documentElement;
+        const body = document.body;
+        let fontSize = 1;
+        let modoNocturno = false;
+        let contraste = false;
+        let contrasteValor = 1;
+        let grises = false;
+        let guiaLectura = false;
+        let lectorActivo = false;
+        let tipografia = 'default';
+
+        function aplicarFiltros() {
+            let filtro = '';
+            if (contraste) filtro += `contrast(${contrasteValor})`;
+            if (grises) filtro += (filtro ? ' ' : '') + 'grayscale(1)';
+            body.style.filter = filtro;
+        }
+
+        function setFontSize(mult) {
+            fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
+            body.style.fontSize = fontSize + 'em';
+        }
+        document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
+        document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
+
+        document.getElementById('modoNocturnoBtn').onclick = function() {
+            modoNocturno = !modoNocturno;
+            const mainSection = document.querySelector('.main-section');
+            if(modoNocturno) {
+                body.classList.add('night-mode');
+                if(mainSection) mainSection.classList.add('night-mode');
+                this.classList.add('active');
+            } else {
+                body.classList.remove('night-mode');
+                if(mainSection) mainSection.classList.remove('night-mode');
+                this.classList.remove('active');
+            }
+        };
+
+        const contrasteRange = document.getElementById('contrasteRange');
+        const contrasteBtn = document.getElementById('contrasteBtn');
+        contrasteBtn.onclick = function() {
+            contraste = !contraste;
+            this.classList.toggle('active', contraste);
+            aplicarFiltros();
+        };
+        contrasteRange.oninput = function() {
+            contrasteValor = parseFloat(this.value);
+            if (!contraste) {
+                contraste = true;
+                contrasteBtn.classList.add('active');
+            }
+            aplicarFiltros();
+        };
+
+        document.getElementById('grisesBtn').onclick = function() {
+            grises = !grises;
+            this.classList.toggle('active', grises);
+            aplicarFiltros();
+        };
+
+        document.getElementById('guiaLecturaBtn').onclick = function() {
+            guiaLectura = !guiaLectura;
+            let contenido = document.querySelector('.main-section') || document.body;
+            if(guiaLectura) {
+                contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+                contenido.style.background = '#fffbe7';
+                contenido.scrollIntoView({behavior:'smooth', block:'center'});
+                this.classList.add('active');
+            } else {
+                contenido.style.boxShadow = '';
+                contenido.style.background = '';
+                this.classList.remove('active');
+            }
+        };
+
+        document.getElementById('tipografiaSelect').onchange = function() {
+            tipografia = this.value;
+            switch(tipografia) {
+                case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
+                case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
+                case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
+                case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
+                default: body.style.fontFamily = '';
+            }
+        };
+
+        document.getElementById('lectorPantallaBtn').onclick = function() {
+            lectorActivo = !lectorActivo;
+            let contenido = document.querySelector('.main-section') || document.body;
+            if(lectorActivo) {
+                this.classList.add('active');
+                let texto = contenido.innerText;
+                if('speechSynthesis' in window) {
+                    let utter = new SpeechSynthesisUtterance(texto);
+                    utter.lang = 'es-MX';
+                    window.speechSynthesis.speak(utter);
+                } else {
+                    alert('Lector de pantalla no soportado en este navegador.');
+                }
+            } else {
+                this.classList.remove('active');
+                if('speechSynthesis' in window) window.speechSynthesis.cancel();
+            }
+        };
+    </script>
+    </script>
         <p style="margin:0; font-weight:500;">
             © 2025 La Esquinita - Todos los derechos reservados &nbsp;|&nbsp; Hecho con 🥕 y ❤️ en México
         </p>

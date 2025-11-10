@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pago Pendiente | AgroConnect</title>
+  <style>
+    :root {
+      --primary: #00a650;
+      --warning: #ff9800;
+      --warning-dark: #f57c00;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+      --gray: #6c757d;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #fff8e1, #fffef7);
+      color: var(--dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .pending-icon {
+      font-size: 4em;
+      color: var(--warning);
+      margin-bottom: 20px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    h1 {
+      color: var(--warning-dark);
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    .mensaje-pendiente {
+      font-size: 1.2em;
+      color: var(--warning-dark);
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .info-pendiente {
+      background: #fff3e0;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px 0;
+      border-left: 4px solid var(--warning);
+      text-align: left;
+    }
+
+    .info-pendiente h3 {
+      color: var(--warning-dark);
+      margin-bottom: 15px;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .instrucciones {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px 0;
+      text-align: left;
+    }
+
+    .instrucciones h3 {
+      color: var(--dark);
+      margin-bottom: 15px;
+    }
+
+    .instrucciones-lista {
+      list-style: none;
+      padding: 0;
+    }
+
+    .instrucciones-lista li {
+      padding: 8px 0;
+      padding-left: 25px;
+      position: relative;
+    }
+
+    .instrucciones-lista li:before {
+      content: "📝";
+      position: absolute;
+      left: 0;
+    }
+
+    .estado-tracking {
+      background: linear-gradient(90deg, #e0e0e0 0%, var(--warning) 50%, #e0e0e0 100%);
+      height: 4px;
+      border-radius: 2px;
+      margin: 20px 0;
+      animation: loading 2s linear infinite;
+    }
+
+    @keyframes loading {
+      0% { background-position: -200px 0; }
+      100% { background-position: 200px 0; }
+    }
+
+    .botones-accion {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .boton {
+      padding: 15px 25px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .boton-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .boton-warning {
+      background: var(--warning);
+      color: white;
+    }
+
+    .boton-secondary {
+      background: white;
+      color: var(--gray);
+      border: 2px solid var(--gray);
+    }
+
+    .boton:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .tiempo-actualizacion {
+      margin-top: 30px;
+      padding: 20px;
+      background: #e8f5e8;
+      border-radius: 8px;
+      font-size: 0.9em;
+      color: var(--dark);
+    }
+
+    .refresh-button {
+      background: var(--warning);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    .refresh-button:hover {
+      background: var(--warning-dark);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 20px;
+        padding: 25px;
+      }
+      
+      .botones-accion {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .boton {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  </style>
+  <script>
+    // Auto-refresh cada 30 segundos
+    setTimeout(function() {
+      location.reload();
+    }, 30000);
+
+    function refreshStatus() {
+      location.reload();
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="pending-icon">⏳</div>
+    
+    <h1>Pago Pendiente</h1>
+    
+    <div class="mensaje-pendiente">
+      🕐 <strong>Tu pago está siendo procesado</strong><br>
+      Estamos verificando tu pago. Este proceso puede tomar unos minutos.
+    </div>
+
+    <div class="estado-tracking"></div>
+
+    <div class="info-pendiente">
+      <h3>📋 Información del pago</h3>
+      <div class="info-item">
+        <span>Número de transacción:</span>
+        <span>{{ payment_id if payment_id else 'Generando...' }}</span>
+      </div>
+      <div class="info-item">
+        <span>Método de pago:</span>
+        <span>{{ payment_method if payment_method else 'MercadoPago' }}</span>
+      </div>
+      <div class="info-item">
+        <span>Monto:</span>
+        <span>${{ "%.2f"|format(total) if total else '0.00' }}</span>
+      </div>
+      <div class="info-item">
+        <span>Estado:</span>
+        <span>🟡 Pendiente de confirmación</span>
+      </div>
+    </div>
+
+    <div class="instrucciones">
+      <h3>📋 Próximos pasos</h3>
+      <ul class="instrucciones-lista">
+        <li>Mantén esta página abierta mientras procesamos tu pago</li>
+        <li>No realices el pago nuevamente</li>
+        <li>Recibirás una notificación cuando se confirme el pago</li>
+        <li>Si usaste transferencia bancaria, puede tomar hasta 24 horas</li>
+        <li>Revisa tu email para actualizaciones del estado</li>
+      </ul>
+    </div>
+
+    <div class="botones-accion">
+      <button onclick="refreshStatus()" class="boton boton-warning">
+        🔄 Verificar estado
+      </button>
+      <a href="{{ url_for('historial_pedidos') }}" class="boton boton-primary">
+        📦 Ver mis pedidos
+      </a>
+      <a href="{{ url_for('contacto') }}" class="boton boton-secondary">
+        💬 Contactar soporte
+      </a>
+    </div>
+
+    <div class="tiempo-actualizacion">
+      <strong>🔄 Actualización automática</strong><br>
+      Esta página se actualizará automáticamente cada 30 segundos.<br>
+      También puedes hacer clic en "Verificar estado" para una actualización manual.
+    </div>
+  </div>
+</body>
+</html>

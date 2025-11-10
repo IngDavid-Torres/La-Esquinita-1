@@ -615,26 +615,28 @@
       }
     };
 
+    function actualizarFiltroCliente() {
+      let filtro = '';
+      if (contraste) filtro += 'contrast(1.7)';
+      if (grises) filtro += (filtro ? ' ' : '') + 'grayscale(1)';
+      const mainContent = document.querySelector('.main-content');
+      const sectionBoxes = document.querySelectorAll('.section-box');
+      if(mainContent) mainContent.style.filter = filtro;
+      sectionBoxes.forEach(e => e.style.filter = filtro);
+      // El body, el footer y la barra de accesibilidad quedan sin filtro
+      body.style.filter = '';
+    }
+
     document.getElementById('contrasteBtn').onclick = function() {
       contraste = !contraste;
-      if(contraste) {
-        body.style.filter = 'contrast(1.7)';
-        this.classList.add('active');
-      } else {
-        body.style.filter = '';
-        this.classList.remove('active');
-      }
+      this.classList.toggle('active', contraste);
+      actualizarFiltroCliente();
     };
 
     document.getElementById('grisesBtn').onclick = function() {
       grises = !grises;
-      if(grises) {
-        body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
-        this.classList.add('active');
-      } else {
-        body.style.filter = contraste ? 'contrast(1.7)' : '';
-        this.classList.remove('active');
-      }
+      this.classList.toggle('active', grises);
+      actualizarFiltroCliente();
     };
 
     document.getElementById('guiaLecturaBtn').onclick = function() {
@@ -696,6 +698,7 @@
       <a href="{{ url_for('productos') }}"><span>🛒</span>Hacer Pedido</a>
       <a href="{{ url_for('contacto') }}"><span>📞</span>Contacto</a>
       <a href="{{ url_for('perfil_cliente') }}"><span>✏️</span>Editar mi perfil</a>
+      <a href="{{ url_for('pedidos_cliente') }}"><span>📦</span>Mis Pedidos</a>
     </nav>
     <button class="logout" onclick="mostrarModalLogout()"><span>🚪</span>Cerrar sesión</button>
   </aside>
@@ -752,7 +755,7 @@
         {% endif %}
         <button class="btn" onclick="window.location.href='{{ url_for('agregar_tarjeta') }}'">Agregar Tarjeta</button>
       </div>
-      <!-- Mi carrito -->
+      
       <div class="section-box">
         <h2>Mi Carrito</h2>
         <div class="carrito-info">

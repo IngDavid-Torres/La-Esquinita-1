@@ -6,6 +6,15 @@
     <title>Dashboard | La Esquinita</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        
+        #guiaLecturaOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 2999;
+            pointer-events: none;
+        }
         :root {
             --primary: #ffb300;
             --secondary: #2e7d32;
@@ -272,11 +281,11 @@
             background: rgba(255,255,255,0.97);
         }
         
-        .accesibilidad-bar {
+    .accesibilidad-bar {
             position: fixed;
             right: 32px;
             bottom: 70px;
-            z-index: 3000;
+            z-index: 3001;
             background: rgba(34,34,34,0.92);
             color: #fff;
             display: flex;
@@ -515,6 +524,7 @@
             letter-spacing: 0.5px;
             position: fixed;
             left: 0;
+            right: 0;
             bottom: 0;
             width: 100vw;
             z-index: 2000;
@@ -549,7 +559,11 @@
                 width: 100vw;
             }
             footer {
-                position: fixed;
+                position: fixed !important;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100vw;
             }
         }
         @media (max-width: 600px) {
@@ -623,10 +637,15 @@
     </style>
 </head>
 <body>
+
+    <div id="guiaLecturaOverlay"></div>
     
     <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
         <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
-        <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+            <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
+            <input id="contrasteRange" type="range" min="1" max="3" step="0.1" value="1" style="width:36px;margin:0 0 2px 0;" title="Nivel de contraste" aria-label="Nivel de contraste">
+        </div>
         <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
         <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
         <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
@@ -641,16 +660,45 @@
         <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
     </div>
     <script>
-        
+        // --- ACCESIBILIDAD GLOBAL ---
         const root = document.documentElement;
         const body = document.body;
         let fontSize = 1;
         let modoNocturno = false;
         let contraste = false;
+        let contrasteValor = 1;
         let grises = false;
         let guiaLectura = false;
         let lectorActivo = false;
         let tipografia = 'default';
+
+        
+    const dashboardMain = document.querySelector('.dashboard-main');
+    const dashboardContainer = document.querySelector('.dashboard-container');
+    const accesBar = document.querySelector('.accesibilidad-bar');
+    const guiaLecturaOverlay = document.getElementById('guiaLecturaOverlay');
+
+    // Aplica el filtro al body, pero "visualmente" excluye la barra de accesibilidad (por z-index)
+    function actualizarFiltro() {
+        let filtro = '';
+        if (contraste) {
+            filtro += `contrast(${contrasteValor})`;
+        }
+        if (grises) {
+            if (filtro) filtro += ' ';
+            filtro += 'grayscale(1)';
+        }
+        // Aplica el filtro a todos los elementos principales del dashboard
+        const mainElements = [
+            dashboardMain,
+            ...document.querySelectorAll('.dashboard-container, .dashboard-header, .dashboard-cards, .card, .dashboard-graphs, .graph-box, .dashboard-actions, .action-box')
+        ];
+        mainElements.forEach(el => {
+            if (el) el.style.filter = filtro;
+        });
+        // Limpia el filtro del body por si acaso
+        body.style.filter = '';
+    }
 
         function setFontSize(mult) {
             fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
@@ -661,8 +709,7 @@
 
         document.getElementById('modoNocturnoBtn').onclick = function() {
             modoNocturno = !modoNocturno;
-            const mainContent = document.querySelector('.dashboard-main');
-            const container = document.querySelector('.dashboard-container');
+            const mainContent = dashboardMain;
             const cards = document.querySelectorAll('.card');
             const actions = document.querySelectorAll('.action-box');
             const graphs = document.querySelectorAll('.graph-box');
@@ -672,7 +719,6 @@
             if(modoNocturno) {
                 body.classList.add('night-mode');
                 if(mainContent) mainContent.classList.add('night-mode');
-                if(container) container.classList.add('night-mode');
                 cards.forEach(e=>e.classList.add('night-mode'));
                 actions.forEach(e=>e.classList.add('night-mode'));
                 graphs.forEach(e=>e.classList.add('night-mode'));
@@ -683,7 +729,6 @@
             } else {
                 body.classList.remove('night-mode');
                 if(mainContent) mainContent.classList.remove('night-mode');
-                if(container) container.classList.remove('night-mode');
                 cards.forEach(e=>e.classList.remove('night-mode'));
                 actions.forEach(e=>e.classList.remove('night-mode'));
                 graphs.forEach(e=>e.classList.remove('night-mode'));
@@ -694,42 +739,47 @@
             }
         };
 
-        document.getElementById('contrasteBtn').onclick = function() {
+        const contrasteRange = document.getElementById('contrasteRange');
+        const contrasteBtn = document.getElementById('contrasteBtn');
+        contrasteBtn.onclick = function() {
             contraste = !contraste;
             if(contraste) {
-                body.style.filter = 'contrast(1.7)';
+                contrasteValor = parseFloat(contrasteRange.value);
+                contrasteRange.disabled = false;
                 this.classList.add('active');
             } else {
-                body.style.filter = '';
+                contrasteRange.disabled = true;
                 this.classList.remove('active');
             }
+            actualizarFiltro();
         };
+        contrasteRange.oninput = function() {
+            contrasteValor = parseFloat(this.value);
+            if(contraste) {
+                actualizarFiltro();
+            }
+        };
+        contrasteRange.disabled = true;
 
         document.getElementById('grisesBtn').onclick = function() {
             grises = !grises;
-            if(grises) {
-                body.style.filter = (contraste ? 'contrast(1.7) ' : '') + 'grayscale(1)';
-                this.classList.add('active');
-            } else {
-                body.style.filter = contraste ? 'contrast(1.7)' : '';
-                this.classList.remove('active');
-            }
+            this.classList.toggle('active', grises);
+            actualizarFiltro();
         };
-
-        document.getElementById('guiaLecturaBtn').onclick = function() {
-            guiaLectura = !guiaLectura;
-            let contenido = document.querySelector('.dashboard-main') || document.body;
-            if(guiaLectura) {
-                contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-                contenido.style.background = '#fffbe7';
-                contenido.scrollIntoView({behavior:'smooth', block:'center'});
-                this.classList.add('active');
-            } else {
-                contenido.style.boxShadow = '';
-                contenido.style.background = '';
-                this.classList.remove('active');
-            }
-        };
+    document.getElementById('guiaLecturaBtn').onclick = function() {
+        guiaLectura = !guiaLectura;
+        let contenido = dashboardContainer;
+        if(guiaLectura) {
+            guiaLecturaOverlay.style.display = 'block';
+            contenido.style.background = '#fffbe7';
+            contenido.scrollIntoView({behavior:'smooth', block:'center'});
+            this.classList.add('active');
+        } else {
+            guiaLecturaOverlay.style.display = 'none';
+            contenido.style.background = '';
+            this.classList.remove('active');
+        }
+    };
 
         document.getElementById('tipografiaSelect').onchange = function() {
             tipografia = this.value;
@@ -742,25 +792,25 @@
             }
         };
 
-       
-        document.getElementById('lectorPantallaBtn').onclick = function() {
-            lectorActivo = !lectorActivo;
-            let contenido = document.querySelector('.dashboard-main') || document.body;
-            if(lectorActivo) {
-                this.classList.add('active');
-                let texto = contenido.innerText;
-                if('speechSynthesis' in window) {
-                    let utter = new SpeechSynthesisUtterance(texto);
-                    utter.lang = 'es-MX';
-                    window.speechSynthesis.speak(utter);
-                } else {
-                    alert('Lector de pantalla no soportado en este navegador.');
-                }
+    document.getElementById('lectorPantallaBtn').onclick = function() {
+        lectorActivo = !lectorActivo;
+        let contenido = dashboardContainer || dashboardMain || document.body;
+        if(lectorActivo) {
+            this.classList.add('active');
+            let texto = contenido ? contenido.innerText : '';
+            if('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let utter = new SpeechSynthesisUtterance(texto);
+                utter.lang = 'es-MX';
+                window.speechSynthesis.speak(utter);
             } else {
-                this.classList.remove('active');
-                if('speechSynthesis' in window) window.speechSynthesis.cancel();
+                alert('Lector de pantalla no soportado en este navegador.');
             }
-        };
+        } else {
+            this.classList.remove('active');
+            if('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+    };
     </script>
     <div class="sidebar">
         <div class="logo">
@@ -865,23 +915,23 @@
                 <div class="action-box">
                     <h3>👥 Gestión de Usuarios</h3>
                     <p>Controla clientes y productores registrados en la plataforma.</p>
-                    <button onclick="window.location.href='{{ url_for('gestion_usuarios') }}'">Administrar Usuarios</button>
-                    <button onclick="window.location.href='{{ url_for('agregar_usuario') }}'" style="background:var(--secondary);color:#fff;">Agregar Usuario</button>
+                    <button onclick="window.location.href='{{ url_for('gestion_usuarios') }}';">Administrar Usuarios</button>
+                    <button onclick="window.location.href='{{ url_for('agregar_usuario') }}';" style="background:var(--secondary);color:#fff;">Agregar Usuario</button>
                 </div>
                 <div class="action-box">
                     <h3>📦 Administración de Pedidos</h3>
                     <p>Consulta y gestiona todos los pedidos activos y su historial.</p>
-                    <button onclick="window.location.href='{{ url_for('admin_pedidos') }}'" style="background:var(--secondary);color:#fff;">Ver Estatus de Pedidos</button>
+                    <button onclick="window.location.href='{{ url_for('admin_pedidos') }}';" style="background:var(--secondary);color:#fff;">Ver Estatus de Pedidos</button>
                 </div>
                 <div class="action-box">
                     <h3>🛒 Supervisión de Productos</h3>
                     <p>Revisa y administra los productos publicados por los productores.</p>
-                    <button onclick="window.location.href='{{ url_for('admin_productos') }}'">Ver Productos</button>
+                    <button onclick="window.location.href='{{ url_for('admin_productos') }}';">Ver Productos</button>
                 </div>
                 <div class="action-box">
                     <h3>✉️ Mensajes de Usuarios</h3>
                     <p>Consulta y elimina mensajes enviados por clientes y productores.</p>
-                    <button onclick="window.location.href='{{ url_for('admin_mensajes') }}'">Ver Mensajes</button>
+                    <button onclick="window.location.href='{{ url_for('admin_mensajes') }}';">Ver Mensajes</button>
                 </div>
             </div>
         </div>
@@ -897,7 +947,7 @@
             <p>Tu sesión se cerrará y volverás a la pantalla de inicio de sesión.</p>
             <div class="alert-btns">
                 <button onclick="closeLogoutModal()">Cancelar</button>
-                <button onclick="window.location.href='{{ url_for('logout') }}'">Cerrar Sesión</button>
+                <button onclick="window.location.href='{{ url_for('logout') }}';">Cerrar Sesión</button>
             </div>
         </div>
     </div>
