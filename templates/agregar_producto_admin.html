@@ -432,7 +432,6 @@
       <textarea name="descripcion" placeholder="Descripción" required></textarea>
       <input type="number" name="precio" placeholder="Precio" step="0.01" required>
       <input type="file" name="imagen" accept="image/*" required>
-      <!-- Elimina el select de productor -->
       <select name="categoria_id" required>
         <option value="" disabled selected>Selecciona una categoría</option>
         {% for categoria in categorias %}

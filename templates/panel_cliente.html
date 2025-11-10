@@ -685,7 +685,6 @@
       }
     };
   </script>
-  <!-- SIDEBAR IZQUIERDA -->
   <aside class="sidebar">
     <div class="logo">
       <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
@@ -703,7 +702,6 @@
     <button class="logout" onclick="mostrarModalLogout()"><span>🚪</span>Cerrar sesión</button>
   </aside>
 
-  <!-- MODAL DE CIERRE DE SESIÓN -->
   <div id="modal-logout" class="modal-logout-bg" style="display:none;">
     <div class="modal-logout-box">
       <div class="modal-logout-icon">🌽</div>
@@ -715,7 +713,6 @@
     </div>
   </div>
 
-  <!-- CONTENIDO PRINCIPAL -->
   <div class="main-content">
     <div class="dashboard-header">
       <h1>Bienvenido a tu Dashboard, {{ usuario.nombre }}!</h1>
@@ -728,14 +725,12 @@
         {% endif %}
       </div>
     </div>
-    <div class="dashboard-sections">
-      <!-- Mis pedidos y mensajes -->
+      <div class="dashboard-sections">
       <div class="section-box">
         <h2>Mis Pedidos y Bandeja de Mensajes</h2>
         <button class="btn" onclick="window.location.href='{{ url_for('historial_pedidos') }}'">Ver Mis Pedidos</button>
         <button class="btn" onclick="window.location.href='{{ url_for('bandeja_mensajes_cliente') }}'">Bandeja de Mensajes</button>
       </div>
-      <!-- Mis tarjetas guardadas -->
       <div class="section-box">
         <h2>Mis Tarjetas Guardadas</h2>
         {% if tarjetas %}

@@ -438,7 +438,6 @@
     </nav>
   </header>
 
-  <!-- CONTENIDO -->
   <main class="container">
     <h2>🛒 Tu Carrito</h2>
     {% if productos %}
@@ -459,15 +458,12 @@
       </ul>
       <p class="total">Total: ${{ "%.2f"|format(total) }}</p>
       
-      <!-- Botones de pago -->
       <div class="metodos-pago-container" style="margin-top: 20px;">
         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-          <!-- Pago tradicional -->
           <a href="{{ url_for('metodos_pago') }}" class="pagar" style="flex: 1; min-width: 200px; text-align: center; padding: 15px; background: #28a745; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
             💳 Pago Tradicional
           </a>
           
-          <!-- MercadoPago -->
           <a href="{{ url_for('pago_mercadopago') }}" class="pagar-mp" style="flex: 1; min-width: 200px; text-align: center; padding: 15px; background: #00a650; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; position: relative;">
             🛡️ Pagar con MercadoPago
             <small style="display: block; font-size: 0.8em; margin-top: 5px; opacity: 0.9;">Pago seguro y rápido</small>
@@ -483,7 +479,6 @@
     {% endif %}
   </main>
 
-  <!-- FOOTER -->
   <footer>
     <p>© 2025 La Esquinita</p>
     <p>Hecho con 🌽 y ❤️ en México</p>

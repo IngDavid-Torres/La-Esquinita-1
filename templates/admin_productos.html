@@ -327,9 +327,9 @@
             const items = document.querySelectorAll('.producto-item');
             let algunoVisible = false;
             items.forEach(item => {
-                // Busca el nombre correctamente
+                
                 const id = item.querySelector('.id-producto').textContent.toLowerCase();
-                // Selecciona el span, no el strong
+              
                 const nombre = item.querySelector('span.nombre-producto').textContent.toLowerCase();
                 const precio = item.querySelector('.precio-producto').textContent.toLowerCase();
                 if (
@@ -380,7 +380,7 @@
         <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
     </div>
     <script>
-        // --- ACCESIBILIDAD ---
+       
         const root = document.documentElement;
         const body = document.body;
         let fontSize = 1;

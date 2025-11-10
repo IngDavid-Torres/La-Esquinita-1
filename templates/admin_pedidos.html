@@ -368,7 +368,7 @@
   </style>
 </head>
 <body>
-  <!-- BARRA DE ACCESIBILIDAD -->
+  
   <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
     <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
     <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
@@ -390,7 +390,7 @@
   </div>
 
   <script>
-    // --- ACCESIBILIDAD GLOBAL ---
+    
     const root = document.documentElement;
     const body = document.body;
     let fontSize = 1;
@@ -479,7 +479,7 @@
       }
     };
 
-    // Lector de pantalla básico
+    
     document.getElementById('lectorPantallaBtn').onclick = function() {
       lectorActivo = !lectorActivo;
       let contenido = document.getElementById('contenido-principal') || document.body;
@@ -499,7 +499,7 @@
       }
     };
   </script>
-  <!-- NAVBAR -->
+
   <nav>
     <div class="nav-left"></div>
     <div class="nav-right">
@@ -514,7 +514,7 @@
 
   <div class="container">
     <h2>📦 Administración de Pedidos</h2>
-    <!-- Buscador -->
+    
     <div class="buscador-wrapper">
       <form class="buscador-form" method="GET" action="{{ url_for('admin_pedidos') }}">
         <input type="text" name="q" placeholder="Buscar por ID, cliente o estado..." value="{{ request.args.get('q', '') }}">
