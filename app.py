@@ -390,8 +390,22 @@ def exportar_reporte():
 
 @app.route('/logout')
 def logout():
-    session.clear() 
-    return redirect(url_for('inicio'))
+    # Destrucción completa de la sesión
+    # Eliminar todos los datos de la sesión
+    usuario_nombre = session.get('usuario_nombre', 'Usuario')
+    session.clear()
+    
+    # Invalidar la cookie de sesión explícitamente
+    response = make_response(redirect(url_for('inicio')))
+    # Eliminar la cookie de sesión de Flask (nombre por defecto)
+    response.set_cookie('session', '', expires=0, max_age=0, path='/')
+    # También eliminar posibles cookies alternativas
+    response.set_cookie(app.session_cookie_name, '', expires=0, max_age=0, path='/')
+    
+    # Mensaje de confirmación
+    flash(f"✅ Sesión cerrada correctamente. ¡Hasta pronto, {usuario_nombre}!", "success")
+    
+    return response
 
 
 @app.route('/carrito')

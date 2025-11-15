@@ -423,7 +423,7 @@
         <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Panel">
         Mi Panel
       </a>
-      <a href="{{ url_for('logout') }}">
+      <a href="{{ url_for('logout') }}" onclick="destruirSesionCliente(); return true;">
         <img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">
         Cerrar Sesión
       </a>
@@ -475,6 +475,28 @@
     function cerrarAlerta() {
       document.getElementById("alerta").style.display = "none";
       document.querySelector("form").submit(); 
+    }
+    
+    // Función para destruir completamente la sesión en el cliente
+    function destruirSesionCliente() {
+      // Limpiar localStorage
+      try {
+        localStorage.clear();
+      } catch(e) {
+        console.log('Error al limpiar localStorage:', e);
+      }
+      
+      // Limpiar sessionStorage
+      try {
+        sessionStorage.clear();
+      } catch(e) {
+        console.log('Error al limpiar sessionStorage:', e);
+      }
+      
+      // Eliminar cookies relacionadas con la sesión
+      document.cookie.split(";").forEach(function(c) { 
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+      });
     }
   </script>
 </body>

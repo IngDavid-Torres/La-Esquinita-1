@@ -639,9 +639,33 @@
       document.getElementById('alerta-cierre-mensaje').textContent = "¿Seguro que quieres cerrar sesión?";
 
       document.getElementById('btnConfirmarCerrar').onclick = function() {
+        // Destrucción completa de sesión en el cliente
+        destruirSesionCliente();
         // Redirige al logout y pasa un parámetro para mostrar la alerta en inicio
         window.location.href = "{{ url_for('logout') }}?cerrada=1";
       };
+      
+      // Función para destruir completamente la sesión en el cliente
+      function destruirSesionCliente() {
+        // Limpiar localStorage
+        try {
+          localStorage.clear();
+        } catch(e) {
+          console.log('Error al limpiar localStorage:', e);
+        }
+        
+        // Limpiar sessionStorage
+        try {
+          sessionStorage.clear();
+        } catch(e) {
+          console.log('Error al limpiar sessionStorage:', e);
+        }
+        
+        // Eliminar cookies relacionadas con la sesión
+        document.cookie.split(";").forEach(function(c) { 
+          document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+        });
+      }
       document.getElementById('btnCancelarCerrar').onclick = function() {
         document.getElementById('alerta-cierre').style.display = 'none';
       };

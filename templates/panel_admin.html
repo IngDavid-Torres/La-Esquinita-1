@@ -947,7 +947,7 @@
             <p>Tu sesión se cerrará y volverás a la pantalla de inicio de sesión.</p>
             <div class="alert-btns">
                 <button onclick="closeLogoutModal()">Cancelar</button>
-                <button onclick="window.location.href='{{ url_for('logout') }}';">Cerrar Sesión</button>
+                <button onclick="destruirSesionCliente(); window.location.href='{{ url_for('logout') }}';">Cerrar Sesión</button>
             </div>
         </div>
     </div>
@@ -1124,6 +1124,28 @@
             event.preventDefault();
             document.getElementById('logoutModal').style.display = 'flex';
         });
+        
+        // Función para destruir completamente la sesión en el cliente
+        function destruirSesionCliente() {
+            // Limpiar localStorage
+            try {
+                localStorage.clear();
+            } catch(e) {
+                console.log('Error al limpiar localStorage:', e);
+            }
+            
+            // Limpiar sessionStorage
+            try {
+                sessionStorage.clear();
+            } catch(e) {
+                console.log('Error al limpiar sessionStorage:', e);
+            }
+            
+            // Eliminar cookies relacionadas con la sesión
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+        }
     </script>
 </body>
 </html>

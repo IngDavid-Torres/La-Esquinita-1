@@ -782,7 +782,31 @@
       document.body.style.overflow = '';
     }
     function confirmarLogoutAccion() {
+      // Destrucción completa de sesión en el cliente
+      destruirSesionCliente();
       window.location.href = "{{ url_for('logout') }}";
+    }
+    
+    // Función para destruir completamente la sesión en el cliente
+    function destruirSesionCliente() {
+      // Limpiar localStorage
+      try {
+        localStorage.clear();
+      } catch(e) {
+        console.log('Error al limpiar localStorage:', e);
+      }
+      
+      // Limpiar sessionStorage
+      try {
+        sessionStorage.clear();
+      } catch(e) {
+        console.log('Error al limpiar sessionStorage:', e);
+      }
+      
+      // Eliminar cookies relacionadas con la sesión
+      document.cookie.split(";").forEach(function(c) { 
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+      });
     }
     function confirmarEliminacion() {
       return confirm("⚠️ ¿Seguro que deseas eliminar esta tarjeta?");
