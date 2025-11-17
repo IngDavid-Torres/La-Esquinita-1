@@ -1514,6 +1514,26 @@ def procesar_pago_test():
         return redirect(url_for('carrito'))
 
 
+@app.route('/health')
+def health_check():
+    
+    try:
+        
+        db.session.execute('SELECT 1')
+        return jsonify({
+            'status': 'healthy',
+            'message': 'La Esquinita API funcionando correctamente',
+            'timestamp': datetime.utcnow().isoformat(),
+            'database': 'connected'
+        }), 200
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'message': f'Error en el sistema: {str(e)}',
+            'timestamp': datetime.utcnow().isoformat(),
+            'database': 'disconnected'
+        }), 500
+
 @app.errorhandler(404)
 def page_not_found(error):
     """Manejador personalizado para errores 404"""
