@@ -30,19 +30,43 @@ if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL or 'postgresql://postgres:789@localhost/laesquinita'
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL or 'sqlite:///laesquinita.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'pool_pre_ping': True,
-    'pool_recycle': 300,
-    'connect_args': {
-        'connect_timeout': 10,
-        'application_name': 'la_esquinita_app'
+
+if DATABASE_URL and 'postgresql://' in DATABASE_URL:
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_pre_ping': True,
+        'pool_recycle': 300,
+        'pool_timeout': 20,
+        'max_overflow': 0,
+        'pool_size': 5,
+        'connect_args': {
+            'connect_timeout': 30,
+            'application_name': 'la_esquinita_app',
+            'sslmode': 'require'
+        }
     }
-}
+    print("🐘 Configuración PostgreSQL para Railway")
+else:
+    
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_pre_ping': True,
+        'connect_args': {'timeout': 20}
+    }
+    print("📁 Configuración SQLite para desarrollo local")
 app.secret_key = os.environ.get('SECRET_KEY') or 'clave_secreta_super_segura'
 
-db = SQLAlchemy(app)
+
+try:
+    db = SQLAlchemy(app)
+    print("✅ SQLAlchemy inicializado correctamente")
+except Exception as db_init_error:
+    print(f"❌ Error inicializando SQLAlchemy: {str(db_init_error)}")
+    # Fallback a configuración básica
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fallback.db'
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
+    db = SQLAlchemy(app)
+    print("🔄 Fallback a SQLite activado")
 UPLOAD_FOLDER = 'static/images'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -1505,25 +1529,43 @@ def procesar_pago_test():
 
 
 def check_database_connection():
-    """Verificar conexión a la base de datos"""
-    try:
-        result = db.session.execute('SELECT 1').fetchone()
-        return True, "Database connected"
-    except Exception as e:
-        print(f"Database connection error: {str(e)}")
-        return False, str(e)
+    """Verificar conexión a la base de datos con reintentos"""
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            # Usar una consulta más simple y compatible
+            result = db.session.execute('SELECT 1 as test').scalar()
+            if result == 1:
+                return True, f"Database connected (attempt {attempt + 1})"
+        except Exception as e:
+            print(f"Database connection error (attempt {attempt + 1}): {str(e)}")
+            if attempt < max_retries - 1:
+                try:
+                    db.session.rollback()
+                    db.session.close()
+                except:
+                    pass
+                import time
+                time.sleep(0.5)  # Esperar medio segundo antes del siguiente intento
+            else:
+                return False, f"Connection failed after {max_retries} attempts: {str(e)}"
+    
+    return False, "Max retries exceeded"
 
 @app.before_request
 def ensure_db_connection():
-    """Verificar conexión antes de cada request"""
+    
     try:
-        if request.endpoint not in ['health_check', 'static']:
-            db_connected, _ = check_database_connection()
-            if not db_connected:
-                # Intentar reconectar
+       
+        critical_endpoints = ['login', 'panel_admin', 'productos', 'carrito']
+        if request.endpoint in critical_endpoints:
+            
+            try:
+                db.session.execute('SELECT 1').scalar()
+            except Exception as db_error:
+                print(f"DB issue detected: {str(db_error)}")
                 try:
-                    db.session.close()
-                    db.session.remove()
+                    db.session.rollback()
                 except:
                     pass
     except Exception as e:
@@ -1532,7 +1574,7 @@ def ensure_db_connection():
 
 @app.route('/test')
 def test_simple():
-    """Ruta simple para probar que la aplicación funciona"""
+    
     return jsonify({
         'status': 'ok',
         'message': 'La Esquinita funcionando',
@@ -1565,25 +1607,25 @@ def health_check():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    """Manejador personalizado para errores 404"""
+    
     return render_template('error_404.html'), 404
 
 @app.errorhandler(500)
 def internal_server_error(error):
-    """Manejador personalizado para errores 500"""
+    
     try:
         db.session.rollback()
     except Exception as db_error:
         print(f"Error during rollback: {str(db_error)}")
     
-    # Log del error para debugging
+   
     print(f"Error 500: {str(error)}")
     
     return render_template('error_500.html'), 500
 
 @app.errorhandler(403)
 def forbidden(error):
-    """Manejador personalizado para errores 403"""
+    
     return render_template('error_404.html'), 403
 
 if __name__ == '__main__':
