@@ -482,12 +482,15 @@
             <input type="email" name="email" placeholder="Correo electrónico" required>
             <input type="password" name="password" placeholder="Contraseña" required>
             
-            <div class="captcha-container">
+            <div class="captcha-container" id="captchaContainer">
                 <div class="captcha-display" id="captchaDisplay">🔄 Cargando...</div>
                 <input type="text" class="captcha-input" id="captchaInput" name="captcha" placeholder="Código" maxlength="5" required>
                 <button type="button" class="captcha-refresh" id="refreshCaptcha" title="Generar nuevo código">🔄</button>
             </div>
             <div class="captcha-error" id="captchaError">El código CAPTCHA es incorrecto</div>
+            <div id="adminNotice" style="display: none; background: #e8f5e8; color: #2e7d32; padding: 10px; border-radius: 4px; margin: 10px 0; text-align: center; font-size: 14px;">
+                ✅ Acceso de administrador detectado - CAPTCHA no requerido
+            </div>
             
             <button type="submit">Ingresar</button>
         </form>
@@ -556,19 +559,50 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Función para manejar cambios en el email
+function handleEmailChange() {
+    const email = document.querySelector('input[name="email"]').value.trim();
+    const isAdmin = email === 'admin@laesquinita.com';
+    const captchaContainer = document.getElementById('captchaContainer');
+    const adminNotice = document.getElementById('adminNotice');
+    const captchaInput = document.getElementById('captchaInput');
+    
+    if (isAdmin) {
+        captchaContainer.style.display = 'none';
+        adminNotice.style.display = 'block';
+        captchaInput.removeAttribute('required');
+    } else {
+        captchaContainer.style.display = 'block';
+        adminNotice.style.display = 'none';
+        captchaInput.setAttribute('required', 'required');
+    }
+}
+
+// Agregar event listener al campo de email
+document.querySelector('input[name="email"]').addEventListener('input', handleEmailChange);
+document.querySelector('input[name="email"]').addEventListener('blur', handleEmailChange);
+
 document.getElementById('loginForm').addEventListener('submit', function(e){
     e.preventDefault();
     
-    if (!validateCaptcha()) {
+    // Obtener email para verificar si es admin
+    const email = document.querySelector('input[name="email"]').value.trim();
+    const isAdmin = email === 'admin@laesquinita.com';
+    
+    // Si es admin, saltar validación de CAPTCHA
+    if (!isAdmin && !validateCaptcha()) {
         document.getElementById('captchaError').style.display = 'block';
         generateCaptcha();
         return;
     }
     
+    // Ocultar error de CAPTCHA si es admin o CAPTCHA válido
+    document.getElementById('captchaError').style.display = 'none';
+    
     document.getElementById('alerta-cargando').style.display = 'flex';
     setTimeout(() => {
         e.target.submit();
-    }, 2000);
+    }, 1000); // Reducir tiempo de espera
 });
 </script>
 </body>

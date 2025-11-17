@@ -238,32 +238,11 @@ def crear_admin():
             db.session.add(nuevo_admin)
             db.session.commit()
             print("✅ Administrador creado: admin@laesquinita.com / admin123")
+        else:
+            print("ℹ️ Administrador ya existe")
         
         
-        if Categoria.query.count() == 0:
-            categorias = [
-                Categoria(nombre="Elotes y Esquites"),
-                Categoria(nombre="Patitas"),
-                Categoria(nombre="Maruchan"),
-                Categoria(nombre="Bebidas")
-            ]
-            for categoria in categorias:
-                db.session.add(categoria)
-            db.session.commit()
-            print("✅ Categorías básicas creadas")
-        
-       
-        if Producto.query.count() == 0:
-            productos_ejemplo = [
-                Producto(nombre="Elote con mayonesa", descripcion="Delicioso elote con mayonesa, chile y queso", precio=25.0, imagen="elote1.jpg", categoria_id=1, activo=True),
-                Producto(nombre="Esquites en vaso", descripcion="Esquites tradicionales servidos en vaso", precio=20.0, imagen="esquite.png", categoria_id=1, activo=True),
-                Producto(nombre="Patitas en escabeche", descripcion="Patitas de cerdo en delicioso escabeche", precio=35.0, imagen="patitas.jpeg", categoria_id=2, activo=True),
-                Producto(nombre="Maruchan preparada", descripcion="Sopa maruchan con ingredientes adicionales", precio=30.0, imagen="Maruchaesquite.png", categoria_id=3, activo=True)
-            ]
-            for producto in productos_ejemplo:
-                db.session.add(producto)
-            db.session.commit()
-            print("✅ Productos de ejemplo creados")
+        print("ℹ️ Las categorías y productos se crean desde el panel de administración")
 
 class PedidoItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
