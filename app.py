@@ -176,6 +176,7 @@ def crear_admin():
             nuevo_admin = Administrador(nombre="Admin La Esquinita", email="admin@laesquinita.com", password="securepassword")
             db.session.add(nuevo_admin)
             db.session.commit()
+
 class PedidoItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     pedido_id = db.Column(db.Integer, db.ForeignKey('pedido.id'), nullable=False)
