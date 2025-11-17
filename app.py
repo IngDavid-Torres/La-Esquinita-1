@@ -12,7 +12,7 @@ from sqlalchemy.sql import exists
 from flask_login import login_required, current_user
 from sqlalchemy import and_, not_, exists, cast, String, or_
 from sqlalchemy.orm import aliased
-import pandas as pd
+# import pandas as pd  
 import mercadopago
 import time
 from dotenv import load_dotenv
@@ -329,55 +329,7 @@ def panel_admin():
         filtro=filtro
     ))
     return add_security_headers(response)
-@app.route('/exportar_reporte')
-def exportar_reporte():
-    tipo = request.args.get('tipo')
-    if not tipo:
-        return "<h2 style='color:#c62828;text-align:center;margin-top:40px;'>Debes especificar el tipo de reporte (usuarios, pedidos o productos).</h2>", 400
-    output = io.BytesIO()
-    if tipo == 'usuarios':
-        usuarios = Usuario.query.all()
-        data = [{
-            'ID': u.id,
-            'Nombre': u.nombre,
-            'Email': u.email,
-            'Tipo de usuario': u.tipo_usuario
-        } for u in usuarios]
-        df = pd.DataFrame(data)
-        filename = "usuarios.xlsx"
-    elif tipo == 'pedidos':
-        pedidos = Pedido.query.all()
-        data = [{
-            'ID': p.id,
-            'Usuario': p.usuario_id,
-            'Total': p.total,
-            'Estado': p.estado,
-            'Fecha': p.fecha.strftime('%d/%m/%Y %H:%M')
-        } for p in pedidos]
-        df = pd.DataFrame(data)
-        filename = "pedidos.xlsx"
-    elif tipo == 'productos':
-        productos = Producto.query.all()
-        data = [{
-            'ID': prod.id,
-            'Nombre': prod.nombre,
-            'DescripciÃ³n': prod.descripcion,
-            'Precio': prod.precio,
-            'CategorÃ­a': prod.categoria_id,
-            'Activo': prod.activo
-        } for prod in productos]
-        df = pd.DataFrame(data)
-        filename = "productos.xlsx"
-    else:
-        return "<h2 style='color:#c62828;text-align:center;margin-top:40px;'>Tipo de reporte no vÃ¡lido.</h2>", 400
-    df.to_excel(output, index=False)
-    output.seek(0)
-    return send_file(
-        output,
-        download_name=filename,
-        as_attachment=True,
-        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
+
 @app.route('/logout')
 def logout():
     user_type = session.get('tipo_usuario', 'Desconocido')
