@@ -234,15 +234,40 @@ def inicio():
 @app.route('/productos')
 def productos():
     try:
-        productos = Producto.query.filter_by(activo=True).all()
-        categorias = Categoria.query.all() 
+       
+        productos = []
+        categorias = []
+        
+        try:
+            productos = Producto.query.filter_by(activo=True).all()
+            categorias = Categoria.query.all()
+        except Exception as db_error:
+            print(f"Error de BD en productos: {str(db_error)}")
+            
+            try:
+                db.session.rollback()
+                productos = Producto.query.filter_by(activo=True).all()
+                categorias = Categoria.query.all()
+            except Exception as retry_error:
+                print(f"Error en reintento: {str(retry_error)}")
+                productos = []
+                categorias = []
+        
         cantidad_carrito = 0
         if session.get('usuario_id') and session.get('tipo_usuario') == 'Cliente':
-            cantidad_carrito = db.session.query(func.coalesce(func.sum(Carrito.cantidad), 0)).filter_by(usuario_id=session.get('usuario_id')).scalar() or 0
+            try:
+                cantidad_carrito = db.session.query(func.coalesce(func.sum(Carrito.cantidad), 0)).filter_by(usuario_id=session.get('usuario_id')).scalar() or 0
+            except:
+                cantidad_carrito = 0
+        
+        if not productos:
+            flash('No hay productos disponibles por el momento', 'info')
+        
         return render_template('productos.html', productos=productos, categorias=categorias, cantidad_carrito=cantidad_carrito)
+        
     except Exception as e:
-        print(f"Error en ruta productos: {str(e)}")
-        flash('Error al cargar productos', 'error')
+        print(f"Error general en productos: {str(e)}")
+        flash('Error al cargar productos, intenta más tarde', 'error')
         return redirect(url_for('inicio'))
 @app.route('/contacto')
 def contacto():
@@ -285,24 +310,43 @@ def registro():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        admin = Administrador.query.filter_by(email=email, password=password).first()
-        if admin:
-            session['usuario_id'] = admin.id
-            session['usuario_nombre'] = admin.nombre
-            session['tipo_usuario'] = "Administrador"
-            return redirect(url_for('panel_admin'))
-        usuario = Usuario.query.filter_by(email=email, password=password).first()
-        if usuario:
-            session['usuario_id'] = usuario.id
-            session['usuario_nombre'] = usuario.nombre
-            session['tipo_usuario'] = usuario.tipo_usuario
-            if usuario.tipo_usuario == "Cliente":
-                return redirect(url_for('panel_cliente'))
-            elif usuario.tipo_usuario == "Productor":
-                return redirect(url_for('panel_productor'))
-        return "Credenciales incorrectas"
+        try:
+            email = request.form.get('email', '').strip()
+            password = request.form.get('password', '').strip()
+            
+            if not email or not password:
+                flash('Por favor completa todos los campos', 'error')
+                return render_template('login.html')
+            
+            # Verificar admin primero
+            admin = Administrador.query.filter_by(email=email, password=password).first()
+            if admin:
+                session['usuario_id'] = admin.id
+                session['usuario_nombre'] = admin.nombre
+                session['tipo_usuario'] = "Administrador"
+                flash(f'Bienvenido Administrador {admin.nombre}', 'success')
+                return redirect(url_for('panel_admin'))
+            
+            # Verificar usuario
+            usuario = Usuario.query.filter_by(email=email, password=password).first()
+            if usuario:
+                session['usuario_id'] = usuario.id
+                session['usuario_nombre'] = usuario.nombre
+                session['tipo_usuario'] = usuario.tipo_usuario
+                flash(f'Bienvenido {usuario.nombre}', 'success')
+                if usuario.tipo_usuario == "Cliente":
+                    return redirect(url_for('panel_cliente'))
+                elif usuario.tipo_usuario == "Productor":
+                    return redirect(url_for('panel_productor'))
+            
+            flash('Credenciales incorrectas', 'error')
+            return render_template('login.html')
+            
+        except Exception as e:
+            print(f"Error en login: {str(e)}")
+            flash('Error del servidor, intenta de nuevo', 'error')
+            return render_template('login.html')
+    
     return render_template('login.html')
 @app.route('/panel_cliente')
 def panel_cliente():
@@ -321,54 +365,76 @@ def perfil_cliente():
     return render_template('perfil_cliente.html', usuario=usuario, direccion=direccion)
 @app.route('/panel_admin')
 def panel_admin():
-    q = request.args.get('q', '').strip()
-    filtro = request.args.get('filtro', '')
-    total_usuarios = Usuario.query.count()
-    pedidos_activos = Pedido.query.filter(Pedido.estado != 'Entregado').count()
-    total_productos = Producto.query.count()
-    mensajes_pendientes = Contacto.query.filter(Contacto.respuesta == None).count()
-    resultados = []
-    if q:
-        if filtro == "usuarios":
-            resultados = Usuario.query.filter(
-                (Usuario.nombre.ilike(f"%{q}%")) | (Usuario.email.ilike(f"%{q}%"))
-            ).all()
-        elif filtro == "pedidos":
-            resultados = Pedido.query.join(Usuario).filter(
-                (Pedido.id == q) |
-                (Usuario.nombre.ilike(f"%{q}%")) |
-                (Pedido.estado.ilike(f"%{q}%"))
-            ).all()
-        elif filtro == "productos":
-            resultados = Producto.query.filter(
-                (Producto.nombre.ilike(f"%{q}%")) |
-                (Producto.descripcion.ilike(f"%{q}%"))
-            ).all()
-        else:
-            usuarios = Usuario.query.filter(
-                (Usuario.nombre.ilike(f"%{q}%")) | (Usuario.email.ilike(f"%{q}%"))
-            ).all()
-            pedidos = Pedido.query.join(Usuario).filter(
-                (Pedido.id == q) |
-                (Usuario.nombre.ilike(f"%{q}%")) |
-                (Pedido.estado.ilike(f"%{q}%"))
-            ).all()
-            productos = Producto.query.filter(
-                (Producto.nombre.ilike(f"%{q}%")) |
-                (Producto.descripcion.ilike(f"%{q}%"))
-            ).all()
-            resultados = usuarios + pedidos + productos
-    response = make_response(render_template(
-        'panel_admin.html',
-        total_usuarios=total_usuarios,
-        pedidos_activos=pedidos_activos,
-        total_productos=total_productos,
-        mensajes_pendientes=mensajes_pendientes,
-        resultados=resultados,
-        q=q,
-        filtro=filtro
-    ))
-    return add_security_headers(response)
+    try:
+        q = request.args.get('q', '').strip()
+        filtro = request.args.get('filtro', '')
+        
+        
+        try:
+            total_usuarios = Usuario.query.count()
+            pedidos_activos = Pedido.query.filter(Pedido.estado != 'Entregado').count()
+            total_productos = Producto.query.count()
+            mensajes_pendientes = Contacto.query.filter(Contacto.respuesta == None).count()
+        except Exception as stats_error:
+            print(f"Error obteniendo estadísticas: {str(stats_error)}")
+            total_usuarios = 0
+            pedidos_activos = 0
+            total_productos = 0
+            mensajes_pendientes = 0
+        
+        resultados = []
+        if q:
+            try:
+                if filtro == "usuarios":
+                    resultados = Usuario.query.filter(
+                        (Usuario.nombre.ilike(f"%{q}%")) | (Usuario.email.ilike(f"%{q}%"))
+                    ).all()
+                elif filtro == "pedidos":
+                    resultados = Pedido.query.join(Usuario).filter(
+                        (Pedido.id == q) |
+                        (Usuario.nombre.ilike(f"%{q}%")) |
+                        (Pedido.estado.ilike(f"%{q}%"))
+                    ).all()
+                elif filtro == "productos":
+                    resultados = Producto.query.filter(
+                        (Producto.nombre.ilike(f"%{q}%")) |
+                        (Producto.descripcion.ilike(f"%{q}%"))
+                    ).all()
+                else:
+                    usuarios = Usuario.query.filter(
+                        (Usuario.nombre.ilike(f"%{q}%")) | (Usuario.email.ilike(f"%{q}%"))
+                    ).all()
+                    pedidos = Pedido.query.join(Usuario).filter(
+                        (Pedido.id == q) |
+                        (Usuario.nombre.ilike(f"%{q}%")) |
+                        (Pedido.estado.ilike(f"%{q}%"))
+                    ).all()
+                    productos = Producto.query.filter(
+                        (Producto.nombre.ilike(f"%{q}%")) |
+                        (Producto.descripcion.ilike(f"%{q}%"))
+                    ).all()
+                    resultados = usuarios + pedidos + productos
+            except Exception as search_error:
+                print(f"Error en búsqueda: {str(search_error)}")
+                resultados = []
+                flash('Error en la búsqueda', 'warning')
+        
+        response = make_response(render_template(
+            'panel_admin.html',
+            total_usuarios=total_usuarios,
+            pedidos_activos=pedidos_activos,
+            total_productos=total_productos,
+            mensajes_pendientes=mensajes_pendientes,
+            resultados=resultados,
+            q=q,
+            filtro=filtro
+        ))
+        return add_security_headers(response)
+        
+    except Exception as e:
+        print(f"Error general en panel_admin: {str(e)}")
+        flash('Error cargando panel de administración', 'error')
+        return redirect(url_for('inicio'))
 
 @app.route('/logout')
 def logout():
@@ -1463,6 +1529,15 @@ def ensure_db_connection():
     except Exception as e:
         print(f"Error en before_request: {str(e)}")
         pass
+
+@app.route('/test')
+def test_simple():
+    """Ruta simple para probar que la aplicación funciona"""
+    return jsonify({
+        'status': 'ok',
+        'message': 'La Esquinita funcionando',
+        'timestamp': datetime.utcnow().isoformat()
+    })
 
 @app.route('/health')
 def health_check():
