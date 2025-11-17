@@ -4,22 +4,19 @@ from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 import re
-from xhtml2pdf import pisa
 import io
 from flask import send_file
 from flask_mail import Mail, Message
 from sqlalchemy.sql import exists
-from flask_login import login_required, current_user
 from sqlalchemy import and_, not_, exists, cast, String, or_
 from sqlalchemy.orm import aliased
-# import pandas as pd  
 import mercadopago
 import time
 from dotenv import load_dotenv
 load_dotenv()
 
 def add_security_headers(response):
-    """Agregar headers de seguridad anti-cache a todas las respuestas de páginas protegidas"""
+    
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
@@ -1044,41 +1041,10 @@ def actualizar_producto(producto_id):
             flash("âš ï¸ No se detectaron cambios en el producto.", "warning")
         return redirect(url_for('admin_productos_productor'))
     return render_template('actualizar_producto.html', producto=producto, categorias=categorias)
-@app.route('/descargar_factura_pdf')
-def descargar_factura_pdf():
-    if 'usuario_id' not in session:
-        return redirect(url_for('login'))
-    usuario_id = session['usuario_id']
-    pedido = Pedido.query.filter_by(usuario_id=usuario_id).order_by(Pedido.fecha.desc()).first()
-    if not pedido:
-        flash("No hay pedido para generar factura.", "error")
-        return redirect(url_for('pago'))
-    items = PedidoItem.query.filter_by(pedido_id=pedido.id).all()
-    productos = []
-    for item in items:
-        producto = Producto.query.get(item.producto_id)
-        if producto:
-            productos.append({
-                'nombre': producto.nombre,
-                'cantidad': item.cantidad,
-                'precio': producto.precio,
-                'subtotal': producto.precio * item.cantidad
-            })
-    total = pedido.total
-    metodo_pago = Pago.query.filter_by(pedido_id=pedido.id).first()
-    if metodo_pago:
-        metodo = MetodoPago.query.get(metodo_pago.metodo_pago_id)
-        metodo_pago_nombre = metodo.nombre if metodo else "No especificado"
-    else:
-        metodo_pago_nombre = "No especificado"
-    html = render_template('factura_pdf.html', pedido=pedido, productos=productos, total=total, metodo_pago=metodo_pago_nombre)
-    result = io.BytesIO()
-    pisa_status = pisa.CreatePDF(html, dest=result)
-    if pisa_status.err:
-        flash("Error al generar el PDF.", "error")
-        return redirect(url_for('pago'))
-    result.seek(0)
-    return send_file(result, mimetype='application/pdf', as_attachment=True, download_name='factura_laesquinita.pdf')
+# @app.route('/descargar_factura_pdf')  # Comentado temporalmente - requiere xhtml2pdf
+# def descargar_factura_pdf():
+#     """Función temporalmente deshabilitada - requiere xhtml2pdf"""
+#     return jsonify({'error': 'Función de PDF temporalmente deshabilitada'}), 503
 @app.route('/agregar_usuario', methods=['GET', 'POST'])
 def agregar_usuario():
     if request.method == 'POST':
@@ -1149,42 +1115,10 @@ def eliminar_producto_admin(producto_id):
     db.session.commit()
     flash("Producto eliminado permanentemente.", "success")
     return redirect(url_for('admin_productos'))
-@app.route('/descargar_ticket_transferencia')
-def descargar_ticket_transferencia():
-    if 'usuario_id' not in session:
-        return redirect(url_for('login'))
-    usuario_id = session['usuario_id']
-    pedido = Pedido.query.filter_by(usuario_id=usuario_id).order_by(Pedido.fecha.desc()).first()
-    if not pedido:
-        flash("No hay pedido para generar ticket.", "error")
-        return redirect(url_for('pago'))
-    items = PedidoItem.query.filter_by(pedido_id=pedido.id).all()
-    productos = []
-    for item in items:
-        producto = Producto.query.get(item.producto_id)
-        if producto:
-            productos.append({
-                'nombre': producto.nombre,
-                'cantidad': item.cantidad,
-                'precio': producto.precio,
-                'subtotal': producto.precio * item.cantidad
-            })
-    total = pedido.total
-    datos = session.get('ticket_transferencia')
-    if not datos:
-        flash("Datos de transferencia no encontrados.", "error")
-        return redirect(url_for('pago'))
-    html = render_template('ticket_transferencia.html',
-        pedido=pedido,
-        numero_tarjeta=datos['numero_tarjeta'],
-        propietario=datos['propietario'],
-        productos=productos,
-        total=total
-    )
-    result = io.BytesIO()
-    pisa.CreatePDF(html, dest=result)
-    result.seek(0)
-    return send_file(result, mimetype='application/pdf', as_attachment=True, download_name='ticket_transferencia.pdf')
+# @app.route('/descargar_ticket_transferencia')  # Comentado temporalmente - requiere xhtml2pdf
+# def descargar_ticket_transferencia():
+#     """Función temporalmente deshabilitada - requiere xhtml2pdf"""
+#     return jsonify({'error': 'Función de PDF temporalmente deshabilitada'}), 503
 @app.route('/eliminar_tarjeta/<int:tarjeta_id>', methods=['POST'])
 def eliminar_tarjeta(tarjeta_id):
     tarjeta = Tarjeta.query.get_or_404(tarjeta_id)
