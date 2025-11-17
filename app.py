@@ -117,19 +117,19 @@ def generate_captcha_code(length=5):
     return ''.join(random.choice(chars) for _ in range(length))
 
 def create_captcha_image(code):
-    """Crea una imagen CAPTCHA con el código dado"""
+   
     try:
         width, height = 200, 80
         img = Image.new('RGB', (width, height), color='white')
         draw = ImageDraw.Draw(img)
         
-        # Agregar ruido de fondo
+       
         for _ in range(100):
             x = random.randint(0, width-1)
             y = random.randint(0, height-1)
             draw.point((x, y), fill=(random.randint(200, 255), random.randint(200, 255), random.randint(200, 255)))
         
-        # Cargar fuente
+       
         try:
             font = ImageFont.truetype("arial.ttf", 36)
         except:
@@ -138,22 +138,22 @@ def create_captcha_image(code):
             except:
                 font = ImageFont.load_default()
         
-        # Calcular posición del texto
+        
         try:
             text_width = draw.textlength(code, font=font)
         except AttributeError:
-            # Fallback para versiones antiguas de Pillow
+         
             text_width = len(code) * 20
         
         text_height = 36
         x = max(10, (width - text_width) // 2)
         y = max(10, (height - text_height) // 2)
         
-        # Dibujar el texto
+       
         color = (random.randint(0, 100), random.randint(0, 100), random.randint(0, 100))
         draw.text((x, y), code, font=font, fill=color)
         
-        # Agregar líneas de distorsión
+       
         for _ in range(5):
             x1 = random.randint(0, width)
             y1 = random.randint(0, height)
@@ -183,7 +183,7 @@ def create_captcha_session(session):
         
         logger.info(f"Imagen convertida a base64. Tamaño: {len(img_base64)} caracteres")
         
-        # Guardar código en sesión
+      
         session['captcha_code'] = code
         
         return f"data:image/png;base64,{img_base64}"
@@ -216,7 +216,7 @@ def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
         html_body = f"""
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf7; padding: 20px; border-radius: 10px;">
             <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #2e7d32; margin-bottom: 10px;">ðŸŒ½ La Esquinita</h1>
+                <h1 style="color: #2e7d32; margin-bottom: 10px;">La Esquinita</h1>
                 <h2 style="color: #ff5722;">Â¡Pago Confirmado!</h2>
             </div>
             <div style="background: #f1f8e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -224,26 +224,26 @@ def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
                 <p><strong>Pedido #:</strong> {pedido.id}</p>
                 <p><strong>Nombre:</strong> {pedido.nombre}</p>
                 <p><strong>Correo:</strong> {pedido.correo}</p>
-                <p><strong>DirecciÃ³n:</strong> {pedido.direccion}</p>
+                <p><strong>Dirección:</strong> {pedido.direccion}</p>
                 <p><strong>Total:</strong> ${pedido.total:.2f} MXN</p>
-                <p><strong>MÃ©todo de Pago:</strong> {metodo_pago}</p>
+                <p><strong>Método de Pago:</strong> {metodo_pago}</p>
                 <p><strong>Estado:</strong> <span style="color: #4caf50; font-weight: bold;">{pedido.estado}</span></p>
                 <p><strong>Fecha:</strong> {pedido.fecha.strftime('%d/%m/%Y %H:%M')}</p>
             </div>
             <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <h4 style="color: #ff5722; margin-top: 0;">ðŸšš Â¿QuÃ© sigue?</h4>
-                <p>â€¢ Tu pedido estÃ¡ siendo preparado con amor ðŸŒ½</p>
-                <p>â€¢ Tiempo estimado de entrega: 30-45 minutos</p>
-                <p>â€¢ Te contactaremos si necesitamos algo adicional</p>
+                <h4 style="color: #ff5722; margin-top: 0;"> ¿Qué sigue?</h4>
+                <p>Tu pedido esta siendo preparado con amor </p>
+                <p> Tiempo estimado de entrega: 30-45 minutos</p>
+                <p>Te contactaremos si necesitamos algo adicional</p>
             </div>
             <div style="text-align: center; margin-top: 30px;">
-                <p style="color: #666;">Â¡Gracias por elegir La Esquinita!</p>
-                <p style="color: #2e7d32; font-weight: bold;">El autÃ©ntico sabor mexicano ðŸ‡²ðŸ‡½</p>
+                <p style="color: #666;">¡Gracias por elegir La Esquinita!</p>
+                <p style="color: #2e7d32; font-weight: bold;">El automático sabor mexicano</p>
             </div>
             <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
                 <p style="font-size: 12px; color: #888;">
-                    Este correo fue enviado automÃ¡ticamente desde La Esquinita<br>
-                    MÃ©todo de pago: {metodo_pago}
+                    Este correo fue enviado automáticamente desde La Esquinita<br>
+                    Método de pago: {metodo_pago}
                 </p>
             </div>
         </div>
