@@ -117,63 +117,79 @@ def generate_captcha_code(length=5):
     return ''.join(random.choice(chars) for _ in range(length))
 
 def create_captcha_image(code):
-    
-    width, height = 200, 80
-    img = Image.new('RGB', (width, height), color='white')
-    draw = ImageDraw.Draw(img)
-    
-    
-    for _ in range(100):
-        x = random.randint(0, width-1)
-        y = random.randint(0, height-1)
-        draw.point((x, y), fill=(random.randint(200, 255), random.randint(200, 255), random.randint(200, 255)))
-    
-    
+    """Crea una imagen CAPTCHA con el código dado"""
     try:
-        font = ImageFont.truetype("arial.ttf", 36)
-    except:
-        font = ImageFont.load_default()
-    
-   
-    try:
-        text_width = draw.textlength(code, font=font)
-    except AttributeError:
+        width, height = 200, 80
+        img = Image.new('RGB', (width, height), color='white')
+        draw = ImageDraw.Draw(img)
         
-        text_width = len(code) * 20
-    
-    text_height = 36
-    x = max(10, (width - text_width) // 2)
-    y = max(10, (height - text_height) // 2)
-    
-    
-    color = (random.randint(0, 100), random.randint(0, 100), random.randint(0, 100))
-    draw.text((x, y), code, font=font, fill=color)
-    
-    
-    for _ in range(5):
-        x1 = random.randint(0, width)
-        y1 = random.randint(0, height)
-        x2 = random.randint(0, width)
-        y2 = random.randint(0, height)
-        draw.line((x1, y1, x2, y2), fill=(random.randint(100, 200), random.randint(100, 200), random.randint(100, 200)))
-    
-    return img
+        # Agregar ruido de fondo
+        for _ in range(100):
+            x = random.randint(0, width-1)
+            y = random.randint(0, height-1)
+            draw.point((x, y), fill=(random.randint(200, 255), random.randint(200, 255), random.randint(200, 255)))
+        
+        # Cargar fuente
+        try:
+            font = ImageFont.truetype("arial.ttf", 36)
+        except:
+            try:
+                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 36)
+            except:
+                font = ImageFont.load_default()
+        
+        # Calcular posición del texto
+        try:
+            text_width = draw.textlength(code, font=font)
+        except AttributeError:
+            # Fallback para versiones antiguas de Pillow
+            text_width = len(code) * 20
+        
+        text_height = 36
+        x = max(10, (width - text_width) // 2)
+        y = max(10, (height - text_height) // 2)
+        
+        # Dibujar el texto
+        color = (random.randint(0, 100), random.randint(0, 100), random.randint(0, 100))
+        draw.text((x, y), code, font=font, fill=color)
+        
+        # Agregar líneas de distorsión
+        for _ in range(5):
+            x1 = random.randint(0, width)
+            y1 = random.randint(0, height)
+            x2 = random.randint(0, width)
+            y2 = random.randint(0, height)
+            draw.line((x1, y1, x2, y2), fill=(random.randint(100, 200), random.randint(100, 200), random.randint(100, 200)))
+        
+        logger.info(f"Imagen CAPTCHA creada exitosamente para código: {code}")
+        return img
+    except Exception as e:
+        logger.error(f"Error creando imagen CAPTCHA: {str(e)}", exc_info=True)
+        raise
 
 def create_captcha_session(session):
-    
-    code = generate_captcha_code()
-    img = create_captcha_image(code)
-    
-    
-    buffer = io.BytesIO()
-    img.save(buffer, format='PNG')
-    img_data = buffer.getvalue()
-    img_base64 = base64.b64encode(img_data).decode()
-    
-    
-    session['captcha_code'] = code
-    
-    return f"data:image/png;base64,{img_base64}"
+    """Genera un código CAPTCHA y lo guarda en la sesión"""
+    try:
+        code = generate_captcha_code()
+        logger.info(f"Código CAPTCHA generado: {code}")
+        
+        img = create_captcha_image(code)
+        
+        # Convertir imagen a base64
+        buffer = io.BytesIO()
+        img.save(buffer, format='PNG')
+        img_data = buffer.getvalue()
+        img_base64 = base64.b64encode(img_data).decode()
+        
+        logger.info(f"Imagen convertida a base64. Tamaño: {len(img_base64)} caracteres")
+        
+        # Guardar código en sesión
+        session['captcha_code'] = code
+        
+        return f"data:image/png;base64,{img_base64}"
+    except Exception as e:
+        logger.error(f"Error en create_captcha_session: {str(e)}", exc_info=True)
+        raise
 
 def validate_captcha_session(session, user_input):
     
@@ -409,14 +425,17 @@ def enviar_mensaje():
 def generate_captcha():
     
     try:
+        logger.info("Generando CAPTCHA...")
         image_data = create_captcha_session(session)
-        return json.dumps({
+        logger.info(f"CAPTCHA generado exitosamente. Longitud de imagen: {len(image_data) if image_data else 0}")
+        
+        return jsonify({
             'success': True,
             'image': image_data
         })
     except Exception as e:
-        logger.error(f"Error generando CAPTCHA: {str(e)}")
-        return json.dumps({
+        logger.error(f"Error generando CAPTCHA: {str(e)}", exc_info=True)
+        return jsonify({
             'success': False,
             'error': str(e)
         }), 500
