@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro con Verificación SMS | La Esquinita</title>
+    <style>
+        :root {
+            --primary: #ffb300;
+            --secondary: #2e7d32;
+            --accent: #ff5722;
+            --light: #fffdf7;
+            --dark: #1c1c1c;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.97);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo img {
+            max-width: 120px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: var(--secondary);
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .step.active {
+            background: var(--primary);
+            color: var(--dark);
+        }
+        
+        .step.completed {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 20px;
+            height: 2px;
+            background: #ddd;
+            transform: translateY(-50%);
+        }
+        
+        .step:last-child::after {
+            display: none;
+        }
+        
+        .step.completed::after {
+            background: var(--secondary);
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        input, select {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 1em;
+            background: #fffdf7;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 179, 0, 0.1);
+        }
+        
+        .phone-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .country-code {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+            min-width: 70px;
+        }
+        
+        .phone-input {
+            flex: 1;
+        }
+        
+        button {
+            background: var(--accent);
+            color: white;
+            font-size: 1.1em;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .verification-info {
+            background: linear-gradient(135deg, var(--primary), #ffc947);
+            color: var(--dark);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .verification-code-input {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            letter-spacing: 5px;
+            font-family: monospace;
+        }
+        
+        .resend-code {
+            background: transparent;
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+            padding: 10px 20px;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+        
+        .resend-code:hover {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .back-link {
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .alert.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+        
+        .alert.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .phone-input-group {
+                flex-direction: column;
+            }
+            
+            .country-code {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita" style="max-width: 120px; height: auto; margin-bottom: 10px;">
+        </div>
+        
+        {% if step == 1 %}
+        <h2>Registro en La Esquinita</h2>
+        
+        <div class="step-indicator">
+            <div class="step active">1</div>
+            <div class="step">2</div>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ 'error' if category == 'error' else 'success' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST">
+            <input type="hidden" name="step" value="1">
+            
+            <input type="text" name="nombre" placeholder="Nombre completo" required>
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            
+            <div class="phone-input-group">
+                <div class="country-code">+52</div>
+                <input type="tel" name="telefono" class="phone-input" placeholder="5512345678" 
+                       pattern="[0-9]{10}" maxlength="10" required>
+            </div>
+            
+            <input type="hidden" name="tipo_usuario" value="Cliente">
+            
+            <button type="submit">Enviar Código SMS</button>
+        </form>
+        
+        {% elif step == 2 %}
+        <h2>Verificación SMS</h2>
+        
+        <div class="step-indicator">
+            <div class="step completed">✓</div>
+            <div class="step active">2</div>
+        </div>
+        
+        <div class="verification-info">
+            <h3>📱 Código Enviado</h3>
+            <p>Hemos enviado un código de verificación al número:</p>
+            <strong>{{ phone }}</strong>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                El código expira en 10 minutos
+            </p>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ 'error' if category == 'error' else 'success' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST">
+            <input type="hidden" name="step" value="2">
+            <input type="hidden" name="phone_number" value="{{ phone }}">
+            
+            <input type="text" name="verification_code" class="verification-code-input" 
+                   placeholder="000000" maxlength="6" pattern="[0-9]{6}" required 
+                   autocomplete="one-time-code">
+            
+            <button type="submit">Verificar y Completar Registro</button>
+        </form>
+        
+        <button type="button" class="resend-code" onclick="resendCode()">
+            🔄 Reenviar Código
+        </button>
+        
+        {% elif step == 3 %}
+        <h2>¡Registro Exitoso!</h2>
+        
+        <div class="step-indicator">
+            <div class="step completed">✓</div>
+            <div class="step completed">✓</div>
+        </div>
+        <div class="verification-info" style="background: linear-gradient(135deg, #4CAF50, #66BB6A); color: white;">
+            <h3>🎉 ¡Felicidades {{ nombre }}!</h3>
+            <p>Tu cuenta ha sido creada exitosamente</p>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                📧 <strong>Email:</strong> {{ email }}<br>
+                ✅ Datos personales registrados<br>
+                ✅ Teléfono verificado por SMS<br>
+                ✅ Cuenta activada y lista para usar
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <h3 style="color: var(--secondary); margin-bottom: 15px;">
+                ¡Ya puedes iniciar sesión!
+            </h3>
+            <p style="color: #666; margin-bottom: 25px;">
+                Serás redirigido al login en <span id="countdown">5</span> segundos...
+            </p>
+            <a href="{{ url_for('login') }}" style="display: inline-block; background: var(--secondary); color: white; text-decoration: none; padding: 15px 30px; border-radius: 12px; font-weight: bold; transition: all 0.3s;">
+                🚀 Ir al Login Ahora  
+            </a>
+        </div>
+        
+        {% endif %}
+        
+        <div class="back-link">
+            <a href="{{ url_for('login') }}">← Volver al Login</a>
+        </div>
+    </div>
+    
+    <script>
+        {% if step == 2 %}
+        document.querySelector('.verification-code-input').focus();
+        {% elif step == 3 %}
+        
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+        const timer = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            if (countdown <= 0) {
+                clearInterval(timer);
+                window.location.href = "{{ url_for('login') }}";
+            }
+        }, 1000);
+        {% endif %}
+        
+        function resendCode() {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = '⏳ Enviando...';
+            
+            fetch('/send_sms_verification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'phone_number={{ phone }}'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    button.textContent = '✅ Código Reenviado';
+                    setTimeout(() => {
+                        button.disabled = false;
+                        button.textContent = '🔄 Reenviar Código';
+                    }, 30000);
+                } else {
+                    button.textContent = '❌ Error';
+                    button.disabled = false;
+                }
+            })
+            .catch(error => {
+                button.textContent = '❌ Error';
+                button.disabled = false;
+            });
+        }
+        
+        const phoneInput = document.querySelector('input[name="telefono"]');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                if (this.value.length > 10) {
+                    this.value = this.value.slice(0, 10);
+                }
+            });
+        }
+        
+        const codeInput = document.querySelector('.verification-code-input');
+        if (codeInput) {
+            codeInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                if (this.value.length === 6) {
+                    setTimeout(() => {
+                        this.closest('form').submit();
+                    }, 500);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

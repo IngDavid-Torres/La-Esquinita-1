@@ -317,10 +317,289 @@
       .hero-content h1 { font-size: 2em; }
       .hero-content p { font-size: 1em; }
     }
+
+    /* CHATBOT STYLES */
+    .chatbot-widget {
+      position: fixed;
+      bottom: 100px;
+      right: 24px;
+      z-index: 2999;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .chatbot-toggle {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse-chatbot 2s infinite;
+    }
+
+    .chatbot-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 25px rgba(255, 87, 34, 0.6);
+    }
+
+    .chatbot-container {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 350px;
+      height: 500px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      border: 2px solid var(--primary);
+    }
+
+    .chatbot-header {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chatbot-avatar {
+      width: 35px;
+      height: 35px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .chatbot-info h4 {
+      font-size: 1rem;
+      margin-bottom: 2px;
+    }
+
+    .chatbot-status {
+      font-size: 0.8rem;
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .chatbot-status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: #4caf50;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .chatbot-close {
+      margin-left: auto;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chatbot-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: linear-gradient(135deg, #fffdf7 0%, #fff8e1 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chatbot-message {
+      max-width: 80%;
+      padding: 10px 15px;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      animation: slideInMessage 0.3s ease;
+    }
+
+    .chatbot-message.bot {
+      background: linear-gradient(135deg, var(--primary) 0%, #ffc947 100%);
+      color: var(--dark);
+      align-self: flex-start;
+      border-bottom-left-radius: 5px;
+    }
+
+    .chatbot-message.user {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 5px;
+    }
+
+    .chatbot-quick-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .chatbot-quick-btn {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chatbot-quick-btn:hover {
+      background: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .chatbot-input-container {
+      padding: 15px;
+      background: white;
+      border-top: 1px solid #eee;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chatbot-input {
+      flex: 1;
+      padding: 10px 15px;
+      border: 2px solid var(--primary);
+      border-radius: 20px;
+      outline: none;
+      font-size: 0.9rem;
+      background: #fffdf7;
+    }
+
+    .chatbot-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.1);
+    }
+
+    .chatbot-send {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+
+    .chatbot-send:hover {
+      transform: scale(1.1);
+    }
+
+    .chatbot-typing {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 15px;
+      background: rgba(255, 179, 0, 0.1);
+      border-radius: 15px;
+      margin: 5px 0;
+      align-self: flex-start;
+      max-width: 80%;
+    }
+
+    .chatbot-typing-dots {
+      display: flex;
+      gap: 3px;
+    }
+
+    .chatbot-typing-dots span {
+      width: 6px;
+      height: 6px;
+      background: var(--secondary);
+      border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out;
+    }
+
+    .chatbot-typing-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .chatbot-typing-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes pulse-chatbot {
+      0%, 100% { box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4); }
+      50% { box-shadow: 0 4px 30px rgba(255, 87, 34, 0.8); }
+    }
+
+    @keyframes slideInMessage {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      30% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .chatbot-widget {
+        bottom: 80px;
+        right: 10px;
+      }
+      
+      .chatbot-container {
+        width: 300px;
+        height: 400px;
+        right: -10px;
+      }
+      
+      .chatbot-toggle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+      }
+    }
   </style>
 </head>
-<body>
-  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad" style="z-index:3001;">
+<body data-user-type="{{ 'admin' if session.get('tipo_usuario') == 'Administrador' else 'cliente' if session.get('usuario_nombre') else 'guest' }}" data-auto-logout="true" data-force-logout-close="false">
+  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad" style="z-index:3001;bottom:180px;">
     <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
     <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
       <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
@@ -341,8 +620,8 @@
   </div>
 
   <div id="contenido-app">
+    <script src="{{ url_for('static', filename='js/logout_security.js') }}"></script>
     <script>
-      // --- ACCESIBILIDAD GLOBAL ---
       const root = document.documentElement;
       const body = document.body;
       let fontSize = 1;
@@ -354,7 +633,6 @@
       let lectorActivo = false;
       let tipografia = 'default';
 
-      // El filtro de contraste y grises se aplica a este contenedor, no al body
       const contenidoApp = document.getElementById('contenido-app');
 
       function setFontSize(mult) {
@@ -436,7 +714,6 @@
         }
       };
 
-      // Lector de pantalla básico
       document.getElementById('lectorPantallaBtn').onclick = function() {
         lectorActivo = !lectorActivo;
         let contenido = document.getElementById('contenido-principal') || contenidoApp;
@@ -478,9 +755,12 @@
           <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">
           Mi Dashboard
         </a>
-        <a href="{{ url_for('logout') }}">
+        <a href="#" data-logout-type="{{ 'admin' if session.get('tipo_usuario') == 'Administrador' else 'cliente' }}" onclick="event.preventDefault(); destructiveLogout('{{ 'admin' if session.get('tipo_usuario') == 'Administrador' else 'cliente' }}');">
           <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">
-          Cerrar Sesión
+          🔐 Cerrar Sesión Segura
+        </a>
+        <a href="#" onclick="event.preventDefault(); destructiveLogout('force');" style="font-size: 0.8em; color: #ff5722; margin-top: 5px;">
+          💥 Destrucción Total
         </a>
       {% else %}
         <a href="{{ url_for('login') }}">
@@ -542,6 +822,56 @@
   </footer>
   </div>
 
+ 
+  <div class="chatbot-widget">
+    <button class="chatbot-toggle" id="chatbotToggle" title="Chat de soporte">
+      💬
+    </button>
+    
+    <div class="chatbot-container" id="chatbotContainer">
+      <div class="chatbot-header">
+        <div class="chatbot-avatar">
+          🌽
+        </div>
+        <div class="chatbot-info">
+          <h4>Asistente La Esquinita</h4>
+          <div class="chatbot-status">En línea</div>
+        </div>
+        <button class="chatbot-close" id="chatbotClose">
+          ✕
+        </button>
+      </div>
+      
+      <div class="chatbot-messages" id="chatbotMessages">
+        <div class="chatbot-message bot">
+          ¡Hola! 🌽 Soy el asistente virtual de La Esquinita. ¿En qué puedo ayudarte hoy?
+          <div class="chatbot-quick-options">
+            <button class="chatbot-quick-btn" data-msg="¿Cuáles son sus horarios?">Horarios</button>
+            <button class="chatbot-quick-btn" data-msg="¿Dónde están ubicados?">Ubicación</button>
+            <button class="chatbot-quick-btn" data-msg="¿Cuáles son sus productos?">Productos</button>
+            <button class="chatbot-quick-btn" data-msg="¿Cómo hago un pedido?">Pedidos</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="chatbot-typing" id="chatbotTyping">
+        <div class="chatbot-typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span>Escribiendo...</span>
+      </div>
+      
+      <div class="chatbot-input-container">
+        <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Escribe tu mensaje..." maxlength="200">
+        <button class="chatbot-send" id="chatbotSend">
+          ➤
+        </button>
+      </div>
+    </div>
+  </div>
+
   {% if request.args.get('cerrada') %}
   <div id="alerta-sesion-cerrada" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);display:flex;justify-content:center;align-items:center;">
     <div style="background:var(--primary);color:var(--secondary);border:2px solid var(--secondary);border-radius:14px;box-shadow:0 4px 24px rgba(44,44,44,0.18);padding:36px 32px 28px 32px;min-width:260px;max-width:90vw;text-align:center;font-size:1.18em;font-weight:bold;">
@@ -550,3 +880,123 @@
     </div>
   </div>
   {% endif %}
+
+  <script>
+   
+    class LaEsquinitaChatbot {
+      constructor() {
+        this.toggle = document.getElementById('chatbotToggle');
+        this.container = document.getElementById('chatbotContainer');
+        this.close = document.getElementById('chatbotClose');
+        this.messages = document.getElementById('chatbotMessages');
+        this.input = document.getElementById('chatbotInput');
+        this.send = document.getElementById('chatbotSend');
+        this.typing = document.getElementById('chatbotTyping');
+        
+        this.isOpen = false;
+        this.responses = {
+          'horarios': '🕐 Nuestros horarios son de lunes a sábado de 10:00 AM a 8:00 PM. Los domingos de 11:00 AM a 6:00 PM.',
+          'ubicación': '📍 Estamos ubicados en Av Telecomunicaciones, Chinam Pac de Juárez, Iztapalapa, CDMX. ¡Te esperamos!',
+          'productos': '🌽 Ofrecemos elotes, esquites, patitas de cerdo y muchos antojitos mexicanos más. ¡Todos con el auténtico sabor casero!',
+          'pedidos': '🛒 Puedes hacer tu pedido directamente desde nuestra tienda en línea. Solo navega por nuestros productos y agrégalos al carrito.',
+          'precios': '💰 Nuestros precios son muy accesibles. Los elotes desde $15 y los esquites desde $20. ¡Calidad al mejor precio!',
+          'entrega': '🚚 Hacemos entregas a domicilio en toda la zona. El tiempo estimado es de 30-45 minutos.',
+          'default': '🤔 No estoy seguro de cómo ayudarte con eso, pero puedes contactarnos directamente o explorar nuestra tienda para más información.'
+        };
+        
+        this.initializeEvents();
+      }
+      
+      initializeEvents() {
+        this.toggle.addEventListener('click', () => this.toggleChat());
+        this.close.addEventListener('click', () => this.closeChat());
+        this.send.addEventListener('click', () => this.sendMessage());
+        this.input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') this.sendMessage();
+        });
+        
+        document.addEventListener('click', (e) => {
+          if (e.target.classList.contains('chatbot-quick-btn')) {
+            const message = e.target.dataset.msg;
+            this.addMessage(message, 'user');
+            this.processMessage(message);
+          }
+        });
+      }
+      
+      toggleChat() {
+        this.isOpen = !this.isOpen;
+        this.container.style.display = this.isOpen ? 'flex' : 'none';
+      }
+      
+      closeChat() {
+        this.isOpen = false;
+        this.container.style.display = 'none';
+      }
+      
+      async sendMessage() {
+        const message = this.input.value.trim();
+        if (!message) return;
+        
+        this.addMessage(message, 'user');
+        this.input.value = '';
+        
+        this.showTyping();
+        await this.delay(1000 + Math.random() * 1000);
+        this.hideTyping();
+        
+        this.processMessage(message);
+      }
+      
+      processMessage(message) {
+        const lowerMessage = message.toLowerCase();
+        let response = this.responses.default;
+        
+        if (lowerMessage.includes('horario') || lowerMessage.includes('hora')) {
+          response = this.responses.horarios;
+        } else if (lowerMessage.includes('ubicación') || lowerMessage.includes('dirección') || lowerMessage.includes('donde')) {
+          response = this.responses.ubicación;
+        } else if (lowerMessage.includes('producto') || lowerMessage.includes('menu') || lowerMessage.includes('vende')) {
+          response = this.responses.productos;
+        } else if (lowerMessage.includes('pedido') || lowerMessage.includes('comprar') || lowerMessage.includes('orden')) {
+          response = this.responses.pedidos;
+        } else if (lowerMessage.includes('precio') || lowerMessage.includes('costo') || lowerMessage.includes('cuanto')) {
+          response = this.responses.precios;
+        } else if (lowerMessage.includes('entrega') || lowerMessage.includes('domicilio') || lowerMessage.includes('envío')) {
+          response = this.responses.entrega;
+        } else if (lowerMessage.includes('hola') || lowerMessage.includes('buenas')) {
+          response = '¡Hola! 👋 Bienvenido a La Esquinita. ¿En qué puedo ayudarte hoy?';
+        } else if (lowerMessage.includes('gracias')) {
+          response = '¡De nada! 😊 ¡Gracias por elegir La Esquinita! ¿Hay algo más en lo que pueda ayudarte?';
+        }
+        
+        this.addMessage(response, 'bot');
+      }
+      
+      addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chatbot-message ${sender}`;
+        messageDiv.textContent = text;
+        
+        this.messages.appendChild(messageDiv);
+        this.messages.scrollTop = this.messages.scrollHeight;
+      }
+      
+      showTyping() {
+        this.typing.style.display = 'flex';
+        this.messages.scrollTop = this.messages.scrollHeight;
+      }
+      
+      hideTyping() {
+        this.typing.style.display = 'none';
+      }
+      
+      delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      new LaEsquinitaChatbot();
+    });
+  </script>

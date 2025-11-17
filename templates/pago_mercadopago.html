@@ -217,6 +217,7 @@
     <div class="header-pago">
       <h2>💳 Finalizar Compra</h2>
       <div class="mercadopago-logo">🔒 Pago Seguro con MercadoPago</div>
+      <div style="background: #ff9800; color: white; padding: 8px 15px; border-radius: 20px; font-size: 0.9em; margin: 10px 0;">🧪 MODO PRUEBA ACTIVO</div>
       <p>Completa tus datos para proceder al pago seguro</p>
     </div>
 
@@ -234,15 +235,63 @@
       </div>
     </div>
 
-    <form class="form-pago" action="{{ url_for('pago_mercadopago') }}" method="post">
-      <input type="text" name="nombre" placeholder="📝 Nombre completo" required>
-      <input type="email" name="correo" placeholder="📧 Correo electrónico" required>
-      <input type="text" name="direccion" placeholder="📍 Dirección de envío completa" required>
+    <form class="form-pago" action="{{ url_for('pago_mercadopago') }}" method="post" onsubmit="return validateAndSubmit(event)">
+      <input type="text" name="nombre" placeholder="📝 Nombre completo" required minlength="3" id="nombre">
+      <input type="email" name="correo" placeholder="📧 Correo electrónico" required id="correo">
+      <input type="text" name="direccion" placeholder="📍 Dirección de envío completa" required minlength="10" id="direccion">
       
-      <button type="submit" class="boton-pago">
+      <button type="submit" class="boton-pago" id="submitBtn">
         🚀 Continuar con MercadoPago - ${{ "%.2f"|format(total) }}
       </button>
     </form>
+
+    <script>
+      function validateAndSubmit(event) {
+        console.log('Formulario enviado - iniciando validación');
+        
+        const nombre = document.getElementById('nombre').value.trim();
+        const correo = document.getElementById('correo').value.trim();
+        const direccion = document.getElementById('direccion').value.trim();
+        
+        console.log('Datos del formulario:', { nombre, correo, direccion });
+        
+    
+        if (nombre.length < 3) {
+          alert('El nombre debe tener al menos 3 caracteres');
+          event.preventDefault();
+          return false;
+        }
+        
+        if (!correo.includes('@') || !correo.includes('.')) {
+          alert('Por favor ingresa un correo válido');
+          event.preventDefault();
+          return false;
+        }
+        
+        if (direccion.length < 10) {
+          alert('La dirección debe ser más específica (mínimo 10 caracteres)');
+          event.preventDefault();
+          return false;
+        }
+        
+        
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Procesando...';
+        
+        console.log('Validación exitosa - enviando formulario');
+        return true;
+      }
+      
+      
+      window.addEventListener('beforeunload', function() {
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '🚀 Continuar con MercadoPago - ${{ "%.2f"|format(total) }}';
+        }
+      });
+    </script>
 
     <div class="seguridad-info">
       🔐 <strong>Pago 100% Seguro</strong><br>

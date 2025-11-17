@@ -158,7 +158,10 @@
     
     <div class="mensaje-exito">
       🎉 <strong>¡Felicidades!</strong> Tu pago se ha procesado correctamente.<br>
-      Hemos recibido tu pedido y pronto comenzaremos a prepararlo.
+      Hemos recibido tu pedido y pronto comenzaremos a prepararlo.<br>
+      {% if 'TEST' in pedido.estado %}
+      <span style="color: #ff9800; font-weight: bold;">🧪 Procesado en modo de prueba</span>
+      {% endif %}
     </div>
 
     <div class="info-pedido">
@@ -174,6 +177,14 @@
       <div class="info-item">
         <span>Estado:</span>
         <span>{{ pedido.estado }}</span>
+      </div>
+      <div class="info-item">
+        <span>Método de pago:</span>
+        <span>{{ pedido.metodo_pago }}</span>
+      </div>
+      <div class="info-item">
+        <span>ID de transacción:</span>
+        <span>{{ pedido.payment_id }}</span>
       </div>
       <div class="info-item">
         <span>Total pagado:</span>

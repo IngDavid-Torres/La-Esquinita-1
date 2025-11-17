@@ -549,6 +549,19 @@
       .dashboard-header h1 { font-size: 1.1em; }
     }
   </style>
+  <script>
+    (function() {
+      'use strict';
+      
+      if (sessionStorage.getItem('logout_executed') === 'true') {
+        sessionStorage.removeItem('logout_executed');
+        if (sessionStorage) sessionStorage.clear();
+        if (localStorage) localStorage.clear();
+        window.location.replace('{{ url_for("login") }}');
+        return;
+      }
+    })();
+  </script>
 </head>
 <body>
   <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
@@ -568,6 +581,26 @@
     <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
   </div>
   <script>
+    (function() {
+        'use strict';
+        
+        sessionStorage.setItem('user_authenticated', 'true');
+        
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, null, window.location.href);
+            
+            window.addEventListener('popstate', function(event) {
+                if (!sessionStorage.getItem('user_authenticated')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    window.location.replace('{{ url_for("login") }}');
+                } else {
+                    window.history.pushState(null, null, window.location.href);
+                }
+            });
+        }
+        
+    })();
     
     const root = document.documentElement;
     const body = document.body;
@@ -623,7 +656,7 @@
       const sectionBoxes = document.querySelectorAll('.section-box');
       if(mainContent) mainContent.style.filter = filtro;
       sectionBoxes.forEach(e => e.style.filter = filtro);
-      // El body, el footer y la barra de accesibilidad quedan sin filtro
+      
       body.style.filter = '';
     }
 
@@ -665,7 +698,7 @@
       }
     };
 
-    // Lector de pantalla básico
+    
     document.getElementById('lectorPantallaBtn').onclick = function() {
       lectorActivo = !lectorActivo;
       let contenido = document.querySelector('.main-content') || document.body;
@@ -782,6 +815,9 @@
       document.body.style.overflow = '';
     }
     function confirmarLogoutAccion() {
+      sessionStorage.removeItem('user_authenticated');
+      sessionStorage.setItem('logout_executed', 'true');
+      
       window.location.href = "{{ url_for('logout') }}";
     }
     function confirmarEliminacion() {

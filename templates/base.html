@@ -97,7 +97,7 @@
 
     <script src="{{ url_for('static', filename='js/accesibilidad.js') }}"></script>
     <script>
-        // Toggle del panel de accesibilidad
+        
         const toggle = document.getElementById('accToggle');
         const panel = document.getElementById('accPanel');
         const overlay = document.getElementById('accOverlay');
@@ -114,7 +114,7 @@
             overlay.classList.remove('show');
         });
 
-        // Cerrar con ESC
+      
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && panel.classList.contains('show')) {
                 toggle.classList.remove('active');
@@ -123,7 +123,7 @@
             }
         });
 
-        // Actualizar texto del lector
+       
         const lectorBtn = document.getElementById('lectorPantallaBtn');
         const lectorTexto = document.getElementById('lectorTexto');
         
@@ -139,7 +139,7 @@
             });
         }
 
-        // Botón de reset
+        
         const resetBtn = document.getElementById('resetAccesibilidadBtn');
         if(resetBtn) {
             resetBtn.addEventListener('click', () => {
@@ -150,7 +150,7 @@
             });
         }
 
-        // Aplicar modo nocturno al panel cuando esté activo
+        
         const observer = new MutationObserver(() => {
             if(document.body.classList.contains('night-mode')) {
                 panel.classList.add('night-mode');

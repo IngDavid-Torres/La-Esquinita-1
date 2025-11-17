@@ -512,6 +512,13 @@
             <input type="hidden" name="tipo_usuario" value="Cliente">
             <button type="submit">Registrarse</button>
         </form>
+        <div class="sms-option" style="text-align: center; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #28a745;">
+            <h4 style="color: #28a745; margin: 0 0 10px 0;">🔒 Registro Seguro con SMS</h4>
+            <p style="margin: 0 0 15px 0; color: #666;">Protege tu cuenta con verificación por SMS</p>
+            <a href="{{ url_for('sms_bp.registro_sms') }}" class="btn-sms" style="display: inline-block; background: #28a745; color: white; text-decoration: none; padding: 12px 24px; border-radius: 25px; font-weight: bold; transition: all 0.3s;">
+                📱 Registrarse con SMS
+            </a>
+        </div>
         <div class="login-link">
             ¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí</a>
         </div>

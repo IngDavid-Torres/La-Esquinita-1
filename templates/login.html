@@ -235,6 +235,77 @@
             color: var(--accent);
             text-decoration: underline;
         }
+        
+        .captcha-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 179, 0, 0.08);
+            border-radius: 12px;
+            border: 1.5px solid var(--primary);
+        }
+        
+        .captcha-display {
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.4em;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            border: 2px solid #ccc;
+            min-width: 120px;
+            text-align: center;
+            user-select: none;
+        }
+        
+        .captcha-input {
+            flex: 1;
+            max-width: 120px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        .captcha-refresh {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .captcha-refresh:hover {
+            background: var(--accent);
+            transform: rotate(180deg);
+        }
+        
+        .captcha-error {
+            color: var(--accent);
+            font-size: 0.9em;
+            margin-top: 5px;
+            text-align: center;
+            display: none;
+        }
+        
+        .night-mode .captcha-display {
+            background: linear-gradient(135deg, #333, #444);
+            color: #fff;
+            border-color: #555;
+        }
         footer {
             background: var(--dark);
             color: #fff;
@@ -247,7 +318,6 @@
             box-sizing: border-box;
         }
         .accesibilidad-bar {
-            /* ...existing styles... */
             position: fixed !important;
             left: 0; right: 0;
             bottom: 0;
@@ -285,7 +355,6 @@
         </div>
         <div id="contenido-principal">
         <script>
-            // --- ACCESIBILIDAD GLOBAL ---
             const root = document.documentElement;
             const body = document.body;
             let fontSize = 1;
@@ -297,7 +366,6 @@
             let lectorActivo = false;
             let tipografia = 'default';
 
-            // El filtro de contraste y grises se aplica a este contenedor, no al body
             const contenidoApp = document.getElementById('contenido-principal');
 
             function setFontSize(mult) {
@@ -413,8 +481,23 @@
         <form id="loginForm" action="{{ url_for('login') }}" method="POST">
             <input type="email" name="email" placeholder="Correo electrónico" required>
             <input type="password" name="password" placeholder="Contraseña" required>
+            
+            <div class="captcha-container">
+                <div class="captcha-display" id="captchaDisplay">🔄 Cargando...</div>
+                <input type="text" class="captcha-input" id="captchaInput" name="captcha" placeholder="Código" maxlength="5" required>
+                <button type="button" class="captcha-refresh" id="refreshCaptcha" title="Generar nuevo código">🔄</button>
+            </div>
+            <div class="captcha-error" id="captchaError">El código CAPTCHA es incorrecto</div>
+            
             <button type="submit">Ingresar</button>
         </form>
+        <div class="sms-option" style="text-align: center; margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
+            <h4 style="color: #2196f3; margin: 0 0 10px 0;">🔐 Login Seguro con SMS</h4>
+            <p style="margin: 0 0 15px 0; color: #666;">Accede con máxima seguridad</p>
+            <a href="{{ url_for('sms_bp.login_sms') }}" class="btn-sms" style="display: inline-block; background: #2196f3; color: white; text-decoration: none; padding: 12px 24px; border-radius: 25px; font-weight: bold; transition: all 0.3s;">
+                📱 Ingresar con SMS
+            </a>
+        </div>
         <div class="registro">
             <p>¿No tienes cuenta?  
                 <a href="{{ url_for('registro') }}?tipo=Cliente">Regístrate Aqui</a>
@@ -431,7 +514,6 @@
         </div>
     </footer>
 
-    
 <div id="alerta-cargando" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);justify-content:center;align-items:center;">
   <div style="background:var(--primary);color:var(--secondary);border:2px solid var(--secondary);border-radius:18px;box-shadow:0 4px 24px rgba(44,44,44,0.18);padding:38px 32px 28px 32px;min-width:260px;max-width:90vw;text-align:center;font-size:1.18em;font-weight:bold;display:flex;flex-direction:column;align-items:center;">
     <span style="font-size:1.3em;">Entrando a "La Esquinita"</span>
@@ -446,12 +528,47 @@
 </div>
 
 <script>
+let captchaCode = '';
+
+function generateCaptcha() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    captchaCode = '';
+    for (let i = 0; i < 5; i++) {
+        captchaCode += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    document.getElementById('captchaDisplay').textContent = captchaCode;
+    document.getElementById('captchaInput').value = '';
+    document.getElementById('captchaError').style.display = 'none';
+}
+
+function validateCaptcha() {
+    const userInput = document.getElementById('captchaInput').value.toUpperCase();
+    return userInput === captchaCode;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    generateCaptcha();
+    
+    document.getElementById('refreshCaptcha').addEventListener('click', generateCaptcha);
+    
+    document.getElementById('captchaInput').addEventListener('input', function() {
+        document.getElementById('captchaError').style.display = 'none';
+    });
+});
+
 document.getElementById('loginForm').addEventListener('submit', function(e){
     e.preventDefault();
+    
+    if (!validateCaptcha()) {
+        document.getElementById('captchaError').style.display = 'block';
+        generateCaptcha();
+        return;
+    }
+    
     document.getElementById('alerta-cargando').style.display = 'flex';
     setTimeout(() => {
         e.target.submit();
-    }, 2000); 
+    }, 2000);
 });
 </script>
 </body>

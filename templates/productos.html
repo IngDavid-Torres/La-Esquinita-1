@@ -1,7 +1,68 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Esquinita - Productos</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    :root {
+      --primary: #ffb300;
+      --secondary: #1b5e20;
+      --accent: #d84315;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+      --focus-color: #005fcc;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Utilidades de accesibilidad */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Skip link para navegación */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 6px;
+      background: var(--secondary);
+      color: white;
+      padding: 8px;
+      text-decoration: none;
+      border-radius: 4px;
+      z-index: 10000;
+    }
+
+    .skip-link:focus {
+      top: 6px;
+    }
+
+    /* Barra de accesibilidad */
     .accesibilidad-bar {
       position: fixed;
       left: 24px;
@@ -21,11 +82,15 @@
       min-height: 48px;
       transition: box-shadow 0.2s, opacity 0.2s;
     }
-    .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+
+    .accesibilidad-bar:hover, 
+    .accesibilidad-bar:focus-within {
       opacity: 1;
       box-shadow: 0 6px 24px rgba(0,0,0,0.22);
     }
-    .accesibilidad-bar button, .accesibilidad-bar select {
+
+    .accesibilidad-bar button, 
+    .accesibilidad-bar select {
       background: #fff;
       color: #222;
       border: none;
@@ -42,14 +107,13 @@
       justify-content: center;
       margin-bottom: 2px;
     }
+
     .accesibilidad-bar button.active {
       background: #ffb300;
       color: #222;
       transform: scale(1.08);
     }
-    .accesibilidad-bar label {
-      display: none;
-    }
+
     .accesibilidad-bar select {
       border-radius: 8px;
       width: 38px;
@@ -58,97 +122,81 @@
       padding: 0;
       margin-bottom: 2px;
     }
-    .accesibilidad-bar option {
-      font-size: 1em;
-    }
-    .accesibilidad-bar .icono {
-      font-size: 1.2em;
-    }
-    @media(max-width:600px){
-      .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
-      .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
-    }
-    body {
-      min-height: 100vh;
+
+    .accesibilidad-bar .contraste-slider-container {
+      width: 100%;
       display: flex;
       flex-direction: column;
-    }
-    footer {
-      background: var(--dark);
-      color: #fff;
-      text-align: center;
-      padding: 30px 20px 38px 20px;
-      margin-top: auto;
-      width: 100%;
-      position: relative;
-      z-index: 1;
-      box-sizing: border-box;
-    }
-  </style>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>La Esquinita - Productos</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
-    :root {
-      --primary: #ffb300;
-      --secondary: #2e7d32;
-      --accent: #ff5722;
-      --light: #fffdf7;
-      --dark: #1c1c1c;
+      align-items: center;
+      margin-bottom: 2px;
     }
 
-    * {
-      margin: 0;
+    .accesibilidad-bar input[type="range"]#contrasteRange {
+      width: 38px;
+      margin: 0 0 2px 0;
+      accent-color: #FFD700;
+      cursor: pointer;
+      border-radius: 8px;
+      background: #eee;
+      height: 4px;
       padding: 0;
-      box-sizing: border-box;
+      display: block;
     }
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--light);
-      color: var(--dark);
-      line-height: 1.6;
+    .accesibilidad-bar button:focus,
+    .accesibilidad-bar select:focus,
+    .accesibilidad-bar input:focus {
+      outline: 3px solid #007acc;
+      outline-offset: 2px;
     }
 
-    nav {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(10px);
-      padding: 50px 50px;
+    /* NAVBAR */
+    header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 30px 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
       z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
-
-    .nav-left, .nav-right {
+    .logo img {
+      height: 80px;
+      border-radius: 8px;
+    }
+    nav {
       display: flex;
-      gap: 40px;
+      gap: 70px;
     }
-
     nav a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       text-decoration: none;
       color: var(--dark);
       font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
       transition: color 0.3s;
     }
-
     nav a img {
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
     }
-
-    nav a:hover {
+    nav a:hover,
+    nav a:focus {
       color: var(--accent);
     }
 
+    a:focus {
+      outline: 3px solid #007acc;
+      outline-offset: 2px;
+      background-color: rgba(0, 122, 204, 0.1);
+    }
+
+    /* Hero section */
     .hero {
       height: 60vh;
       background: url('{{ url_for("static", filename="images/elote-y-esquites.jpg") }}') no-repeat center/cover;
@@ -158,6 +206,7 @@
       text-align: center;
       color: #fff;
       position: relative;
+      margin-top: 120px; /* Espacio para el header fijo */
     }
 
     .hero::after {
@@ -182,6 +231,7 @@
       font-size: 1.2em;
     }
 
+    /* Contenido principal */
     .container {
       max-width: 1200px;
       margin: 60px auto;
@@ -200,6 +250,38 @@
       color: var(--accent);
     }
 
+    .filtro-categorias {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .filtro-categorias label {
+      font-weight: bold;
+      color: var(--secondary);
+      font-size: 1.1em;
+    }
+
+    #filtro-categoria {
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: 2px solid var(--primary);
+      background: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1em;
+      color: var(--dark);
+      transition: border-color 0.3s;
+      outline: none;
+      box-shadow: 0 2px 8px rgba(255,179,0,0.08);
+    }
+
+    #filtro-categoria:focus {
+      border-color: var(--accent);
+    }
+
+    /* Productos */
     .productos-lista {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -241,11 +323,16 @@
       transition: background 0.3s;
     }
 
-    .boton-carrito:hover {
+    .boton-carrito:hover,
+    .boton-carrito:focus {
       background: var(--accent);
       color: #fff;
+      outline: 3px solid var(--focus-color);
+      outline-offset: 2px;
+      transform: translateY(-1px);
     }
 
+    /* Alertas */
     .alert-container {
       margin: 20px auto;
       text-align: center;
@@ -259,11 +346,17 @@
       display: inline-block;
     }
 
+    /* Footer */
     footer {
       background: var(--dark);
       color: #fff;
       text-align: center;
-      padding: 30px 20px;
+      padding: 30px 20px 38px 20px;
+      margin-top: auto;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      box-sizing: border-box;
     }
 
     footer p {
@@ -283,39 +376,16 @@
       transition: color 0.3s;
     }
 
-    footer .social a:hover {
+    footer .social a:hover,
+    footer .social a:focus {
       color: var(--primary);
+      background-color: rgba(255, 179, 0, 0.2);
+      border-radius: 50%;
+      padding: 4px;
+      outline: 2px solid var(--primary);
     }
 
-   
-    .filtro-categorias {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 30px;
-    }
-    .filtro-categorias label {
-      font-weight: bold;
-      color: var(--secondary);
-      font-size: 1.1em;
-    }
-    #filtro-categoria {
-      padding: 8px 18px;
-      border-radius: 20px;
-      border: 2px solid var(--primary);
-      background: #fff;
-      font-family: 'Poppins', sans-serif;
-      font-size: 1em;
-      color: var(--dark);
-      transition: border-color 0.3s;
-      outline: none;
-      box-shadow: 0 2px 8px rgba(255,179,0,0.08);
-    }
-    #filtro-categoria:focus {
-      border-color: var(--accent);
-    }
-
+    /* Responsive */
     @media(max-width:768px){
       .nav-left, .nav-right {
         gap: 20px;
@@ -333,19 +403,52 @@
         font-size: 1.5em;
       }
     }
+
+    @media(max-width:600px){
+      .accesibilidad-bar {
+        left: 6px; 
+        bottom: 6px; 
+        padding: 7px 4px 4px 4px; 
+        min-width: 36px; 
+        min-height: 36px;
+      }
+      .accesibilidad-bar button, 
+      .accesibilidad-bar select {
+        width: 30px; 
+        height: 30px; 
+        font-size: 1em;
+      }
+      .accesibilidad-bar input[type="range"]#contrasteRange {
+        width: 30px;
+      }
+    }
   </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+  
   <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
-    <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
+    <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno" aria-pressed="false" tabindex="0">
+      <span>🌙</span>
+    </button>
     <div class="contraste-slider-container">
-      <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
-      <input id="contrasteRange" type="range" min="1" max="3" step="0.1" value="1" style="width:38px;margin:0 0 2px 0;" title="Nivel de contraste" aria-label="Nivel de contraste">
+      <button id="contrasteBtn" title="Contraste" aria-label="Contraste" aria-pressed="false" tabindex="0">
+        <span>🔳</span>
+      </button>
+      <input id="contrasteRange" type="range" min="1" max="3" step="0.1" value="1" title="Nivel de contraste" aria-label="Nivel de contraste" tabindex="0">
     </div>
-    <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
-    <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
-    <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
-    <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
+    <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises" aria-pressed="false" tabindex="0">
+      <span>🌑</span>
+    </button>
+    <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra" tabindex="0">
+      <span>A+</span>
+    </button>
+    <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra" tabindex="0">
+      <span>A-</span>
+    </button>
+    <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura" aria-pressed="false" tabindex="0">
+      <span>📖</span>
+    </button>
     <select id="tipografiaSelect" aria-label="Cambiar tipografía">
       <option value="default">Aa</option>
       <option value="arial">A</option>
@@ -353,31 +456,124 @@
       <option value="comic">C</option>
       <option value="open">O</option>
     </select>
-    <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
-    .accesibilidad-bar .contraste-slider-container {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 2px;
-    }
-    .accesibilidad-bar input[type="range"]#contrasteRange {
-      width: 38px;
-      margin: 0 0 2px 0;
-      accent-color: #FFD700;
-      cursor: pointer;
-      border-radius: 8px;
-      background: #eee;
-      height: 4px;
-      padding: 0;
-      display: block;
-    }
-    @media(max-width:600px){
-      .accesibilidad-bar input[type="range"]#contrasteRange {width: 30px;}
-    }
+    <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla" aria-pressed="false" tabindex="0">
+      <span>🔊</span>
+    </button>
   </div>
+
+  <header>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
+    </div>
+    <nav role="navigation" aria-label="Navegación principal">
+      <a href="{{ url_for('inicio') }}" aria-label="Ir a la página de inicio">
+        <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">
+        Inicio
+      </a>
+      <a href="{{ url_for('contacto') }}" aria-label="Ir a la página de contacto">
+        <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">
+        Contacto
+      </a>
+      <a href="{{ url_for('carrito') }}" aria-label="Ver carrito de compras{% if cantidad_carrito and cantidad_carrito > 0 %} ({{ cantidad_carrito }} productos){% endif %}">
+        <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
+        Carrito{% if cantidad_carrito and cantidad_carrito > 0 %} ({{ cantidad_carrito }}){% endif %}
+      </a>
+      {% if session.get('usuario_id') %}
+        <a href="{{ url_for('panel_cliente') }}" aria-label="Ir al panel de cliente">
+          <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">
+          Mi Dashboard
+        </a>
+        <a href="{{ url_for('logout') }}" onclick="return mostrarAlertaCerrarSesion(event)" aria-label="Cerrar sesión de usuario">
+          <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">
+          Cerrar Sesión
+        </a>
+      {% else %}
+        <a href="{{ url_for('login') }}" aria-label="Iniciar sesión en tu cuenta">
+          <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">
+          Ingresar
+        </a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <section class="hero" role="banner" aria-label="Sección principal de productos">
+    <div class="hero-content">
+      <h1>Te presentamos los productos que "La esquinita" te ofrece</h1>
+      <p>Llevate el mejor sabor del barrio hecho en México.</p>
+    </div>
+  </section>
+
+  <main id="main-content" class="container" role="main" aria-label="Catálogo de productos">
+    <h2>🌽Productos por Categoría🤤</h2>
+
+    <div class="filtro-categorias" role="group" aria-label="Filtros de productos">
+      <label for="filtro-categoria">Filtrar por categoría:</label>
+      <select id="filtro-categoria" onchange="filtrarCategoria()" aria-describedby="filtro-descripcion">
+        <option value="todas">Todas</option>
+        {% for categoria in categorias %}
+          <option value="cat{{ categoria.id }}">{{ categoria.nombre }}</option>
+        {% endfor %}
+      </select>
+      <span id="filtro-descripcion" class="sr-only">Selecciona una categoría para filtrar los productos mostrados</span>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alert-container">
+          {% for category, message in messages %}
+            {% if category == "success" %}
+              <div class="alert {{ category }}">{{ message }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% for categoria in categorias %}
+      <section aria-labelledby="categoria-{{ categoria.id }}">
+        <h3 id="categoria-{{ categoria.id }}" class="titulo-categoria" data-categoria="cat{{ categoria.id }}">{{ categoria.nombre }}</h3>
+        <div class="productos-lista" data-categoria="cat{{ categoria.id }}" role="list" aria-label="Productos de {{ categoria.nombre }}">
+          {% for producto in productos %}
+            {% if producto.categoria_id == categoria.id %}
+              <article class="producto-item" role="listitem" aria-labelledby="producto-{{ producto.id }}">
+                <img src="{{ url_for('static', filename='images/' + producto.imagen) }}" alt="Imagen de {{ producto.nombre }}">
+                <h4 id="producto-{{ producto.id }}" class="sr-only">{{ producto.nombre }}</h4>
+                <p><strong>{{ producto.nombre }}</strong></p>
+                <p>Descripción: {{ producto.descripcion }}</p>
+                <p>Precio: <span aria-label="{{ producto.precio }} pesos">${{ producto.precio }}</span></p>
+                
+                <form action="{{ url_for('agregar_carrito', producto_id=producto.id) }}" method="POST">
+                  <button class="boton-carrito" type="button" onclick="verificarSesion()" aria-label="Agregar {{ producto.nombre }} al carrito">🛒 Agregar al carrito</button>
+                </form>
+              </article>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </section>
+    {% endfor %}
+  </main>
+
+  <div id="alerta-cierre" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);justify-content:center;align-items:center;">
+    <div style="background:var(--primary);color:var(--secondary);border:2px solid var(--secondary);border-radius:14px;box-shadow:0 4px 24px rgba(44,44,44,0.18);padding:36px 32px 28px 32px;min-width:260px;max-width:90vw;text-align:center;font-size:1.18em;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:18px;">
+      <span id="alerta-cierre-mensaje">¿Seguro que quieres cerrar sesión?</span>
+      <div style="display:flex;gap:18px;margin-top:18px;">
+        <button type="button" id="btnConfirmarCerrar" style="padding:10px 28px;border:none;border-radius:16px;background:var(--secondary);color:#fff;font-size:1.08em;font-weight:bold;cursor:pointer;transition:background 0.2s;">Cerrar Sesión</button>
+        <button type="button" id="btnCancelarCerrar" style="padding:10px 28px;border:none;border-radius:16px;background:#ccc;color:#333;font-size:1.08em;font-weight:bold;cursor:pointer;transition:background 0.2s;">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer role="contentinfo" aria-label="Información del sitio">
+    <p>© 2025 La Esquinita</p>
+    <p>Hecho con 🌱 y ❤️ en México</p>
+    <div class="social" role="list" aria-label="Redes sociales">
+      <a href="#" role="listitem" aria-label="Seguir en Facebook"><i>📝</i></a>
+      <a href="#" role="listitem" aria-label="Seguir en Instagram"><i>📸</i></a>
+      <a href="#" role="listitem" aria-label="Seguir en Twitter"><i>🐦</i></a>
+    </div>
+  </footer>
+
   <script>
-    
     const root = document.documentElement;
     const body = document.body;
     let fontSize = 1;
@@ -400,57 +596,77 @@
       fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
       body.style.fontSize = fontSize + 'em';
     }
-    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
 
-    document.getElementById('modoNocturnoBtn').onclick = function() {
+    function addKeyboardSupport(elementId, callback) {
+      const element = document.getElementById(elementId);
+      element.onclick = callback;
+      element.onkeydown = function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          callback.call(this, e);
+        }
+      };
+    }
+    
+    addKeyboardSupport('aumentarLetraBtn', () => setFontSize(1.15));
+    addKeyboardSupport('disminuirLetraBtn', () => setFontSize(0.87));
+
+    addKeyboardSupport('modoNocturnoBtn', function() {
       modoNocturno = !modoNocturno;
       if(modoNocturno) {
         body.style.background = '#181818';
         body.style.color = '#fff';
         this.classList.add('active');
+        this.setAttribute('aria-pressed', 'true');
       } else {
         body.style.background = '';
         body.style.color = '';
         this.classList.remove('active');
+        this.setAttribute('aria-pressed', 'false');
       }
-    };
+    });
 
     const contrasteRange = document.getElementById('contrasteRange');
     const contrasteBtn = document.getElementById('contrasteBtn');
-    contrasteBtn.onclick = function() {
+    addKeyboardSupport('contrasteBtn', function() {
       contraste = !contraste;
       this.classList.toggle('active', contraste);
+      this.setAttribute('aria-pressed', contraste.toString());
       aplicarFiltros();
-    };
+    });
+    
     contrasteRange.oninput = function() {
       contrasteValor = parseFloat(this.value);
       if (!contraste) {
         contraste = true;
         contrasteBtn.classList.add('active');
+        contrasteBtn.setAttribute('aria-pressed', 'true');
       }
       aplicarFiltros();
     };
 
-    document.getElementById('grisesBtn').onclick = function() {
+    addKeyboardSupport('grisesBtn', function() {
       grises = !grises;
       this.classList.toggle('active', grises);
+      this.setAttribute('aria-pressed', grises.toString());
       aplicarFiltros();
-    };
+    });
 
-    document.getElementById('guiaLecturaBtn').onclick = function() {
+    addKeyboardSupport('guiaLecturaBtn', function() {
       guiaLectura = !guiaLectura;
       let contenido = document.querySelector('.container') || document.body;
       if(guiaLectura) {
         contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
         contenido.style.background = '#fffbe7';
         this.classList.add('active');
+        this.setAttribute('aria-pressed', 'true');
       } else {
         contenido.style.boxShadow = '';
         contenido.style.background = '';
         this.classList.remove('active');
+        this.setAttribute('aria-pressed', 'false');
       }
-    };
+    });
 
     document.getElementById('tipografiaSelect').onchange = function() {
       tipografia = this.value;
@@ -463,137 +679,29 @@
       }
     };
 
-    document.getElementById('lectorPantallaBtn').onclick = function() {
+    addKeyboardSupport('lectorPantallaBtn', function() {
       lectorActivo = !lectorActivo;
       let contenido = document.querySelector('.container') || document.body;
       if(lectorActivo) {
         this.classList.add('active');
+        this.setAttribute('aria-pressed', 'true');
         let texto = contenido.innerText;
         if('speechSynthesis' in window) {
           let utter = new SpeechSynthesisUtterance(texto);
           utter.lang = 'es-MX';
+          utter.rate = 0.8;
           window.speechSynthesis.speak(utter);
         } else {
           alert('Lector de pantalla no soportado en este navegador.');
         }
       } else {
         this.classList.remove('active');
+        this.setAttribute('aria-pressed', 'false');
         if('speechSynthesis' in window) window.speechSynthesis.cancel();
       }
-    };
-  </script>
+    });
 
-  
-  <nav>
-    <div class="nav-left">
-      <a href="{{ url_for('inicio') }}">
-        <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">Inicio
-      </a>
-      <a href="{{ url_for('contacto') }}">
-        <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
-      </a>
-    </div>
-    <div class="nav-right">
-      <a href="{{ url_for('carrito') }}">
-        <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">Carrito
-        {% if cantidad_carrito and cantidad_carrito > 0 %}
-          <span style="background:var(--primary);color:var(--dark);padding:2px 8px;border-radius:12px;font-weight:bold;margin-left:4px;">
-            {{ cantidad_carrito }}
-          </span>
-        {% endif %}
-      </a>
-      {% if session.get('usuario_id') %}
-        <a href="{{ url_for('logout') }}" onclick="return mostrarAlertaCerrarSesion(event)">
-          <img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">Cerrar Sesión
-        </a>
-      {% else %}
-        <a href="{{ url_for('panel_cliente') }}">
-          <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Iniciar Sesión">Iniciar Sesión
-        </a>
-      {% endif %}
-    </div>
-  </nav>
-
-  
-  <section class="hero">
-    <div class="hero-content">
-      <h1>Te presentamos los productos que "La esquinita" te ofrece</h1>
-      <p>Llevate el mejor sabor del barrio hecho en México.</p>
-    </div>
-  </section>
-
-  
-  <div class="container">
-    <h2>🌽Productos por Categoría🤤</h2>
-
-    <div class="filtro-categorias">
-      <label for="filtro-categoria">Filtrar por categoría:</label>
-      <select id="filtro-categoria" onchange="filtrarCategoria()">
-        <option value="todas">Todas</option>
-        {% for categoria in categorias %}
-          <option value="cat{{ categoria.id }}">{{ categoria.nombre }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="alert-container">
-          {% for category, message in messages %}
-            {% if category == "success" %}
-              <div class="alert {{ category }}">{{ message }}</div>
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-
-    {% for categoria in categorias %}
-      <h3 class="titulo-categoria" data-categoria="cat{{ categoria.id }}">{{ categoria.nombre }}</h3>
-      <div class="productos-lista" data-categoria="cat{{ categoria.id }}">
-        {% for producto in productos %}
-          {% if producto.categoria_id == categoria.id %}
-            <div class="producto-item">
-              <img src="{{ url_for('static', filename='images/' + producto.imagen) }}" alt="{{ producto.nombre }}">
-              <p><strong>{{ producto.nombre }}</strong></p>
-              <p>Descripción: {{ producto.descripcion }}</p>
-              <p>Precio: ${{ producto.precio }}</p>
-              
-              <form action="{{ url_for('agregar_carrito', producto_id=producto.id) }}" method="POST">
-                <button class="boton-carrito" type="button" onclick="verificarSesion()">🛒 Agregar al carrito</button>
-              </form>
-            </div>
-          {% endif %}
-        {% endfor %}
-      </div>
-    {% endfor %}
-  </div>
-
-  
-<div id="alerta-cierre" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);justify-content:center;align-items:center;">
-  <div style="background:var(--primary);color:var(--secondary);border:2px solid var(--secondary);border-radius:14px;box-shadow:0 4px 24px rgba(44,44,44,0.18);padding:36px 32px 28px 32px;min-width:260px;max-width:90vw;text-align:center;font-size:1.18em;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:18px;">
-    <span id="alerta-cierre-mensaje">¿Seguro que quieres cerrar sesión?</span>
-    <div style="display:flex;gap:18px;margin-top:18px;">
-      <button type="button" id="btnConfirmarCerrar" style="padding:10px 28px;border:none;border-radius:16px;background:var(--secondary);color:#fff;font-size:1.08em;font-weight:bold;cursor:pointer;transition:background 0.2s;">Cerrar Sesión</button>
-      <button type="button" id="btnCancelarCerrar" style="padding:10px 28px;border:none;border-radius:16px;background:#ccc;color:#333;font-size:1.08em;font-weight:bold;cursor:pointer;transition:background 0.2s;">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-  
-  <footer>
-    <p>© 2025 La Esquinita</p>
-    <p>Hecho con 🌱 y ❤️ en México</p>
-    <div class="social">
-      <a href="#"><i>📘</i></a>
-      <a href="#"><i>📸</i></a>
-      <a href="#"><i>🐦</i></a>
-    </div>
-  </footer>
-
-
-  <script>
-  var usuarioIniciado = {{ 'true' if session.get('usuario_id') else 'false' }};
+    var usuarioIniciado = {{ 'true' if session.get('usuario_id') else 'false' }};
 
     function verificarSesion() {
       if (!usuarioIniciado) {
@@ -632,14 +740,12 @@
       });
     }
 
-    
     function mostrarAlertaCerrarSesion(event) {
       event.preventDefault();
       document.getElementById('alerta-cierre').style.display = 'flex';
       document.getElementById('alerta-cierre-mensaje').textContent = "¿Seguro que quieres cerrar sesión?";
 
       document.getElementById('btnConfirmarCerrar').onclick = function() {
-        // Redirige al logout y pasa un parámetro para mostrar la alerta en inicio
         window.location.href = "{{ url_for('logout') }}?cerrada=1";
       };
       document.getElementById('btnCancelarCerrar').onclick = function() {
@@ -648,6 +754,5 @@
       return false;
     }
   </script>
-
 </body>
 </html>

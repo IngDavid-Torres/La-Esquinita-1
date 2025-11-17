@@ -634,7 +634,94 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        .modal-logout-bg {
+            position: fixed;
+            z-index: 9999;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            background: rgba(44,44,44,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-logout-box {
+            background: #fffbe7;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(44,44,44,0.25);
+            padding: 40px 35px 30px 35px;
+            min-width: 400px;
+            max-width: 90vw;
+            text-align: center;
+            animation: modalShow 0.3s ease-out;
+        }
+        .modal-logout-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        .modal-logout-msg {
+            color: #2e7d32;
+            font-size: 1.25em;
+            margin-bottom: 25px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .modal-logout-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .modal-logout-option {
+            background: #fff;
+            border: 2px solid #2e7d32;
+            border-radius: 12px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            color: #2e7d32;
+        }
+        .modal-logout-option:hover {
+            background: #2e7d32;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .modal-logout-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .modal-btn-cancelar {
+            background: #fff;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+            border-radius: 10px;
+            padding: 10px 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal-btn-cancelar:hover {
+            background: #e0e0e0;
+        }
+        @keyframes modalShow {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
     </style>
+  <script>
+    (function() {
+      'use strict';
+      
+      if (sessionStorage.getItem('logout_executed') === 'true') {
+        sessionStorage.removeItem('logout_executed');
+        if (sessionStorage) sessionStorage.clear();
+        if (localStorage) localStorage.clear();
+        window.location.replace('{{ url_for("login") }}');
+        return;
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -660,7 +747,27 @@
         <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
     </div>
     <script>
-        // --- ACCESIBILIDAD GLOBAL ---
+        (function() {
+            'use strict';
+            
+            sessionStorage.setItem('admin_authenticated', 'true');
+            
+            if (window.history && window.history.pushState) {
+                window.history.pushState(null, null, window.location.href);
+                
+                window.addEventListener('popstate', function(event) {
+                    if (!sessionStorage.getItem('admin_authenticated')) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        window.location.replace('{{ url_for("login") }}');
+                    } else {
+                        window.history.pushState(null, null, window.location.href);
+                    }
+                });
+            }
+            
+        })();
+        
         const root = document.documentElement;
         const body = document.body;
         let fontSize = 1;
@@ -678,7 +785,6 @@
     const accesBar = document.querySelector('.accesibilidad-bar');
     const guiaLecturaOverlay = document.getElementById('guiaLecturaOverlay');
 
-    // Aplica el filtro al body, pero "visualmente" excluye la barra de accesibilidad (por z-index)
     function actualizarFiltro() {
         let filtro = '';
         if (contraste) {
@@ -688,7 +794,6 @@
             if (filtro) filtro += ' ';
             filtro += 'grayscale(1)';
         }
-        // Aplica el filtro a todos los elementos principales del dashboard
         const mainElements = [
             dashboardMain,
             ...document.querySelectorAll('.dashboard-container, .dashboard-header, .dashboard-cards, .card, .dashboard-graphs, .graph-box, .dashboard-actions, .action-box')
@@ -696,7 +801,7 @@
         mainElements.forEach(el => {
             if (el) el.style.filter = filtro;
         });
-        // Limpia el filtro del body por si acaso
+        
         body.style.filter = '';
     }
 
@@ -830,7 +935,7 @@
                 <a href="{{ url_for('exportar_reporte', tipo='pedidos') }}" class="descargar-btn"><img src="{{ url_for('static', filename='images/excel.png') }}" alt="Excel">Pedidos</a>
                 <a href="{{ url_for('exportar_reporte', tipo='productos') }}" class="descargar-btn"><img src="{{ url_for('static', filename='images/excel.png') }}" alt="Excel">Productos</a>
             </div>
-            <a href="#" id="logoutBtn"><img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">Cerrar Sesión</a>
+            <a href="#" id="logoutBtn" onclick="event.preventDefault(); mostrarModalLogout();"><img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">Cerrar Sesión</a>
         </nav>
         <div class="status">
             {% if mensajes_pendientes > 0 %}
@@ -941,18 +1046,36 @@
             © 2025 La Esquinita - Todos los derechos reservados &nbsp;|&nbsp; Hecho con 🌽 y ❤️ en México
         </p>
     </footer>
-    <div id="logoutModal" class="alert-modal" style="display:none;">
-        <div class="alert-content">
-            <h3>¿Seguro que quieres cerrar sesión?</h3>
-            <p>Tu sesión se cerrará y volverás a la pantalla de inicio de sesión.</p>
-            <div class="alert-btns">
-                <button onclick="closeLogoutModal()">Cancelar</button>
-                <button onclick="window.location.href='{{ url_for('logout') }}';">Cerrar Sesión</button>
+    <div id="modal-logout" class="modal-logout-bg" style="display:none;">
+        <div class="modal-logout-box">
+            <div class="modal-logout-icon">🛡️</div>
+            <div id="modal-logout-msg" class="modal-logout-msg">
+                ¿Cómo quieres cerrar tu sesión de administrador?
+            </div>
+            <div class="modal-logout-options">
+                <div class="modal-logout-option" onclick="seleccionarTipoLogout('logout_simple')">
+                    🚪 <strong>Logout Simple</strong><br>
+                    <small>Solo cierra sesión en esta pestaña</small>
+                </div>
+                <div class="modal-logout-option" onclick="seleccionarTipoLogout('logout_completo')">
+                    🔒 <strong>Logout Completo</strong><br>
+                    <small>Cierra sesión y limpia datos del navegador</small>
+                </div>
+                <div class="modal-logout-option" onclick="seleccionarTipoLogout('logout_total')">
+                    🧹 <strong>Logout Total</strong><br>
+                    <small>Destrucción completa: sesión + cache + cookies</small>
+                </div>
+                <div class="modal-logout-option" onclick="seleccionarTipoLogout('logout_paranoid')">
+                    ⚡ <strong>Logout Paranoid</strong><br>
+                    <small>Máxima seguridad: limpia todo y reinicia navegador</small>
+                </div>
+            </div>
+            <div class="modal-logout-actions">
+                <button onclick="cerrarModalLogout()" class="modal-btn-cancelar">Cancelar</button>
             </div>
         </div>
     </div>
     <script>
-        
         const usuariosData = {
             labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
             datasets: [{
@@ -1099,7 +1222,6 @@
             },
         };
 
-        // Renderizar gráficos
         const usuariosChart = new Chart(
             document.getElementById('usuariosChart'),
             configUsuarios
@@ -1115,15 +1237,121 @@
             configProductos
         );
 
-        // Funciones para manejar el modal de cierre de sesión
-        function closeLogoutModal() {
-            document.getElementById('logoutModal').style.display = 'none';
+        
+        let tipoLogoutSeleccionado = '';
+        
+        function mostrarModalLogout() {
+            document.getElementById('modal-logout').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
         }
-
-        document.getElementById('logoutBtn').addEventListener('click', function(event) {
-            event.preventDefault();
-            document.getElementById('logoutModal').style.display = 'flex';
-        });
+        
+        function cerrarModalLogout() {
+            document.getElementById('modal-logout').style.display = 'none';
+            document.body.style.overflow = '';
+            tipoLogoutSeleccionado = '';
+        }
+        
+        function seleccionarTipoLogout(tipo) {
+            tipoLogoutSeleccionado = tipo;
+            
+            const mensajes = {
+                'logout_simple': '🚪 ¿Confirmas logout simple?<br><small>Solo cerrará esta sesión</small>',
+                'logout_completo': '🔒 ¿Confirmas logout completo?<br><small>Limpiará datos del navegador</small>',
+                'logout_total': '🧹 ¿Confirmas logout total?<br><small>Destrucción completa de sesión</small>',
+                'logout_paranoid': '⚡ ¿Confirmas logout paranoid?<br><small>Máxima seguridad - reiniciará navegador</small>'
+            };
+            
+            document.getElementById('modal-logout-msg').innerHTML = mensajes[tipo];
+            document.querySelector('.modal-logout-options').style.display = 'none';
+            document.querySelector('.modal-logout-actions').innerHTML = `
+                <button onclick="cerrarModalLogout()" class="modal-btn-cancelar">Cancelar</button>
+                <button onclick="ejecutarLogout()" class="modal-btn-cancelar" style="background: #d32f2f; color: #fff; border-color: #d32f2f;">Confirmar</button>
+            `;
+        }
+        
+        function ejecutarLogout() {
+            document.getElementById('modal-logout-msg').innerHTML = '⚡ Ejecutando logout seguro...';
+            document.querySelector('.modal-logout-actions').innerHTML = '<div style="color: #ff5722; font-weight: bold;">Procesando...</div>';
+            
+            sessionStorage.removeItem('admin_authenticated');
+            sessionStorage.setItem('logout_executed', 'true');
+            
+            switch(tipoLogoutSeleccionado) {
+                case 'logout_simple':
+                    setTimeout(() => window.location.replace(`/logout_simple_admin`), 500);
+                    break;
+                case 'logout_completo':
+                    limpiezaCompleta();
+                    setTimeout(() => window.location.replace(`/logout_completo_admin`), 800);
+                    break;
+                case 'logout_total':
+                    limpiezaTotal();
+                    setTimeout(() => window.location.replace(`/logout_total_admin`), 1000);
+                    break;
+                case 'logout_paranoid':
+                    limpiezaParanoid();
+                    setTimeout(() => window.location.replace(`/logout_paranoid_admin`), 1200);
+                    break;
+            }
+        }
+        
+        function limpiezaCompleta() {
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                if ('indexedDB' in window) {
+                    indexedDB.databases().then(databases => {
+                        databases.forEach(db => {
+                            indexedDB.deleteDatabase(db.name);
+                        });
+                    });
+                }
+                console.log('✅ Limpieza completa ejecutada');
+            } catch (e) {
+                console.log('⚠️ Limpieza parcial:', e);
+            }
+        }
+        
+        function limpiezaTotal() {
+            limpiezaCompleta();
+            try {
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            caches.delete(name);
+                        });
+                    });
+                }
+                document.cookie.split(";").forEach(cookie => {
+                    const eqPos = cookie.indexOf("=");
+                    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+                });
+                console.log('✅ Limpieza total ejecutada');
+            } catch (e) {
+                console.log('⚠️ Limpieza total parcial:', e);
+            }
+        }
+        
+        function limpiezaParanoid() {
+            limpiezaTotal();
+            try {
+                if (history.replaceState) {
+                    history.replaceState(null, null, '{{ url_for("login") }}');
+                    for(let i = 0; i < 10; i++) {
+                        history.pushState(null, null, '{{ url_for("login") }}');
+                    }
+                }
+                document.querySelectorAll('form').forEach(form => form.reset());
+                document.querySelectorAll('input, textarea, select').forEach(field => {
+                    field.value = '';
+                    field.defaultValue = '';
+                });
+                console.log('✅ Limpieza paranoid ejecutada');
+            } catch (e) {
+                console.log('⚠️ Limpieza paranoid parcial:', e);
+            }
+        }
     </script>
 </body>
 </html>

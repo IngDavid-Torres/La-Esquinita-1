@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Cliente | La Esquinita</title>
+  <style>
+    :root {
+      --primary: #ffb300;
+      --secondary: #2e7d32;
+      --accent: #ff5722;
+      --light: #fffdf7;
+      --dark: #1c1c1c;
+      --sidebar: #fffbe7;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 50%, #f7e7d7 100%);
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: row;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <h1>Panel Cliente Simplificado</h1>
+    <p>Usuario: {{ usuario.nombre if usuario else 'No disponible' }}</p>
+    <button onclick="logout()">Cerrar Sesión</button>
+  </div>
+
+  <script>
+    
+    function logout() {
+      window.location.href = "{{ url_for('logout') }}";
+    }
+  </script>
+</body>
+</html>
