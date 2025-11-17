@@ -28,9 +28,20 @@ app = Flask(__name__)
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL or 'postgresql://postgres:789@localhost/laesquinita'
-app.secret_key = os.environ.get('SECRET_KEY') or 'clave_secreta_super_segura'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_pre_ping': True,
+    'pool_recycle': 300,
+    'connect_args': {
+        'connect_timeout': 10,
+        'application_name': 'la_esquinita_app'
+    }
+}
+app.secret_key = os.environ.get('SECRET_KEY') or 'clave_secreta_super_segura'
+
 db = SQLAlchemy(app)
 UPLOAD_FOLDER = 'static/images'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -1073,10 +1084,7 @@ def actualizar_producto(producto_id):
             flash("âš ï¸ No se detectaron cambios en el producto.", "warning")
         return redirect(url_for('admin_productos_productor'))
     return render_template('actualizar_producto.html', producto=producto, categorias=categorias)
-# @app.route('/descargar_factura_pdf')  # Comentado temporalmente - requiere xhtml2pdf
-# def descargar_factura_pdf():
-#     """Función temporalmente deshabilitada - requiere xhtml2pdf"""
-#     return jsonify({'error': 'Función de PDF temporalmente deshabilitada'}), 503
+
 @app.route('/agregar_usuario', methods=['GET', 'POST'])
 def agregar_usuario():
     if request.method == 'POST':
@@ -1147,10 +1155,7 @@ def eliminar_producto_admin(producto_id):
     db.session.commit()
     flash("Producto eliminado permanentemente.", "success")
     return redirect(url_for('admin_productos'))
-# @app.route('/descargar_ticket_transferencia')  # Comentado temporalmente - requiere xhtml2pdf
-# def descargar_ticket_transferencia():
-#     """Función temporalmente deshabilitada - requiere xhtml2pdf"""
-#     return jsonify({'error': 'Función de PDF temporalmente deshabilitada'}), 503
+
 @app.route('/eliminar_tarjeta/<int:tarjeta_id>', methods=['POST'])
 def eliminar_tarjeta(tarjeta_id):
     tarjeta = Tarjeta.query.get_or_404(tarjeta_id)
@@ -1433,24 +1438,54 @@ def procesar_pago_test():
         return redirect(url_for('carrito'))
 
 
+def check_database_connection():
+    """Verificar conexión a la base de datos"""
+    try:
+        result = db.session.execute('SELECT 1').fetchone()
+        return True, "Database connected"
+    except Exception as e:
+        print(f"Database connection error: {str(e)}")
+        return False, str(e)
+
+@app.before_request
+def ensure_db_connection():
+    """Verificar conexión antes de cada request"""
+    try:
+        if request.endpoint not in ['health_check', 'static']:
+            db_connected, _ = check_database_connection()
+            if not db_connected:
+                # Intentar reconectar
+                try:
+                    db.session.close()
+                    db.session.remove()
+                except:
+                    pass
+    except Exception as e:
+        print(f"Error en before_request: {str(e)}")
+        pass
+
 @app.route('/health')
 def health_check():
     
     try:
+        db_connected, db_message = check_database_connection()
         
-        db.session.execute('SELECT 1')
+        status = 'healthy' if db_connected else 'unhealthy'
+        status_code = 200 if db_connected else 500
+        
         return jsonify({
-            'status': 'healthy',
-            'message': 'La Esquinita API funcionando correctamente',
+            'status': status,
+            'message': 'La Esquinita API funcionando correctamente' if db_connected else 'Error en base de datos',
             'timestamp': datetime.utcnow().isoformat(),
-            'database': 'connected'
-        }), 200
+            'database': 'connected' if db_connected else 'disconnected',
+            'database_message': db_message
+        }), status_code
     except Exception as e:
         return jsonify({
             'status': 'unhealthy',
             'message': f'Error en el sistema: {str(e)}',
             'timestamp': datetime.utcnow().isoformat(),
-            'database': 'disconnected'
+            'database': 'error'
         }), 500
 
 @app.errorhandler(404)
@@ -1461,7 +1496,14 @@ def page_not_found(error):
 @app.errorhandler(500)
 def internal_server_error(error):
     """Manejador personalizado para errores 500"""
-    db.session.rollback()
+    try:
+        db.session.rollback()
+    except Exception as db_error:
+        print(f"Error during rollback: {str(db_error)}")
+    
+    # Log del error para debugging
+    print(f"Error 500: {str(error)}")
+    
     return render_template('error_500.html'), 500
 
 @app.errorhandler(403)
@@ -1471,8 +1513,21 @@ def forbidden(error):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    with app.app_context():
-        db.create_all()
-        crear_admin()
-        print("âœ… Tablas creadas y administrador registrado ðŸš€")
+    
+    try:
+        with app.app_context():
+            
+            db_connected, db_message = check_database_connection()
+            if not db_connected:
+                print(f"❌ Error de conexión a base de datos: {db_message}")
+                print("🔄 Intentando crear tablas de todas formas...")
+            
+            db.create_all()
+            crear_admin()
+            print("✅ Tablas creadas y administrador registrado 🚀")
+            
+    except Exception as init_error:
+        print(f"⚠️ Error durante inicialización: {str(init_error)}")
+        print("🔄 Continuando con el servidor...")
+    
     app.run(host='0.0.0.0', port=port, debug=False)
