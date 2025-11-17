@@ -6,44 +6,42 @@ import os
 
 class SMSVerification:
     def __init__(self):
-        self.account_sid = os.environ.get('TWILIO_ACCOUNT_SID') or 'tu_account_sid'
-        self.auth_token = os.environ.get('TWILIO_AUTH_TOKEN') or 'tu_auth_token'
-        self.phone_number = os.environ.get('TWILIO_PHONE_NUMBER') or '+1234567890'
-        self.development_mode = self.account_sid == 'tu_account_sid' or not self.account_sid
+        self.account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+        self.auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+        self.phone_number = os.environ.get('TWILIO_PHONE_NUMBER')
+        
+        
+        self.development_mode = not self.account_sid or not self.auth_token or not self.phone_number
         
         if not self.development_mode:
-            self.client = Client(self.account_sid, self.auth_token)
+            try:
+                self.client = Client(self.account_sid, self.auth_token)
+            except Exception as e:
+                print(f"[ERROR] Error al inicializar Twilio Client: {str(e)}")
+                self.development_mode = True
+                self.client = None
         else:
             self.client = None
         
     def generate_verification_code(self, length=6):
-        if self.development_mode:
-            return '123456'
         return ''.join(random.choices(string.digits, k=length))
     
     def send_verification_sms(self, phone_number, code):
         try:
-            is_dev_credentials = (
-                not self.account_sid or 
-                self.account_sid == 'tu_account_sid_aqui' or
-                not self.auth_token or 
-                self.auth_token == 'tu_auth_token_aqui'
-            )
-            
-            if self.development_mode or is_dev_credentials:
+            if self.development_mode:
                 print(f"""
 🌽 [MODO DESARROLLO] La Esquinita - SMS Simulado
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📱 Para: {phone_number}
 🔐 Código: {code}
-💡 Para pruebas usa: 123456
+⚠️ NOTA: Configura las variables de entorno de Twilio para envío real
 ⏰ Expira en 10 minutos
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """)
                 return {
                     'success': True,
                     'message_sid': f'dev_message_{code}',
-                    'message': f'Código enviado a {phone_number}'
+                    'message': f'Código enviado a {phone_number} (modo desarrollo)'
                 }
             
             message_body = f"""🌽 La Esquinita - Código de Verificación
