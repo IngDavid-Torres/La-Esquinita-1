@@ -72,7 +72,7 @@ if DATABASE_URL and 'postgresql://' in DATABASE_URL:
         'connect_args': {
             'connect_timeout': 30,
             'application_name': 'la_esquinita_app',
-            'sslmode': 'require'
+            'sslmode': 'prefer'  # Prefer SSL but don't require it
         }
     }
     print("🐘 Configuración PostgreSQL para Railway")
@@ -1562,8 +1562,9 @@ def check_database_connection():
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            # Usar una consulta más simple y compatible
-            result = db.session.execute('SELECT 1 as test').scalar()
+            
+            from sqlalchemy import text
+            result = db.session.execute(text('SELECT 1 as test')).scalar()
             if result == 1:
                 return True, f"Database connected (attempt {attempt + 1})"
         except Exception as e:
@@ -1609,6 +1610,35 @@ def test_simple():
         'message': 'La Esquinita funcionando',
         'timestamp': datetime.utcnow().isoformat()
     })
+
+@app.route('/admin-direct', methods=['GET', 'POST'])
+def admin_login_direct():
+    """Login directo para admin sin CAPTCHA"""
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+        
+        try:
+            admin = Administrador.query.filter_by(email=email, password=password).first()
+            if admin:
+                session['usuario_id'] = admin.id
+                session['usuario_nombre'] = admin.nombre
+                session['tipo_usuario'] = "Administrador"
+                return redirect(url_for('panel_admin'))
+            else:
+                return "❌ Credenciales incorrectas. Verifique admin@laesquinita.com / admin123"
+        except Exception as e:
+            return f"❌ Error: {str(e)}"
+    
+    
+    return '''
+    <h2>🔐 Login Admin Directo</h2>
+    <form method="POST">
+        <p>Email: <input type="email" name="email" value="admin@laesquinita.com" required></p>
+        <p>Password: <input type="password" name="password" value="admin123" required></p>
+        <p><button type="submit">Entrar</button></p>
+    </form>
+    '''
 
 @app.route('/health')
 def health_check():
