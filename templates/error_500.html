@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error del servidor - La Esquinita</title>
+    <style>
+        :root {
+            --primary: #ffb300;
+            --secondary: #2e7d32;
+            --accent: #ff5722;
+            --light: #fffdf7;
+            --dark: #1c1c1c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--light) 0%, #f5f5f5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        .error-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-icon {
+            font-size: 100px;
+            color: var(--accent);
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: shake 1s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .error-code {
+            font-size: 70px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .restaurant-info {
+            background: #ffe0e0;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 4px solid var(--accent);
+        }
+
+        .restaurant-info h3 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .restaurant-info p {
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            background: #e6a000;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 179, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        @media (max-width: 600px) {
+            .error-container {
+                margin: 20px;
+                padding: 30px 15px;
+            }
+
+            .error-code {
+                font-size: 50px;
+            }
+
+            .error-title {
+                font-size: 22px;
+            }
+
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <div class="error-code">500</div>
+        <h1 class="error-title">¡Oops! Nuestra cocina está teniendo problemas</h1>
+        <p class="error-message">
+            Estamos experimentando dificultades técnicas temporales. 
+            Nuestro equipo ya está trabajando para solucionarlo.
+        </p>
+
+        <div class="restaurant-info">
+            <h3>🔧 ¿Qué está pasando?</h3>
+            <p>• Los servidores están sobrecargados</p>
+            <p>• Estamos realizando mantenimiento</p>
+            <p>• Por favor intenta de nuevo en unos minutos</p>
+        </div>
+
+        <div class="buttons-container">
+            <a href="{{ url_for('inicio') }}" class="btn btn-primary">
+                🏠 Volver al Inicio
+            </a>
+            <button onclick="location.reload()" class="btn btn-secondary">
+                🔄 Intentar de Nuevo
+            </button>
+        </div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #888; font-size: 12px;">
+            <p>Si el problema persiste, contacta con nuestro soporte técnico.</p>
+            <p style="margin-top: 5px;">Código de error: 500 - Error interno del servidor</p>
+        </div>
+    </div>
+
+    <script>
+       
+        setTimeout(function() {
+            window.location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

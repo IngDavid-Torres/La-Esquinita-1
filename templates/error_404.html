@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página no encontrada - La Esquinita</title>
+    <style>
+        :root {
+            --primary: #ffb300;
+            --secondary: #2e7d32;
+            --accent: #ff5722;
+            --light: #fffdf7;
+            --dark: #1c1c1c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--light) 0%, #f5f5f5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        .error-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-icon {
+            font-size: 120px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .error-code {
+            font-size: 80px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .restaurant-info {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .restaurant-info h3 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .restaurant-info p {
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            background: #e6a000;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 179, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--dark);
+            border: 2px solid var(--dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .food-icons {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 40px;
+            opacity: 0.1;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(5deg);
+            }
+        }
+
+        .suggestions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 25px;
+            text-align: left;
+        }
+
+        .suggestions h4 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .suggestions ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .suggestions li {
+            padding: 8px 0;
+            color: #555;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .suggestions li:before {
+            content: "🍽️";
+            position: absolute;
+            left: 0;
+        }
+
+        @media (max-width: 600px) {
+            .error-container {
+                margin: 20px;
+                padding: 30px 15px;
+            }
+
+            .error-code {
+                font-size: 60px;
+            }
+
+            .error-title {
+                font-size: 24px;
+            }
+
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+        }
+
+        .decorative-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .decorative-elements::before,
+        .decorative-elements::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            opacity: 0.05;
+        }
+
+        .decorative-elements::before {
+            background: var(--primary);
+            top: 10%;
+            right: 10%;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .decorative-elements::after {
+            background: var(--secondary);
+            bottom: 10%;
+            left: 10%;
+            animation: pulse 4s ease-in-out infinite reverse;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="decorative-elements"></div>
+    
+    <div class="error-container">
+        <div class="food-icons">🍕🍔🌮</div>
+        
+        <div class="error-icon">🔍</div>
+        <div class="error-code">404</div>
+        <h1 class="error-title">¡Ups! Plato no encontrado</h1>
+        <p class="error-message">
+            Lo sentimos, la página que buscas no está disponible en nuestro menú digital. 
+            Pero no te preocupes, ¡tenemos muchas deliciosas opciones esperándote!
+        </p>
+
+        <div class="restaurant-info">
+            <h3>🏪 La Esquinita</h3>
+            <p>📍 Tu restaurante de confianza</p>
+            <p>🍽️ Comida casera y deliciosa</p>
+            <p>⭐ Sabores que conquistan corazones</p>
+        </div>
+
+        <div class="suggestions">
+            <h4>¿Qué te gustaría hacer?</h4>
+            <ul>
+                <li>Explorar nuestro menú completo</li>
+                <li>Ver tu historial de pedidos</li>
+                <li>Contactar con nuestro equipo</li>
+                <li>Regresar a la página principal</li>
+            </ul>
+        </div>
+
+        <div class="buttons-container">
+            <a href="{{ url_for('inicio') }}" class="btn btn-primary">
+                🏠 Ir al Inicio
+            </a>
+            <a href="{{ url_for('productos') }}" class="btn btn-secondary">
+                🍽️ Ver Menú
+            </a>
+            <a href="{{ url_for('contacto') }}" class="btn btn-outline">
+                📞 Contactanos
+            </a>
+        </div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #888; font-size: 14px;">
+            <p>Si crees que esto es un error, por favor contacta con nuestro equipo de soporte.</p>
+            <p style="margin-top: 5px;">Código de error: 404 - Página no encontrada</p>
+        </div>
+    </div>
+
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px) scale(1.02)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+           
+            const errorIcon = document.querySelector('.error-icon');
+            setInterval(() => {
+                errorIcon.style.transform = 'rotate(10deg)';
+                setTimeout(() => {
+                    errorIcon.style.transform = 'rotate(-10deg)';
+                }, 250);
+                setTimeout(() => {
+                    errorIcon.style.transform = 'rotate(0deg)';
+                }, 500);
+            }, 3000);
+        });
+
+        
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'page_view', {
+                page_title: '404 Error',
+                page_location: window.location.href
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1513,6 +1513,23 @@ def procesar_pago_test():
         flash(f'Error al procesar el pedido: {str(e)}', 'error')
         return redirect(url_for('carrito'))
 
+
+@app.errorhandler(404)
+def page_not_found(error):
+    """Manejador personalizado para errores 404"""
+    return render_template('error_404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    """Manejador personalizado para errores 500"""
+    db.session.rollback()
+    return render_template('error_500.html'), 500
+
+@app.errorhandler(403)
+def forbidden(error):
+    """Manejador personalizado para errores 403"""
+    return render_template('error_404.html'), 403
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     with app.app_context():
