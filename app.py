@@ -14,6 +14,12 @@ import mercadopago
 import time
 import logging
 from dotenv import load_dotenv
+import json
+from PIL import Image, ImageDraw, ImageFont
+import random
+import string
+import io
+import base64
 load_dotenv()
 
 
@@ -102,6 +108,79 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 MP_ACCESS_TOKEN = os.environ.get('MP_ACCESS_TOKEN') or "TEST-7916427332588639-102718-00ee5129ad06c2ceba14e4e44b94d22e-191563398"
 MP_PUBLIC_KEY = os.environ.get('MP_PUBLIC_KEY') or "TEST-c1e625f3-6498-4c5e-9fda-d2b6b5a0a7de-191563398"
 sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
+
+
+def generate_captcha_code(length=5):
+    
+    chars = string.ascii_uppercase + string.digits
+    chars = chars.replace('0', '').replace('O', '').replace('I', '').replace('1')
+    return ''.join(random.choice(chars) for _ in range(length))
+
+def create_captcha_image(code):
+    
+    width, height = 200, 80
+    img = Image.new('RGB', (width, height), color='white')
+    draw = ImageDraw.Draw(img)
+    
+    
+    for _ in range(100):
+        x = random.randint(0, width)
+        y = random.randint(0, height)
+        draw.point((x, y), fill=(random.randint(200, 255), random.randint(200, 255), random.randint(200, 255)))
+    
+    
+    try:
+        font = ImageFont.truetype("arial.ttf", 36)
+    except:
+        font = ImageFont.load_default()
+    
+    text_width = draw.textlength(code, font=font)
+    text_height = 36
+    x = (width - text_width) // 2
+    y = (height - text_height) // 2
+    
+    
+    color = (random.randint(0, 100), random.randint(0, 100), random.randint(0, 100))
+    draw.text((x, y), code, font=font, fill=color)
+    
+    
+    for _ in range(5):
+        x1 = random.randint(0, width)
+        y1 = random.randint(0, height)
+        x2 = random.randint(0, width)
+        y2 = random.randint(0, height)
+        draw.line((x1, y1, x2, y2), fill=(random.randint(100, 200), random.randint(100, 200), random.randint(100, 200)))
+    
+    return img
+
+def create_captcha_session(session):
+    
+    code = generate_captcha_code()
+    img = create_captcha_image(code)
+    
+    
+    buffer = io.BytesIO()
+    img.save(buffer, format='PNG')
+    img_data = buffer.getvalue()
+    img_base64 = base64.b64encode(img_data).decode()
+    
+    
+    session['captcha_code'] = code
+    
+    return f"data:image/png;base64,{img_base64}"
+
+def validate_captcha_session(session, user_input):
+    
+    if 'captcha_code' not in session:
+        return False
+    
+    stored_code = session.get('captcha_code', '').upper()
+    user_code = user_input.upper().strip()
+    
+    
+    session.pop('captcha_code', None)
+    
+    return stored_code == user_code
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -319,6 +398,22 @@ def enviar_mensaje():
     db.session.commit()
     flash("Tu mensaje fue enviado con Ã©xito.", "success")
     return redirect(url_for('contacto'))
+
+@app.route('/generate_captcha')
+def generate_captcha():
+    
+    try:
+        image_data = create_captcha_session(session)
+        return json.dumps({
+            'success': True,
+            'image': image_data
+        })
+    except Exception as e:
+        logger.error(f"Error generando CAPTCHA: {str(e)}")
+        return json.dumps({
+            'success': False,
+            'error': str(e)
+        }), 500
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
     if request.method == 'POST':
@@ -343,38 +438,73 @@ def registro():
 def login():
     if request.method == 'POST':
         try:
+            logger.info("🚀 INICIO DE PROCESO DE LOGIN")
             email = request.form.get('email', '').strip()
             password = request.form.get('password', '').strip()
+            captcha_input = request.form.get('captcha', '').strip()
+            
+            logger.info(f"📧 Email recibido: '{email}'")
+            logger.info(f"🔑 Password recibido: '{password}'")
+            logger.info(f"🔒 CAPTCHA recibido: '{captcha_input}'")
+            logger.info(f"📋 Form data completo: {dict(request.form)}")
             
             if not email or not password:
+                logger.warning("⚠️ Campos vacíos detectados")
                 flash('Por favor completa todos los campos', 'error')
                 return render_template('login.html')
             
-            # Verificar admin primero
+            
+            if not validate_captcha_session(session, captcha_input):
+                logger.warning("⚠️ CAPTCHA incorrecto")
+                flash('Código CAPTCHA incorrecto. Inténtalo de nuevo.', 'error')
+                return render_template('login.html')
+            
+            
+            logger.info("🔍 Buscando admin en base de datos...")
             admin = Administrador.query.filter_by(email=email, password=password).first()
+            logger.info(f"🔎 Resultado búsqueda admin: {admin}")
+            
             if admin:
+                logger.info(f"✅ ADMIN ENCONTRADO: {admin.nombre} (ID: {admin.id})")
                 session['usuario_id'] = admin.id
                 session['usuario_nombre'] = admin.nombre
                 session['tipo_usuario'] = "Administrador"
+                logger.info(f"📝 Session configurada: {dict(session)}")
+                logger.info(f"🔄 Generando redirect a: {url_for('panel_admin')}")
                 flash(f'Bienvenido Administrador {admin.nombre}', 'success')
-                return redirect(url_for('panel_admin'))
+                redirect_response = redirect(url_for('panel_admin'))
+                logger.info(f"📤 ENVIANDO REDIRECT A PANEL_ADMIN: {redirect_response}")
+                logger.info("🎯 RETORNANDO RESPUESTA DE REDIRECT ADMIN")
+                return redirect_response
+            else:
+                logger.warning("❌ Admin NO encontrado, continuando con verificación de usuario...")
             
-            # Verificar usuario
+        
+            logger.info("🔍 Buscando usuario en base de datos...")
             usuario = Usuario.query.filter_by(email=email, password=password).first()
+            logger.info(f"🔎 Resultado búsqueda usuario: {usuario}")
+            
             if usuario:
+                logger.info(f"✅ USUARIO ENCONTRADO: {usuario.nombre} (Tipo: {usuario.tipo_usuario})")
                 session['usuario_id'] = usuario.id
                 session['usuario_nombre'] = usuario.nombre
                 session['tipo_usuario'] = usuario.tipo_usuario
                 flash(f'Bienvenido {usuario.nombre}', 'success')
                 if usuario.tipo_usuario == "Cliente":
+                    logger.info("🔄 REDIRIGIENDO A PANEL_CLIENTE")
                     return redirect(url_for('panel_cliente'))
                 elif usuario.tipo_usuario == "Productor":
+                    logger.info("🔄 REDIRIGIENDO A PANEL_PRODUCTOR")
                     return redirect(url_for('panel_productor'))
+            else:
+                logger.warning("❌ Usuario tampoco encontrado")
             
+            logger.warning("❌❌ CREDENCIALES INCORRECTAS - Ni admin ni usuario encontrado")
             flash('Credenciales incorrectas', 'error')
             return render_template('login.html')
             
         except Exception as e:
+            logger.error(f"💥 ERROR EN LOGIN: {str(e)}")
             print(f"Error en login: {str(e)}")
             flash('Error del servidor, intenta de nuevo', 'error')
             return render_template('login.html')
@@ -397,6 +527,17 @@ def perfil_cliente():
     return render_template('perfil_cliente.html', usuario=usuario, direccion=direccion)
 @app.route('/panel_admin')
 def panel_admin():
+    logger.info(f"🎯 PANEL_ADMIN ACCEDIDO - Método: {request.method}")
+    logger.info(f"🔍 Session actual: {dict(session)}")
+    logger.info(f"🌐 Headers: {dict(request.headers)}")
+   
+    if 'usuario_id' not in session or session.get('tipo_usuario') != 'Administrador':
+        logger.warning(f"⚠️ Acceso denegado a panel_admin - Session: {dict(session)}")
+        flash('Acceso denegado. Solo administradores pueden acceder a esta página.', 'error')
+        return redirect(url_for('login'))
+    
+    logger.info(f"✅ Admin autenticado accediendo a panel: {session.get('usuario_nombre')}")
+    
     try:
         q = request.args.get('q', '').strip()
         filtro = request.args.get('filtro', '')
@@ -451,6 +592,7 @@ def panel_admin():
                 resultados = []
                 flash('Error en la búsqueda', 'warning')
         
+        logger.info(f"🎨 Renderizando panel_admin.html para: {session.get('usuario_nombre')}")
         response = make_response(render_template(
             'panel_admin.html',
             total_usuarios=total_usuarios,
@@ -461,6 +603,7 @@ def panel_admin():
             q=q,
             filtro=filtro
         ))
+        logger.info(f"✅ Template renderizado correctamente, enviando respuesta")
         return add_security_headers(response)
         
     except Exception as e:

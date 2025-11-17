@@ -931,9 +931,10 @@
             <a href="{{ url_for('admin_productos') }}"><img src="{{ url_for('static', filename='images/producto.png') }}" alt="Productos">Productos</a>
             <a href="{{ url_for('admin_mensajes') }}"><img src="{{ url_for('static', filename='images/mesajes.png') }}" alt="Mensajes">Mensajes</a>
             <div class="export-links">
-                <a href="{{ url_for('exportar_reporte', tipo='usuarios') }}" class="descargar-btn"><img src="{{ url_for('static', filename='images/excel.png') }}" alt="Excel">Usuarios</a>
+                <!-- Funcionalidad de exportar reportes temporalmente deshabilitada -->
+                <!-- <a href="{{ url_for('exportar_reporte', tipo='usuarios') }}" class="descargar-btn"><img src="{{ url_for('static', filename='images/excel.png') }}" alt="Excel">Usuarios</a>
                 <a href="{{ url_for('exportar_reporte', tipo='pedidos') }}" class="descargar-btn"><img src="{{ url_for('static', filename='images/excel.png') }}" alt="Excel">Pedidos</a>
-                <a href="{{ url_for('exportar_reporte', tipo='productos') }}" class="descargar-btn"><img src="{{ url_for('static', filename='images/excel.png') }}" alt="Excel">Productos</a>
+                <a href="{{ url_for('exportar_reporte', tipo='productos') }}" class="descargar-btn"><img src="{{ url_for('static', filename='images/excel.png') }}" alt="Excel">Productos</a> -->
             </div>
             <a href="#" id="logoutBtn" onclick="event.preventDefault(); mostrarModalLogout();"><img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">Cerrar Sesión</a>
         </nav>

@@ -483,7 +483,9 @@
             <input type="password" name="password" placeholder="Contraseña" required>
             
             <div class="captcha-container" id="captchaContainer">
-                <div class="captcha-display" id="captchaDisplay">🔄 Cargando...</div>
+                <div class="captcha-display" id="captchaDisplay">
+                    <img id="captchaImage" src="" alt="CAPTCHA" style="border: 1px solid #ddd; border-radius: 4px; background: #f5f5f5;">
+                </div>
                 <input type="text" class="captcha-input" id="captchaInput" name="captcha" placeholder="Código" maxlength="5" required>
                 <button type="button" class="captcha-refresh" id="refreshCaptcha" title="Generar nuevo código">🔄</button>
             </div>
@@ -534,19 +536,39 @@
 let captchaCode = '';
 
 function generateCaptcha() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    captchaCode = '';
-    for (let i = 0; i < 5; i++) {
-        captchaCode += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    document.getElementById('captchaDisplay').textContent = captchaCode;
-    document.getElementById('captchaInput').value = '';
-    document.getElementById('captchaError').style.display = 'none';
+    console.log('🔄 Generando CAPTCHA...');
+    
+    fetch('/generate_captcha')
+        .then(response => {
+            console.log('📡 Respuesta recibida:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('📊 Datos del CAPTCHA:', data);
+            if (data.success) {
+                const captchaImg = document.getElementById('captchaImage');
+                captchaImg.src = data.image;
+                captchaImg.style.display = 'block';
+                document.getElementById('captchaInput').value = '';
+                console.log('✅ CAPTCHA cargado correctamente');
+                
+                if (document.getElementById('captchaError')) {
+                    document.getElementById('captchaError').style.display = 'none';
+                }
+            } else {
+                console.error('❌ Error generando CAPTCHA:', data.error);
+                alert('Error generando CAPTCHA: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('💥 Error al generar CAPTCHA:', error);
+            alert('Error de conexión al generar CAPTCHA');
+        });
 }
 
 function validateCaptcha() {
-    const userInput = document.getElementById('captchaInput').value.toUpperCase();
-    return userInput === captchaCode;
+    // La validación ahora se hace en el servidor
+    return true;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -559,50 +581,47 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Función para manejar cambios en el email
+
 function handleEmailChange() {
-    const email = document.querySelector('input[name="email"]').value.trim();
-    const isAdmin = email === 'admin@laesquinita.com';
+    
     const captchaContainer = document.getElementById('captchaContainer');
     const adminNotice = document.getElementById('adminNotice');
     const captchaInput = document.getElementById('captchaInput');
     
-    if (isAdmin) {
-        captchaContainer.style.display = 'none';
-        adminNotice.style.display = 'block';
-        captchaInput.removeAttribute('required');
-    } else {
-        captchaContainer.style.display = 'block';
-        adminNotice.style.display = 'none';
-        captchaInput.setAttribute('required', 'required');
-    }
+    
+    captchaContainer.style.display = 'block';
+    if (adminNotice) adminNotice.style.display = 'none';
+    captchaInput.setAttribute('required', 'required');
+    
+   
+    generateCaptcha();
 }
 
-// Agregar event listener al campo de email
+
 document.querySelector('input[name="email"]').addEventListener('input', handleEmailChange);
 document.querySelector('input[name="email"]').addEventListener('blur', handleEmailChange);
 
 document.getElementById('loginForm').addEventListener('submit', function(e){
     e.preventDefault();
     
-    // Obtener email para verificar si es admin
+    
     const email = document.querySelector('input[name="email"]').value.trim();
     const isAdmin = email === 'admin@laesquinita.com';
     
-    // Si es admin, saltar validación de CAPTCHA
+   
     if (!isAdmin && !validateCaptcha()) {
         document.getElementById('captchaError').style.display = 'block';
         generateCaptcha();
         return;
     }
     
-    // Ocultar error de CAPTCHA si es admin o CAPTCHA válido
+    
     document.getElementById('captchaError').style.display = 'none';
     
     document.getElementById('alerta-cargando').style.display = 'flex';
     setTimeout(() => {
         e.target.submit();
-    }, 1000); // Reducir tiempo de espera
+    }, 1000); 
 });
 </script>
 </body>
