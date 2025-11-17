@@ -12,8 +12,23 @@ from sqlalchemy import and_, not_, exists, cast, String, or_, func
 from sqlalchemy.orm import aliased
 import mercadopago
 import time
+import logging
 from dotenv import load_dotenv
 load_dotenv()
+
+
+if os.environ.get('FLASK_ENV') == 'production':
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s %(name)s %(message)s'
+    )
+else:
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s %(levelname)s %(name)s %(message)s'
+    )
+
+logger = logging.getLogger(__name__)
 
 def add_security_headers(response):
     
@@ -25,9 +40,23 @@ def add_security_headers(response):
     return response
 
 app = Flask(__name__)
+
+
+app.config['ENV'] = os.environ.get('FLASK_ENV', 'production')
+app.config['DEBUG'] = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+app.config['TESTING'] = False
+
+
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hora
+
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+print(f"🚀 Iniciando La Esquinita en modo: {app.config['ENV']}")
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL or 'sqlite:///laesquinita.db'
@@ -1627,6 +1656,31 @@ def internal_server_error(error):
 def forbidden(error):
     
     return render_template('error_404.html'), 403
+
+
+def init_database():
+    
+    try:
+        with app.app_context():
+            logger.info("🔧 Inicializando base de datos...")
+            
+            
+            db_connected, db_message = check_database_connection()
+            if not db_connected:
+                logger.warning(f"❌ Error de conexión a base de datos: {db_message}")
+                logger.info("🔄 Intentando crear tablas de todas formas...")
+            
+            db.create_all()
+            crear_admin()
+            logger.info("✅ Tablas creadas y administrador registrado 🚀")
+            
+    except Exception as init_error:
+        logger.error(f"⚠️ Error durante inicialización: {str(init_error)}")
+        logger.info("🔄 Continuando con el servidor...")
+
+
+if not app.config.get('TESTING'):
+    init_database()
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
