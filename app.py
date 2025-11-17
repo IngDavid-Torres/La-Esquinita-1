@@ -124,8 +124,8 @@ def create_captcha_image(code):
     
     
     for _ in range(100):
-        x = random.randint(0, width)
-        y = random.randint(0, height)
+        x = random.randint(0, width-1)
+        y = random.randint(0, height-1)
         draw.point((x, y), fill=(random.randint(200, 255), random.randint(200, 255), random.randint(200, 255)))
     
     
@@ -134,10 +134,16 @@ def create_captcha_image(code):
     except:
         font = ImageFont.load_default()
     
-    text_width = draw.textlength(code, font=font)
+   
+    try:
+        text_width = draw.textlength(code, font=font)
+    except AttributeError:
+        
+        text_width = len(code) * 20
+    
     text_height = 36
-    x = (width - text_width) // 2
-    y = (height - text_height) // 2
+    x = max(10, (width - text_width) // 2)
+    y = max(10, (height - text_height) // 2)
     
     
     color = (random.randint(0, 100), random.randint(0, 100), random.randint(0, 100))
