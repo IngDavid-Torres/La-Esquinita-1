@@ -8,7 +8,7 @@ import io
 from flask import send_file
 from flask_mail import Mail, Message
 from sqlalchemy.sql import exists
-from sqlalchemy import and_, not_, exists, cast, String, or_
+from sqlalchemy import and_, not_, exists, cast, String, or_, func
 from sqlalchemy.orm import aliased
 import mercadopago
 import time
@@ -218,21 +218,26 @@ class Tarjeta(db.Model):
 def inicio():
     cantidad_carrito = 0
     if 'usuario_id' in session and session.get('tipo_usuario') == 'Cliente':
-        cantidad_carrito = db.session.query(db.func.sum(Carrito.cantidad)).filter_by(usuario_id=session['usuario_id']).scalar() or 0
+        cantidad_carrito = db.session.query(func.sum(Carrito.cantidad)).filter_by(usuario_id=session['usuario_id']).scalar() or 0
     return render_template('inicio.html', cantidad_carrito=cantidad_carrito)
 @app.route('/productos')
 def productos():
-    productos = Producto.query.filter_by(activo=True).all()
-    categorias = Categoria.query.all()
-    cantidad_carrito = 0
-    if session.get('usuario_id') and session.get('tipo_usuario') == 'Cliente':
-        cantidad_carrito = db.session.query(db.func.coalesce(db.func.sum(Carrito.cantidad), 0)).filter_by(usuario_id=session.get('usuario_id')).scalar()
-    return render_template('productos.html', productos=productos, categorias=categorias, cantidad_carrito=cantidad_carrito)
+    try:
+        productos = Producto.query.filter_by(activo=True).all()
+        categorias = Categoria.query.all() 
+        cantidad_carrito = 0
+        if session.get('usuario_id') and session.get('tipo_usuario') == 'Cliente':
+            cantidad_carrito = db.session.query(func.coalesce(func.sum(Carrito.cantidad), 0)).filter_by(usuario_id=session.get('usuario_id')).scalar() or 0
+        return render_template('productos.html', productos=productos, categorias=categorias, cantidad_carrito=cantidad_carrito)
+    except Exception as e:
+        print(f"Error en ruta productos: {str(e)}")
+        flash('Error al cargar productos', 'error')
+        return redirect(url_for('inicio'))
 @app.route('/contacto')
 def contacto():
     cantidad_carrito = 0
     if 'usuario_id' in session and session.get('tipo_usuario') == 'Cliente':
-        cantidad_carrito = db.session.query(db.func.sum(Carrito.cantidad)).filter_by(usuario_id=session['usuario_id']).scalar() or 0
+        cantidad_carrito = db.session.query(func.sum(Carrito.cantidad)).filter_by(usuario_id=session['usuario_id']).scalar() or 0
     return render_template('contacto.html', cantidad_carrito=cantidad_carrito)
 @app.route('/enviar_mensaje', methods=['POST'])
 def enviar_mensaje():
@@ -294,7 +299,7 @@ def panel_cliente():
         return redirect(url_for('login'))
     usuario = Usuario.query.get(session['usuario_id'])
     direccion = Direccion.query.filter_by(usuario_id=session['usuario_id']).first()
-    cantidad_carrito = db.session.query(db.func.sum(Carrito.cantidad)).filter_by(usuario_id=session['usuario_id']).scalar() or 0
+    cantidad_carrito = db.session.query(func.sum(Carrito.cantidad)).filter_by(usuario_id=session['usuario_id']).scalar() or 0
     tarjetas = Tarjeta.query.filter_by(usuario_id=session['usuario_id']).all()
     response = make_response(render_template('panel_cliente.html', usuario=usuario, direccion=direccion, cantidad_carrito=cantidad_carrito, tarjetas=tarjetas))
     return add_security_headers(response)
@@ -856,7 +861,7 @@ def guardar_perfil():
         flash("No se encontrÃ³ el usuario.", "error")
     return redirect(url_for('perfil_cliente'))
 def obtener_cantidad_carrito(usuario_id):
-    cantidad = db.session.query(db.func.sum(Carrito.cantidad)).filter_by(usuario_id=usuario_id).scalar()
+    cantidad = db.session.query(func.sum(Carrito.cantidad)).filter_by(usuario_id=usuario_id).scalar()
     return cantidad or 0
 @app.route('/pedidos_cliente')
 def pedidos_cliente():
