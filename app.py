@@ -118,58 +118,58 @@ def generate_captcha_code(length=5):
     return ''.join(random.choice(chars) for _ in range(length))
 
 def create_captcha_image(code):
-   
+    
     try:
         width, height = 200, 80
-        img = Image.new('RGB', (width, height), color='white')
+        
+        img = Image.new('RGB', (width, height), color=(240, 240, 240))
         draw = ImageDraw.Draw(img)
         
        
-        for _ in range(100):
+        for _ in range(50):
             x = random.randint(0, width-1)
             y = random.randint(0, height-1)
-            draw.point((x, y), fill=(random.randint(200, 255), random.randint(200, 255), random.randint(200, 255)))
+            draw.point((x, y), fill=(random.randint(220, 255), random.randint(220, 255), random.randint(220, 255)))
+        
+        
+        font = ImageFont.load_default()
+        
+        
+        x = 60
+        y = 30
+        
+      
+        color = (0, 0, 0)
+       
+        offset_x = x
+        for char in code:
+            
+            for dx in range(-1, 2):
+                for dy in range(-1, 2):
+                    draw.text((offset_x + dx, y + dy), char, font=font, fill=color)
+            offset_x += 20
         
        
-        try:
-            font = ImageFont.truetype("arial.ttf", 36)
-        except:
-            try:
-                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 36)
-            except:
-                font = ImageFont.load_default()
-        
-        
-        try:
-            text_width = draw.textlength(code, font=font)
-        except AttributeError:
-         
-            text_width = len(code) * 20
-        
-        text_height = 36
-        x = max(10, (width - text_width) // 2)
-        y = max(10, (height - text_height) // 2)
-        
-       
-        color = (random.randint(0, 100), random.randint(0, 100), random.randint(0, 100))
-        draw.text((x, y), code, font=font, fill=color)
-        
-       
-        for _ in range(5):
+        for _ in range(3):
             x1 = random.randint(0, width)
             y1 = random.randint(0, height)
             x2 = random.randint(0, width)
             y2 = random.randint(0, height)
-            draw.line((x1, y1, x2, y2), fill=(random.randint(100, 200), random.randint(100, 200), random.randint(100, 200)))
+            draw.line((x1, y1, x2, y2), fill=(150, 150, 150), width=1)
         
         logger.info(f"Imagen CAPTCHA creada exitosamente para código: {code}")
         return img
     except Exception as e:
         logger.error(f"Error creando imagen CAPTCHA: {str(e)}", exc_info=True)
-        raise
+        
+        img = Image.new('RGB', (200, 80), color=(255, 255, 255))
+        draw = ImageDraw.Draw(img)
+        draw.text((50, 30), code, fill=(0, 0, 0))
+        logger.info(f"Usando CAPTCHA ultra simple de emergencia")
+        return img
 
 def create_captcha_session(session):
-    """Genera un código CAPTCHA y lo guarda en la sesión"""
+   
     try:
         code = generate_captcha_code()
         logger.info(f"Código CAPTCHA generado: {code}")
@@ -184,13 +184,14 @@ def create_captcha_session(session):
         
         logger.info(f"Imagen convertida a base64. Tamaño: {len(img_base64)} caracteres")
         
-      
+       
         session['captcha_code'] = code
         
         return f"data:image/png;base64,{img_base64}"
     except Exception as e:
         logger.error(f"Error en create_captcha_session: {str(e)}", exc_info=True)
-        raise
+       
+        return None
 
 def validate_captcha_session(session, user_input):
     
