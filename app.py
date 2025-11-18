@@ -423,22 +423,61 @@ def enviar_mensaje():
 
 @app.route('/generate_captcha')
 def generate_captcha():
-    
+   
     try:
-        logger.info("Generando CAPTCHA...")
+        logger.info("=== Iniciando generación de CAPTCHA ===")
         image_data = create_captcha_session(session)
-        logger.info(f"CAPTCHA generado exitosamente. Longitud de imagen: {len(image_data) if image_data else 0}")
         
-        return jsonify({
-            'success': True,
-            'image': image_data
-        })
+        if image_data:
+            logger.info(f"✅ CAPTCHA generado exitosamente. Longitud: {len(image_data)}")
+            return jsonify({
+                'success': True,
+                'image': image_data
+            })
+        else:
+            logger.error("❌ create_captcha_session devolvió None")
+            return jsonify({
+                'success': False,
+                'error': 'No se pudo generar la imagen'
+            }), 500
+            
     except Exception as e:
-        logger.error(f"Error generando CAPTCHA: {str(e)}", exc_info=True)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.error(f"❌ Error generando CAPTCHA: {str(e)}", exc_info=True)
+        
+        
+        try:
+            logger.info("Intentando generar CAPTCHA simplificado...")
+            code = generate_captcha_code()
+            
+            
+            img = Image.new('RGB', (200, 80), color=(240, 240, 240))
+            draw = ImageDraw.Draw(img)
+            
+           
+            font = ImageFont.load_default()
+            draw.text((50, 30), code, font=font, fill=(0, 0, 0))
+            
+            
+            buffer = io.BytesIO()
+            img.save(buffer, format='PNG')
+            img_data = buffer.getvalue()
+            img_base64 = base64.b64encode(img_data).decode()
+            
+            session['captcha_code'] = code
+            image_data = f"data:image/png;base64,{img_base64}"
+            
+            logger.info("✅ CAPTCHA simplificado generado")
+            return jsonify({
+                'success': True,
+                'image': image_data
+            })
+            
+        except Exception as fallback_error:
+            logger.error(f"❌ Error en CAPTCHA de respaldo: {str(fallback_error)}", exc_info=True)
+            return jsonify({
+                'success': False,
+                'error': f'Error: {str(e)}, Fallback: {str(fallback_error)}'
+            }), 500
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
     if request.method == 'POST':
