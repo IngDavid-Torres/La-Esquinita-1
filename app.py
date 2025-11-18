@@ -223,99 +223,68 @@ app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') or 'laesquinita.an
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD') or 'pnyy wnaj yisq wtgv'
 mail = Mail(app)
 
-def enviar_correo_async(app_context, correo_destino, pedido_data, metodo_pago):
-    
-    with app_context:
-        try:
-            print(f"🔵 Thread iniciado - Preparando correo para {correo_destino}")
-            
-            subject = f"Confirmación de Pedido #{pedido_data['id']} - La Esquinita"
-            html_body = f"""
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf7; padding: 20px; border-radius: 10px;">
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #2e7d32; margin-bottom: 10px;">🌽 La Esquinita</h1>
-                    <h2 style="color: #ff5722;">¡Pago Confirmado!</h2>
-                </div>
-                <div style="background: #f1f8e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                    <h3 style="color: #2e7d32; margin-top: 0;">📋 Detalles del Pedido</h3>
-                    <p><strong>Pedido #:</strong> {pedido_data['id']}</p>
-                    <p><strong>Nombre:</strong> {pedido_data['nombre']}</p>
-                    <p><strong>Correo:</strong> {pedido_data['correo']}</p>
-                    <p><strong>Dirección:</strong> {pedido_data['direccion']}</p>
-                    <p><strong>Total:</strong> ${pedido_data['total']:.2f} MXN</p>
-                    <p><strong>Método de Pago:</strong> {metodo_pago}</p>
-                    <p><strong>Estado:</strong> <span style="color: #4caf50; font-weight: bold;">{pedido_data['estado']}</span></p>
-                    <p><strong>Fecha:</strong> {pedido_data['fecha']}</p>
-                </div>
-                <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                    <h4 style="color: #ff5722; margin-top: 0;">🚀 ¿Qué sigue?</h4>
-                    <p>✅ Tu pedido está siendo preparado con amor</p>
-                    <p>⏱️ Tiempo estimado de entrega: 30-45 minutos</p>
-                    <p>📞 Te contactaremos si necesitamos algo adicional</p>
-                </div>
-                <div style="text-align: center; margin-top: 30px;">
-                    <p style="color: #666;">¡Gracias por elegir La Esquinita! 🌽</p>
-                    <p style="color: #2e7d32; font-weight: bold;">El auténtico sabor mexicano</p>
-                </div>
-                <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
-                    <p style="font-size: 12px; color: #888;">
-                        Este correo fue enviado automáticamente desde La Esquinita<br>
-                        Método de pago: {metodo_pago}
-                    </p>
-                </div>
-            </div>
-            """
-            
-            print(f"📧 Conectando a servidor SMTP: {app.config['MAIL_SERVER']}:{app.config['MAIL_PORT']}")
-            print(f"📧 Usuario SMTP: {app.config['MAIL_USERNAME']}")
-            
-            msg = Message(
-                subject=subject,
-                recipients=[correo_destino],
-                html=html_body,
-                sender=app.config['MAIL_USERNAME']
-            )
-            
-            print(f"📤 Enviando correo a {correo_destino}...")
-            mail.send(msg)
-            print(f"✅ Correo enviado exitosamente a {correo_destino}")
-            
-        except Exception as e:
-            print(f"❌ Error enviando correo async: {str(e)}")
-            print(f"❌ Tipo de error: {type(e).__name__}")
-            import traceback
-            print(f"❌ Traceback: {traceback.format_exc()}")
-
 def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
-    
+    """Envía correo de confirmación de forma directa y robusta"""
     try:
+        print(f"📧 INICIO envío correo a {correo_destino}")
+        print(f"📧 SMTP Server: {app.config.get('MAIL_SERVER')}")
+        print(f"📧 SMTP Port: {app.config.get('MAIL_PORT')}")
+        print(f"📧 SMTP User: {app.config.get('MAIL_USERNAME')}")
+        print(f"📧 SMTP Password configurado: {'Sí' if app.config.get('MAIL_PASSWORD') else 'No'}")
         
-        pedido_data = {
-            'id': pedido.id,
-            'nombre': pedido.nombre,
-            'correo': pedido.correo,
-            'direccion': pedido.direccion,
-            'total': pedido.total,
-            'estado': pedido.estado,
-            'fecha': pedido.fecha.strftime('%d/%m/%Y %H:%M')
-        }
+        subject = f"Confirmación de Pedido #{pedido.id} - La Esquinita"
+        html_body = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf7; padding: 20px; border-radius: 10px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #2e7d32; margin-bottom: 10px;">🌽 La Esquinita</h1>
+                <h2 style="color: #ff5722;">¡Pago Confirmado!</h2>
+            </div>
+            <div style="background: #f1f8e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="color: #2e7d32; margin-top: 0;">📋 Detalles del Pedido</h3>
+                <p><strong>Pedido #:</strong> {pedido.id}</p>
+                <p><strong>Nombre:</strong> {pedido.nombre}</p>
+                <p><strong>Correo:</strong> {pedido.correo}</p>
+                <p><strong>Dirección:</strong> {pedido.direccion}</p>
+                <p><strong>Total:</strong> ${pedido.total:.2f} MXN</p>
+                <p><strong>Método de Pago:</strong> {metodo_pago}</p>
+                <p><strong>Estado:</strong> <span style="color: #4caf50; font-weight: bold;">{pedido.estado}</span></p>
+                <p><strong>Fecha:</strong> {pedido.fecha.strftime('%d/%m/%Y %H:%M')}</p>
+            </div>
+            <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #ff5722; margin-top: 0;">🚀 ¿Qué sigue?</h4>
+                <p>✅ Tu pedido está siendo preparado con amor</p>
+                <p>⏱️ Tiempo estimado de entrega: 30-45 minutos</p>
+                <p>📞 Te contactaremos si necesitamos algo adicional</p>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <p style="color: #666;">¡Gracias por elegir La Esquinita! 🌽</p>
+                <p style="color: #2e7d32; font-weight: bold;">El auténtico sabor mexicano</p>
+            </div>
+        </div>
+        """
         
-       
-        app_context = app.app_context()
-        
-        
-        thread = threading.Thread(
-            target=enviar_correo_async,
-            args=(app_context, correo_destino, pedido_data, metodo_pago)
+        msg = Message(
+            subject=subject,
+            recipients=[correo_destino],
+            html=html_body,
+            sender=app.config['MAIL_USERNAME']
         )
-        thread.daemon = True 
-        thread.start()
         
-        print(f"📧 Correo programado para envío asíncrono a {correo_destino}")
+        print(f"📤 Enviando mensaje...")
+        mail.send(msg)
+        print(f"✅ Correo enviado exitosamente a {correo_destino}")
         return True
+        
     except Exception as e:
-        print(f"⚠️ Error programando envío de correo: {str(e)}")
+        print(f"❌ ERROR ENVIANDO CORREO:")
+        print(f"❌ Destinatario: {correo_destino}")
+        print(f"❌ Error: {str(e)}")
+        print(f"❌ Tipo: {type(e).__name__}")
+        import traceback
+        print(f"❌ Traceback completo:")
+        traceback.print_exc()
         return False
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -1174,7 +1143,7 @@ def pago():
                 db.session.add(nueva_tarjeta)
                 db.session.commit()
         
-        # Crear pedido con toda la información necesaria
+      
         nuevo_pedido = Pedido(
             usuario_id=usuario_id, 
             total=total, 
@@ -1198,7 +1167,7 @@ def pago():
         Carrito.query.filter_by(usuario_id=usuario_id).delete()
         db.session.commit()
         
-        # Enviar correo de forma ASÍNCRONA
+        
         try:
             print(f"📧 Preparando envío de correo para pedido #{nuevo_pedido.id}")
             enviar_confirmacion_pago(correo, nuevo_pedido, 'Tarjeta de Crédito')
@@ -2084,7 +2053,7 @@ def init_categorias_railway():
         
         db.session.commit()
         
-      
+        # Verificar
         todas = Categoria.query.all()
         resultado = {
             "status": "success",
@@ -2098,9 +2067,115 @@ def init_categorias_railway():
         db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/admin/test-email-config-secret')
+def test_email_config():
+    """Ruta para probar configuración de email"""
+    try:
+        config_info = {
+            "MAIL_SERVER": app.config.get('MAIL_SERVER'),
+            "MAIL_PORT": app.config.get('MAIL_PORT'),
+            "MAIL_USE_TLS": app.config.get('MAIL_USE_TLS'),
+            "MAIL_USERNAME": app.config.get('MAIL_USERNAME'),
+            "MAIL_PASSWORD_SET": "✅ Sí" if app.config.get('MAIL_PASSWORD') else "❌ No",
+            "MAIL_PASSWORD_LENGTH": len(app.config.get('MAIL_PASSWORD', ''))
+        }
+        return jsonify(config_info), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/admin/send-test-email-secret/<email>')
+def send_test_email(email):
+    """Enviar correo de prueba"""
+    try:
+        print(f"🧪 Intentando enviar correo de prueba a {email}")
+        
+        # Crear datos de prueba
+        pedido_data = {
+            'id': 999,
+            'nombre': 'Usuario de Prueba',
+            'correo': email,
+            'direccion': 'Dirección de prueba 123',
+            'total': 100.00,
+            'estado': 'TEST',
+            'fecha': datetime.now().strftime('%d/%m/%Y %H:%M')
+        }
+        
+        # Intentar envío síncrono para ver errores
+        try:
+            subject = f"🧪 TEST - Confirmación de Pedido - La Esquinita"
+            html_body = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf7; padding: 20px; border-radius: 10px;">
+                <h1 style="color: #2e7d32;">🌽 La Esquinita - EMAIL TEST</h1>
+                <p>Este es un correo de prueba.</p>
+                <p><strong>Pedido #:</strong> {pedido_data['id']}</p>
+                <p><strong>Nombre:</strong> {pedido_data['nombre']}</p>
+                <p><strong>Total:</strong> ${pedido_data['total']:.2f} MXN</p>
+                <p><strong>Fecha:</strong> {pedido_data['fecha']}</p>
+                <p>Si recibes este correo, la configuración está correcta ✅</p>
+            </div>
+            """
+            
+            msg = Message(
+                subject=subject,
+                recipients=[email],
+                html=html_body,
+                sender=app.config['MAIL_USERNAME']
+            )
+            
+            print(f"📧 Configuración SMTP:")
+            print(f"   Server: {app.config['MAIL_SERVER']}:{app.config['MAIL_PORT']}")
+            print(f"   Username: {app.config['MAIL_USERNAME']}")
+            print(f"   TLS: {app.config['MAIL_USE_TLS']}")
+            
+            mail.send(msg)
+            print(f"✅ Correo de prueba enviado exitosamente a {email}")
+            
+            return jsonify({
+                "status": "success",
+                "message": f"Correo enviado a {email}",
+                "smtp_server": app.config['MAIL_SERVER'],
+                "smtp_username": app.config['MAIL_USERNAME']
+            }), 200
+            
+        except Exception as mail_error:
+            print(f"❌ Error enviando correo: {str(mail_error)}")
+            import traceback
+            traceback.print_exc()
+            return jsonify({
+                "status": "error",
+                "message": str(mail_error),
+                "type": type(mail_error).__name__
+            }), 500
+            
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     
+    try:
+        with app.app_context():
+            # Verificar conexión a base de datos
+            db_connected, db_message = check_database_connection()
+            if not db_connected:
+                print(f"❌ Error de conexión a base de datos: {db_message}")
+                print("🔄 Intentando crear tablas de todas formas...")
+            
+            db.create_all()
+            crear_admin()
+            try:
+                from sms_verification import SMSCode
+                SMSCode(db).create_table()
+                print("✅ Tabla sms_codes verificada/creada")
+            except Exception as e:
+                print(f"⚠️ No se pudo verificar/crear sms_codes: {e}")
+            print("✅ Tablas creadas y administrador registrado 🚀")
+            
+    except Exception as init_error:
+        print(f"⚠️ Error durante inicialización: {str(init_error)}")
+        print("🔄 Continuando con el servidor...")
+    
+    app.run(host='0.0.0.0', port=port, debug=False)
     try:
         with app.app_context():
             
