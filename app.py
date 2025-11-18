@@ -434,7 +434,7 @@ def enviar_mensaje():
 
 @app.route('/generate_captcha')
 def generate_captcha():
-    """Genera un CAPTCHA SVG y lo guarda en la sesión"""
+   
     try:
         logger.info("=== Generando CAPTCHA (SVG) ===")
         code = generate_captcha_code()
@@ -452,13 +452,13 @@ def generate_captcha():
             '<rect width="100%" height="100%" rx="10" fill="#eeeeee"/>',
         ]
 
-        # Líneas de ruido de fondo
+      
         for _ in range(4):
             x1, y1 = random.randint(10, width-10), random.randint(10, height-10)
             x2, y2 = random.randint(10, width-10), random.randint(10, height-10)
             parts.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#d3d3d3" stroke-width="1"/>')
 
-        # Caracteres del código con rotación
+       
         x = start_x
         for ch in code:
             angle = random.randint(-12, 12)
@@ -469,7 +469,7 @@ def generate_captcha():
             )
             x += spacing
 
-        # Línea horizontal de ruido
+     
         parts.append('<line x1="20" y1="50" x2="240" y2="50" stroke="#bdbdbd" stroke-width="1"/>')
         parts.append('</svg>')
 
