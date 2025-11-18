@@ -227,6 +227,8 @@ def enviar_correo_async(app_context, correo_destino, pedido_data, metodo_pago):
     
     with app_context:
         try:
+            print(f"🔵 Thread iniciado - Preparando correo para {correo_destino}")
+            
             subject = f"Confirmación de Pedido #{pedido_data['id']} - La Esquinita"
             html_body = f"""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf7; padding: 20px; border-radius: 10px;">
@@ -263,16 +265,26 @@ def enviar_correo_async(app_context, correo_destino, pedido_data, metodo_pago):
                 </div>
             </div>
             """
+            
+            print(f"📧 Conectando a servidor SMTP: {app.config['MAIL_SERVER']}:{app.config['MAIL_PORT']}")
+            print(f"📧 Usuario SMTP: {app.config['MAIL_USERNAME']}")
+            
             msg = Message(
                 subject=subject,
                 recipients=[correo_destino],
                 html=html_body,
                 sender=app.config['MAIL_USERNAME']
             )
+            
+            print(f"📤 Enviando correo a {correo_destino}...")
             mail.send(msg)
             print(f"✅ Correo enviado exitosamente a {correo_destino}")
+            
         except Exception as e:
-            print(f"⚠️ Error enviando correo async: {str(e)}")
+            print(f"❌ Error enviando correo async: {str(e)}")
+            print(f"❌ Tipo de error: {type(e).__name__}")
+            import traceback
+            print(f"❌ Traceback: {traceback.format_exc()}")
 
 def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
     
