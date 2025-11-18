@@ -1556,11 +1556,8 @@ def actualizar_usuario(user_id):
         flash('Usuario actualizado correctamente.', 'success')
         return redirect(url_for('gestion_usuarios'))
     return render_template('actualizar_usuario.html', usuario=usuario)
+
 from sms_routes import create_sms_routes
-def validate_captcha_session(session, captcha_input):
-    return True
-def create_captcha_session(session):
-    pass
 sms_bp = create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_session)
 app.register_blueprint(sms_bp)
 @app.route('/logout_simple')
@@ -1981,6 +1978,13 @@ def init_database():
             
             db.create_all()
             crear_admin()
+         
+            try:
+                from sms_verification import SMSCode
+                SMSCode(db).create_table()
+                logger.info("✅ Tabla sms_codes verificada/creada")
+            except Exception as e:
+                logger.warning(f"⚠️ No se pudo verificar/crear sms_codes: {e}")
             logger.info("✅ Tablas creadas y administrador registrado 🚀")
             
     except Exception as init_error:
@@ -2004,6 +2008,12 @@ if __name__ == '__main__':
             
             db.create_all()
             crear_admin()
+            try:
+                from sms_verification import SMSCode
+                SMSCode(db).create_table()
+                print("✅ Tabla sms_codes verificada/creada")
+            except Exception as e:
+                print(f"⚠️ No se pudo verificar/crear sms_codes: {e}")
             print("✅ Tablas creadas y administrador registrado 🚀")
             
     except Exception as init_error:

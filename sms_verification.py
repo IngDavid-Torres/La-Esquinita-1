@@ -140,11 +140,18 @@ class SMSCode:
             """)
             with self.db.engine.begin() as conn:
                 conn.execute(ddl)
+                try:
+                    conn.execute(text("CREATE INDEX IF NOT EXISTS idx_sms_codes_phone ON sms_codes(phone_number)"))
+                    conn.execute(text("CREATE INDEX IF NOT EXISTS idx_sms_codes_expires ON sms_codes(expires_at)"))
+                except Exception:
+                    pass
         except Exception as e:
             print(f"Error creando tabla sms_codes: {e}")
     
     def save_code(self, phone_number, code, expires_in_minutes=10):
         try:
+           
+            self.create_table()
             if self.development_mode:
                 expires_at = datetime.now() + timedelta(minutes=expires_in_minutes)
                 self.temp_codes[phone_number] = {
@@ -174,6 +181,8 @@ class SMSCode:
     
     def verify_code(self, phone_number, input_code):
         try:
+            
+            self.create_table()
             if self.development_mode:
                 print(f"DEBUG (DEV MODE): Verificando código '{input_code}' para '{phone_number}'")
                 
@@ -242,4 +251,11 @@ class SMSCode:
                     
         except Exception as e:
             print(f"[SMS VERIFY ERROR] {type(e).__name__}: {e}")
+            
+            if 'no such table' in str(e).lower() and 'sms_codes' in str(e):
+                try:
+                    self.create_table()
+                except Exception as ce:
+                    print(f"[SMS TABLE CREATE ERROR] {ce}")
+                return {'success': False, 'message': 'La tabla de códigos no existía y se creó. Reenvía el código e inténtalo de nuevo.'}
             return {'success': False, 'message': f'Error interno del servidor: {str(e)}'}
