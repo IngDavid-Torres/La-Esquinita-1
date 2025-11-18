@@ -212,7 +212,7 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD') or 'pnyy wnaj yisq
 mail = Mail(app)
 def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
     try:
-        subject = f"ðŸŒ½ ConfirmaciÃ³n de Pedido #{pedido.id} - La Esquinita"
+        subject = f"Confirmación de Pedido #{pedido.id} - La Esquinita"
         html_body = f"""
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf7; padding: 20px; border-radius: 10px;">
             <div style="text-align: center; margin-bottom: 30px;">
@@ -220,7 +220,7 @@ def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
                 <h2 style="color: #ff5722;">Â¡Pago Confirmado!</h2>
             </div>
             <div style="background: #f1f8e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 style="color: #2e7d32; margin-top: 0;">ðŸ“‹ Detalles del Pedido</h3>
+                <h3 style="color: #2e7d32; margin-top: 0;">Detalles del Pedido</h3>
                 <p><strong>Pedido #:</strong> {pedido.id}</p>
                 <p><strong>Nombre:</strong> {pedido.nombre}</p>
                 <p><strong>Correo:</strong> {pedido.correo}</p>

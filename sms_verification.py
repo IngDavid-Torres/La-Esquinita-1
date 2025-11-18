@@ -13,15 +13,28 @@ class SMSVerification:
         
         self.development_mode = not self.account_sid or not self.auth_token or not self.phone_number
         
+        
+        print(f"""
+🔍 [TWILIO CONFIG] Estado de Configuración:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 ACCOUNT_SID: {'✅ Configurado' if self.account_sid else '❌ NO configurado'}
+📌 AUTH_TOKEN: {'✅ Configurado' if self.auth_token else '❌ NO configurado'}
+📌 PHONE_NUMBER: {'✅ Configurado (' + self.phone_number + ')' if self.phone_number else '❌ NO configurado'}
+📌 Modo: {'🔧 DESARROLLO' if self.development_mode else '🚀 PRODUCCIÓN (Twilio Real)'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+""")
+        
         if not self.development_mode:
             try:
                 self.client = Client(self.account_sid, self.auth_token)
+                print("[✅] Cliente Twilio inicializado correctamente")
             except Exception as e:
-                print(f"[ERROR] Error al inicializar Twilio Client: {str(e)}")
+                print(f"[❌ ERROR] Error al inicializar Twilio Client: {str(e)}")
                 self.development_mode = True
                 self.client = None
         else:
             self.client = None
+            print("[⚠️] Usando modo DESARROLLO - Los SMS no se enviarán realmente")
         
     def generate_verification_code(self, length=6):
         return ''.join(random.choices(string.digits, k=length))

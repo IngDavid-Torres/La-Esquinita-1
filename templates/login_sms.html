@@ -311,7 +311,7 @@
             <input type="password" name="password" placeholder="Contraseña" required>
             
             <div class="captcha-container">
-                <div class="captcha-display" id="captchaDisplay">🔄 Cargando...</div>
+                <img id="captchaImage" style="max-width: 200px; height: 80px; border-radius: 8px;" alt="CAPTCHA">
                 <input type="text" class="captcha-input" id="captchaInput" name="captcha" 
                        placeholder="Código" maxlength="5" required>
                 <button type="button" class="captcha-refresh" id="refreshCaptcha" title="Generar nuevo código">🔄</button>
@@ -372,35 +372,25 @@
     
     <script>
         {% if step == 1 %}
-        let captchaCode = '';
-        
         function generateCaptcha() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            captchaCode = '';
-            for (let i = 0; i < 5; i++) {
-                captchaCode += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            document.getElementById('captchaDisplay').textContent = captchaCode;
-            document.getElementById('captchaInput').value = '';
-        }
-        
-        function validateCaptcha() {
-            const userInput = document.getElementById('captchaInput').value.toUpperCase();
-            return userInput === captchaCode;
+            fetch('/generate_captcha')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.image) {
+                        document.getElementById('captchaImage').src = data.image;
+                        document.getElementById('captchaInput').value = '';
+                    } else {
+                        console.error('Error al cargar CAPTCHA:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en fetch de CAPTCHA:', error);
+                });
         }
         
         document.addEventListener('DOMContentLoaded', function() {
             generateCaptcha();
             document.getElementById('refreshCaptcha').addEventListener('click', generateCaptcha);
-        });
-        
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            if (!validateCaptcha()) {
-                e.preventDefault();
-                alert('Código CAPTCHA incorrecto');
-                generateCaptcha();
-                return false;
-            }
         });
         {% endif %}
         
