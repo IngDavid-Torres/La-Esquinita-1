@@ -89,7 +89,7 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
                     'message': 'Número de teléfono inválido'
                 }), 400
             
-            verification_result = sms_code_manager.verify_code(phone_number, verification_code)
+            verification_result = sms_code_manager.verify_code(normalized_phone, verification_code)
             
             if verification_result['success']:
                 if 'usuario_id' in session:

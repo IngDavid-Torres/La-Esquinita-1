@@ -209,11 +209,21 @@ class SMSCode:
                 if not result:
                     return {'success': False, 'message': 'Código expirado o no válido'}
                 
-                code_id, stored_code, expires_at, attempts = result
+                
+                try:
+                    m = result._mapping
+                    code_id = m['id']
+                    stored_code = m['code']
+                    expires_at = m['expires_at']
+                    attempts = m['attempts'] or 0
+                except Exception:
+                    
+                    code_id, stored_code, expires_at, attempts = result
                 
                 conn.execute(text("UPDATE sms_codes SET attempts = attempts + 1 WHERE id = :id"), {"id": code_id})
                 
-                if attempts >= 3:
+                
+                if attempts + 1 > 3:
                     conn.execute(text("UPDATE sms_codes SET used = TRUE WHERE id = :id"), {"id": code_id})
                     return {'success': False, 'message': 'Demasiados intentos. Solicita un nuevo código'}
                 
@@ -224,12 +234,12 @@ class SMSCode:
                     
                     return {'success': True, 'message': 'Código verificado correctamente'}
                 else:
-                    remaining_attempts = 3 - (attempts + 1)
+                    remaining_attempts = max(0, 3 - (attempts + 1))
                     return {
                         'success': False, 
                         'message': f'Código incorrecto. Te quedan {remaining_attempts} intentos'
                     }
                     
         except Exception as e:
-            print(f"Error verificando código SMS: {e}")
-            return {'success': False, 'message': 'Error interno del servidor'}
+            print(f"[SMS VERIFY ERROR] {type(e).__name__}: {e}")
+            return {'success': False, 'message': f'Error interno del servidor: {str(e)}'}
