@@ -266,11 +266,12 @@
         
         .captcha-input {
             flex: 1;
-            max-width: 120px;
+            max-width: 150px;
             text-align: center;
-            font-size: 1.1em;
+            font-size: 1.3em;
             font-weight: bold;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            padding: 14px 10px;
         }
         
         .captcha-refresh {
@@ -567,40 +568,43 @@ function generateCaptcha() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+   
     generateCaptcha();
     
+    // Función para verificar si es admin
+    function checkIfAdmin() {
+        const email = document.getElementById('emailInput').value.trim().toLowerCase();
+        const isAdmin = email === 'admin@laesquinita.com';
+        const captchaContainer = document.getElementById('captchaContainer');
+        const captchaInput = document.getElementById('captchaInput');
+        const adminNotice = document.getElementById('adminNotice');
+        
+        if (isAdmin) {
+            captchaContainer.style.display = 'none';
+            captchaInput.removeAttribute('required');
+            captchaInput.value = 'ADMIN_BYPASS';
+            adminNotice.style.display = 'block';
+        } else {
+            captchaContainer.style.display = 'flex';
+            captchaInput.value = '';
+            adminNotice.style.display = 'none';
+        }
+    }
+    
+    // Event listeners
     document.getElementById('refreshCaptcha').addEventListener('click', generateCaptcha);
     
     document.getElementById('captchaInput').addEventListener('input', function() {
         document.getElementById('captchaError').style.display = 'none';
     });
     
-  
     const emailInput = document.getElementById('emailInput');
     emailInput.addEventListener('input', checkIfAdmin);
     emailInput.addEventListener('blur', checkIfAdmin);
-});
-
-function checkIfAdmin() {
-    const email = document.getElementById('emailInput').value.trim().toLowerCase();
-    const isAdmin = email === 'admin@laesquinita.com';
-    const captchaContainer = document.getElementById('captchaContainer');
-    const captchaInput = document.getElementById('captchaInput');
-    const adminNotice = document.getElementById('adminNotice');
+    emailInput.addEventListener('change', checkIfAdmin);
     
-    if (isAdmin) {
-        captchaContainer.style.display = 'none';
-        captchaInput.removeAttribute('required');
-        captchaInput.value = 'ADMIN_BYPASS';
-        adminNotice.style.display = 'block';
-    } else {
-        captchaContainer.style.display = 'flex';
-        captchaInput.value = '';
-        adminNotice.style.display = 'none';
-    }
-}
-
-document.getElementById('loginForm').addEventListener('submit', function(e){
+    // Submit handler
+    document.getElementById('loginForm').addEventListener('submit', function(e){
     e.preventDefault();
     
     
@@ -627,8 +631,9 @@ document.getElementById('loginForm').addEventListener('submit', function(e){
     
     document.getElementById('alerta-cargando').style.display = 'flex';
     
-    // Enviar formulario inmediatamente (sin setTimeout para evitar problemas)
+    
     this.submit();
+    });
 });
 </script>
 </body>
