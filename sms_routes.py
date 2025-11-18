@@ -317,6 +317,16 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
             normalized = sms_service.validate_phone_number(phone)
             if not normalized:
                 return jsonify({'success': False, 'message': 'Número inválido'}), 400
+            
+            if getattr(sms_code_manager, 'development_mode', False):
+                stored = sms_code_manager.temp_codes.get(normalized)
+                if stored:
+                    return jsonify({'success': True, 'data': {
+                        'phone': normalized,
+                        'code': stored.get('code'),
+                        'used': stored.get('used'),
+                        'attempts': stored.get('attempts')
+                    }})
             with db.engine.begin() as conn:
                 row = conn.execute(
                     text("""
