@@ -2021,6 +2021,39 @@ def init_database():
 if not app.config.get('TESTING'):
     init_database()
 
+@app.route('/admin/init-categorias-railway-secret-2024')
+def init_categorias_railway():
+    
+    try:
+        categorias = ["Elotes", "Esquites", "Patitas", "Maruchan"]
+        insertadas = 0
+        existentes = 0
+        
+        for nombre in categorias:
+            cat_existe = Categoria.query.filter_by(nombre=nombre).first()
+            if not cat_existe:
+                nueva_cat = Categoria(nombre=nombre)
+                db.session.add(nueva_cat)
+                insertadas += 1
+            else:
+                existentes += 1
+        
+        db.session.commit()
+        
+      
+        todas = Categoria.query.all()
+        resultado = {
+            "status": "success",
+            "insertadas": insertadas,
+            "existentes": existentes,
+            "total_en_db": len(todas),
+            "categorias": [{"id": c.id, "nombre": c.nombre} for c in todas]
+        }
+        return jsonify(resultado), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     
