@@ -1,4 +1,6 @@
 from flask import Blueprint, request, session, flash, redirect, url_for, render_template, jsonify
+import os
+from sqlalchemy import text
 from sms_verification import SMSVerification, SMSCode
 import json
 
@@ -45,7 +47,8 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
             verification_code = sms_service.generate_verification_code()
             
             if sms_code_manager.save_code(normalized_phone, verification_code):
-                sms_result = sms_service.send_verification_sms(normalized_phone, verification_code)
+                callback_url = url_for('sms_bp.twilio_status', _external=True)
+                sms_result = sms_service.send_verification_sms(normalized_phone, verification_code, callback_url)
                 
                 if sms_result['success']:
                     return jsonify({
@@ -151,7 +154,8 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
                     return render_template('registro_sms.html', step=1)
                 
                 verification_code = sms_service.generate_verification_code()
-                sms_result = sms_service.send_verification_sms(normalized_phone, verification_code)
+                callback_url = url_for('sms_bp.twilio_status', _external=True)
+                sms_result = sms_service.send_verification_sms(normalized_phone, verification_code, callback_url)
                 
                 if sms_result['success']:
                     sms_code_manager.save_code(normalized_phone, verification_code)
@@ -243,7 +247,8 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
                     return redirect(url_for('login'))
                 
                 verification_code = sms_service.generate_verification_code()
-                sms_result = sms_service.send_verification_sms(usuario.telefono, verification_code)
+                callback_url = url_for('sms_bp.twilio_status', _external=True)
+                sms_result = sms_service.send_verification_sms(usuario.telefono, verification_code, callback_url)
                 
                 if sms_result['success']:
                     sms_code_manager.save_code(usuario.telefono, verification_code)
@@ -288,5 +293,52 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
             flash(f'Error interno: {str(e)}', 'error')
             create_captcha_session(session)
             return render_template('login_sms.html', step=1)
+
+    @sms_bp.route('/twilio_status', methods=['POST'])
+    def twilio_status():
+        try:
+            data = request.form.to_dict()
+            # Log minimal delivery info; avoid sensitive data leakage
+            print(f"[Twilio Status] sid={data.get('MessageSid')} status={data.get('MessageStatus')} to={data.get('To')} error={data.get('ErrorCode')}")
+            return ('', 204)
+        except Exception as e:
+            print(f"[Twilio Status ERROR] {e}")
+            return ('', 204)
+
+    @sms_bp.route('/sms_last_code')
+    def sms_last_code():
+        # Debug-only endpoint: returns last code for a phone if explicitly enabled
+        if not os.environ.get('SMS_DEBUG_SHOW_CODE', '').lower() in ('1', 'true', 'yes'):
+            return jsonify({'success': False, 'message': 'No autorizado'}), 403
+        phone = request.args.get('phone', '').strip()
+        if not phone:
+            return jsonify({'success': False, 'message': 'Parámetro phone requerido'}), 400
+        try:
+            normalized = sms_service.validate_phone_number(phone)
+            if not normalized:
+                return jsonify({'success': False, 'message': 'Número inválido'}), 400
+            with db.engine.begin() as conn:
+                row = conn.execute(
+                    text("""
+                        SELECT code, created_at, expires_at, used, attempts
+                        FROM sms_codes
+                        WHERE phone_number = :pn
+                        ORDER BY created_at DESC
+                        LIMIT 1
+                    """),
+                    {'pn': normalized}
+                ).fetchone()
+            if not row:
+                return jsonify({'success': False, 'message': 'Sin registros'}), 404
+            m = getattr(row, '_mapping', None)
+            payload = {
+                'phone': normalized,
+                'code': (m['code'] if m else row[0]),
+                'used': (m['used'] if m else row[3]),
+                'attempts': (m['attempts'] if m else row[4])
+            }
+            return jsonify({'success': True, 'data': payload})
+        except Exception as e:
+            return jsonify({'success': False, 'message': str(e)}), 500
 
     return sms_bp

@@ -41,7 +41,7 @@ class SMSVerification:
     def generate_verification_code(self, length=6):
         return ''.join(random.choices(string.digits, k=length))
     
-    def send_verification_sms(self, phone_number, code):
+    def send_verification_sms(self, phone_number, code, callback_url: str | None = None):
         try:
             if self.development_mode:
                 print(f"""
@@ -68,11 +68,14 @@ No compartas este código con nadie.
 
 ¡Gracias por elegir La Esquinita!"""
             
-            message = self.client.messages.create(
-                body=message_body,
-                from_=self.phone_number,
-                to=phone_number
-            )
+            create_kwargs = {
+                'body': message_body,
+                'from_': self.phone_number,
+                'to': phone_number,
+            }
+            if callback_url:
+                create_kwargs['status_callback'] = callback_url
+            message = self.client.messages.create(**create_kwargs)
             
             return {
                 'success': True,
