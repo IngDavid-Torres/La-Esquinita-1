@@ -19,6 +19,8 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
                 'twilio_account_sid_present': bool(sms_service.account_sid),
                 'twilio_auth_token_present': bool(sms_service.auth_token),
                 'twilio_phone_number_present': bool(sms_service.phone_number),
+                'twilio_messaging_service_sid_present': bool(getattr(sms_service, 'messaging_service_sid', None)),
+                'using_messaging_service': bool(getattr(sms_service, 'messaging_service_sid', None)),
                 'development_mode': sms_service.development_mode,
                 'example_generated_code': sms_service.generate_verification_code(),
             }

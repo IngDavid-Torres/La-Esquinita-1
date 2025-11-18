@@ -11,6 +11,7 @@ class SMSVerification:
         self.account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
         self.auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
         self.phone_number = os.environ.get('TWILIO_PHONE_NUMBER')
+        self.messaging_service_sid = os.environ.get('TWILIO_MESSAGING_SERVICE_SID')
         
         
         self.development_mode = not self.account_sid or not self.auth_token or not self.phone_number
@@ -22,6 +23,7 @@ class SMSVerification:
 📌 ACCOUNT_SID: {'✅ Configurado' if self.account_sid else '❌ NO configurado'}
 📌 AUTH_TOKEN: {'✅ Configurado' if self.auth_token else '❌ NO configurado'}
 📌 PHONE_NUMBER: {'✅ Configurado (' + self.phone_number + ')' if self.phone_number else '❌ NO configurado'}
+    📌 MSG SERVICE: {'✅ ' + self.messaging_service_sid if self.messaging_service_sid else '❌ NO configurado'}
 📌 Modo: {'🔧 DESARROLLO' if self.development_mode else '🚀 PRODUCCIÓN (Twilio Real)'}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """)
@@ -59,20 +61,18 @@ class SMSVerification:
                     'message': f'Código enviado a {phone_number} (modo desarrollo)'
                 }
             
-            message_body = f"""🌽 La Esquinita - Código de Verificación
-
-Tu código de verificación es: {code}
-
-Este código expira en 10 minutos.
-No compartas este código con nadie.
-
-¡Gracias por elegir La Esquinita!"""
+            # Mensaje conciso para mejor entregabilidad
+            message_body = f"Tu código La Esquinita: {code}. Expira en 10 min."
             
             create_kwargs = {
                 'body': message_body,
-                'from_': self.phone_number,
                 'to': phone_number,
             }
+            
+            if self.messaging_service_sid:
+                create_kwargs['messaging_service_sid'] = self.messaging_service_sid
+            else:
+                create_kwargs['from_'] = self.phone_number
             if callback_url:
                 create_kwargs['status_callback'] = callback_url
             message = self.client.messages.create(**create_kwargs)
