@@ -79,7 +79,7 @@ if DATABASE_URL and 'postgresql://' in DATABASE_URL:
         'connect_args': {
             'connect_timeout': 30,
             'application_name': 'la_esquinita_app',
-            'sslmode': 'prefer'  # Prefer SSL but don't require it
+            'sslmode': 'prefer'  
         }
     }
     print("🐘 Configuración PostgreSQL para Railway")
@@ -206,6 +206,14 @@ def validate_captcha_session(session, user_input):
     session.pop('captcha_code', None)
     
     return stored_code == user_code
+
+@app.before_request
+def mantener_sesion_activa():
+    
+    if 'usuario_id' in session:
+        session.permanent = True
+        session.modified = True
+
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -486,12 +494,12 @@ def registro():
             flash("El correo ya estÃ¡ registrado.", "error")
             return redirect(url_for('registro'))
         if not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$", password):
-            flash("La contraseÃ±a debe tener al menos 8 caracteres, una mayÃºscula, una minÃºscula y un carÃ¡cter especial.", "error")
+            flash("La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un carácter especial.", "error")
             return redirect(url_for('registro'))
         nuevo_usuario = Usuario(nombre=nombre, email=email, password=password, tipo_usuario=tipo_usuario)
         db.session.add(nuevo_usuario)
         db.session.commit()
-        flash("Registro exitoso. Ahora puedes iniciar sesiÃ³n.", "success")
+        flash("Registro exitoso. Ahora puedes iniciar sesión.", "success")
         return redirect(url_for('login'))
     tipo_usuario = request.args.get('tipo', 'Cliente')
     return render_template('registro.html', tipo_usuario=tipo_usuario)
@@ -530,6 +538,7 @@ def login():
                 session['usuario_id'] = admin.id
                 session['usuario_nombre'] = admin.nombre
                 session['tipo_usuario'] = "Administrador"
+                session.permanent = True  
                 logger.info(f"📝 Session configurada: {dict(session)}")
                 logger.info(f"🔄 Generando redirect a: {url_for('panel_admin')}")
                 flash(f'Bienvenido Administrador {admin.nombre}', 'success')
@@ -550,6 +559,7 @@ def login():
                 session['usuario_id'] = usuario.id
                 session['usuario_nombre'] = usuario.nombre
                 session['tipo_usuario'] = usuario.tipo_usuario
+                session.permanent = True  # Mantener sesión activa
                 flash(f'Bienvenido {usuario.nombre}', 'success')
                 if usuario.tipo_usuario == "Cliente":
                     logger.info("🔄 REDIRIGIENDO A PANEL_CLIENTE")
@@ -711,12 +721,12 @@ def logout_admin():
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
     response.headers['Clear-Site-Data'] = '"cache", "cookies", "storage", "executionContexts"'
-    flash(f'SesiÃ³n de administrador cerrada completamente. Â¡Hasta pronto, {admin_name}! ðŸ”', 'success')
+    flash(f'Sesión de administrador cerrada completamente. ¡Hasta pronto, {admin_name}! 🔐', 'success')
     return response
 @app.route('/logout/cliente')
 def logout_cliente():
     if session.get('tipo_usuario') != 'Cliente':
-        flash('Acceso denegado. Solo clientes pueden usar esta funciÃ³n.', 'error')
+        flash('Acceso denegado. Solo clientes pueden usar esta función.', 'error')
         return redirect(url_for('inicio'))
     client_name = session.get('usuario_nombre', 'Cliente')
     session_keys_to_clear = [
@@ -736,10 +746,11 @@ def logout_cliente():
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
     response.headers['Clear-Site-Data'] = '"cache", "cookies", "storage", "executionContexts"'
-    flash(f'SesiÃ³n de cliente cerrada completamente. Â¡Hasta pronto, {client_name}! ðŸ›’', 'success')
+    flash(f'Sesión de cliente cerrada completamente. ¡Hasta pronto, {client_name}! 🛡️', 'success')
     return response
 @app.route('/logout/force')
 def logout_force():
+    
     session_keys = list(session.keys())
     user_data = {
         'name': session.get('usuario_nombre', 'Usuario'),
@@ -758,14 +769,14 @@ def logout_force():
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
     response.headers['Clear-Site-Data'] = '"cache", "cookies", "storage", "executionContexts"'
-    flash(f'DestrucciÃ³n total de sesiÃ³n completada. Todos los datos eliminados. Â¡Hasta pronto, {user_data["name"]}! ðŸ’¥', 'warning')
+    flash(f'Destrucción total de sesión completada. Todos los datos eliminados. ¡Hasta pronto, {user_data["name"]}! 🔥', 'warning')
     return response
 @app.route('/keep-alive', methods=['POST'])
 def keep_alive():
     if 'usuario_id' in session:
         session.permanent = True
-        return {'status': 'success', 'message': 'SesiÃ³n renovada'}, 200
-    return {'status': 'error', 'message': 'No hay sesiÃ³n activa'}, 401
+        return {'status': 'success', 'message': 'Sesión renovada'}, 200
+    return {'status': 'error', 'message': 'No hay sesión activa'}, 401
 @app.route('/webhook/mercadopago', methods=['POST'])
 def webhook_mercadopago():
     try:
@@ -844,7 +855,7 @@ def pago_mercadopago():
     usuario_id = session['usuario_id']
     carrito_items = Carrito.query.filter_by(usuario_id=usuario_id).all()
     if not carrito_items:
-        flash("Tu carrito estÃ¡ vacÃ­o", "error")
+        flash("Tu carrito está vacío", "error")
         return redirect(url_for('carrito'))
     productos = []
     total = 0
@@ -926,9 +937,9 @@ def pago_mercadopago():
                                  productos=productos)
         
         try:
-            print(f"ðŸ”§ DEBUG: Creando preferencia con datos: {preference_data}")
+            print(f"🧪 DEBUG: Creando preferencia con datos: {preference_data}")
             preference_response = sdk.preference().create(preference_data)
-            print(f"ðŸ”§ DEBUG: Respuesta de MercadoPago: {preference_response}")
+            print(f"🧪 DEBUG: Respuesta de MercadoPago: {preference_response}")
             preference = preference_response["response"]
             if preference_response["status"] == 201:
                 session['pedido_temp'] = {
@@ -964,10 +975,10 @@ def pago_exitoso():
     pedido_data = session['pedido_temp']
     usuario_id = session['usuario_id']
     try:
-        print(f"ðŸ”§ DEBUG: Procesando pago exitoso para usuario {usuario_id}")
-        print(f"ðŸ”§ DEBUG: Datos del pedido: {pedido_data}")
+        print(f"DEBUG: Procesando pago exitoso para usuario {usuario_id}")
+        print(f"DEBUG: Datos del pedido: {pedido_data}")
         carrito_antes = Carrito.query.filter_by(usuario_id=usuario_id).all()
-        print(f"ðŸ”§ DEBUG: Items en carrito ANTES: {len(carrito_antes)}")
+        print(f"🧪DEBUG: Items en carrito ANTES: {len(carrito_antes)}")
         nuevo_pedido = Pedido(
             usuario_id=usuario_id,
             estado='Confirmado',
@@ -977,7 +988,7 @@ def pago_exitoso():
         )
         db.session.add(nuevo_pedido)
         db.session.flush()
-        print(f"ðŸ”§ DEBUG: Pedido creado con ID: {nuevo_pedido.id}")
+        print(f"DEBUG: Pedido creado con ID: {nuevo_pedido.id}")
         for producto_info in pedido_data['productos']:
             pedido_item = PedidoItem(
                 pedido_id=nuevo_pedido.id,
@@ -985,21 +996,21 @@ def pago_exitoso():
                 cantidad=producto_info['cantidad']
             )
             db.session.add(pedido_item)
-            print(f"ðŸ”§ DEBUG: Agregado item: Producto {producto_info['id']}, Cantidad {producto_info['cantidad']}")
-        print(f"ðŸ”§ DEBUG: Limpiando carrito para usuario {usuario_id}")
+            print(f"DEBUG: Agregado item: Producto {producto_info['id']}, Cantidad {producto_info['cantidad']}")
+        print(f"DEBUG: Limpiando carrito para usuario {usuario_id}")
         items_eliminados = Carrito.query.filter_by(usuario_id=usuario_id).delete()
-        print(f"ðŸ”§ DEBUG: Items eliminados del carrito: {items_eliminados}")
+        print(f"DEBUG: Items eliminados del carrito: {items_eliminados}")
         db.session.commit()
-        print(f"ðŸ”§ DEBUG: TransacciÃ³n confirmada en base de datos")
+        print(f"DEBUG: Transacción confirmada en base de datos")
         carrito_despues = Carrito.query.filter_by(usuario_id=usuario_id).all()
-        print(f"ðŸ”§ DEBUG: Items en carrito DESPUÃ‰S: {len(carrito_despues)}")
+        print(f"DEBUG: Items en carrito DESPUÉS: {len(carrito_despues)}")
         try:
             enviar_confirmacion_pago(pedido_data['correo'], nuevo_pedido, 'MercadoPago')
         except Exception as email_error:
-            print(f"âŒ Error enviando email de confirmaciÃ³n: {email_error}")
+            print(f"❌ Error enviando email de confirmación: {email_error}")
         session.pop('pedido_temp', None)
-        print(f"ðŸ”§ DEBUG: Datos temporales limpiados")
-        flash('Â¡Pago procesado exitosamente!', 'success')
+        print(f"DEBUG: Datos temporales limpiados")
+        flash('¡Pago procesado exitosamente!', 'success')
         return render_template('pago_exitoso.html', pedido=nuevo_pedido)
     except Exception as e:
         db.session.rollback()
@@ -1028,7 +1039,7 @@ def pago_pendiente():
 def send_confirmation_email(email, nombre, pedido):
     try:
         msg = Message(
-            'ConfirmaciÃ³n de Pedido - La Esquinita',
+            'Confirmación de Pedido - La Esquinita',
             sender=app.config['MAIL_USERNAME'],
             recipients=[email]
         )
@@ -1040,10 +1051,10 @@ def send_confirmation_email(email, nombre, pedido):
             </div>
             <div style="padding: 20px;">
                 <p>Hola <strong>{nombre}</strong>,</p>
-                <p>Â¡Gracias por tu compra! Tu pedido ha sido confirmado y pronto comenzaremos a prepararlo.</p>
+                <p>¡Gracias por tu compra! Tu pedido ha sido confirmado y pronto comenzaremos a prepararlo.</p>
                 <div style="background: #f8f9fa; padding: 15px; margin: 20px 0; border-radius: 8px;">
-                    <h3>ðŸ“‹ Detalles del pedido</h3>
-                    <p><strong>NÃºmero de pedido:</strong> #{pedido.id}</p>
+                    <h3>📋 Detalles del pedido</h3>
+                    <p><strong>Número de pedido:</strong> #{pedido.id}</p>
                     <p><strong>Fecha:</strong> {pedido.fecha.strftime('%d/%m/%Y %H:%M')}</p>
                     <p><strong>Total:</strong> ${pedido.total:.2f}</p>
                     <p><strong>Estado:</strong> {pedido.estado}</p>
@@ -1125,17 +1136,17 @@ def pago():
             for producto in productos:
                 productos_detalle += f"- {producto.nombre} x{producto.cantidad} = ${producto.precio * producto.cantidad:.2f}\n"
             msg = Message(
-                'ConfirmaciÃ³n de compra - La Esquinita',
+                'Confirmación de compra - La Esquinita',
                 sender='laesquinita.antojitos.mx@gmail.com',
                 recipients=[correo]
             )
             msg.body = (
                 f"Hola {nombre},\n\n"
-                f"Tu pago se realizÃ³ con Ã©xito. Tu pedido serÃ¡ enviado a:\n{direccion}\n\n"
+                f"Tu pago se realizó con éxito. Tu pedido será enviado a:\n{direccion}\n\n"
                 f"Detalle de tu compra:\n"
                 f"{productos_detalle}\n"
                 f"Total pagado: ${total:.2f}\n\n"
-                f"Â¡Gracias por comprar en La Esquinita!"
+                f"¡Gracias por comprar en La Esquinita!"
             )
             mail.send(msg)
         except Exception as e:
@@ -1151,7 +1162,7 @@ def historial_pedidos():
 @app.route('/guardar_perfil', methods=['POST'])
 def guardar_perfil():
     if 'usuario_id' not in session:
-        flash("Debes iniciar sesiÃ³n.", "error")
+        flash("Debes iniciar sesión.", "error")
         return redirect(url_for('login'))
     usuario = Usuario.query.get(session['usuario_id'])
     if usuario:
@@ -1169,9 +1180,9 @@ def guardar_perfil():
                 nueva_dir = Direccion(usuario_id=usuario.id, direccion=direccion_texto)
                 db.session.add(nueva_dir)
         db.session.commit()
-        flash("Â¡Perfil actualizado correctamente!", "success")
+        flash("¡Perfil actualizado correctamente!", "success")
     else:
-        flash("No se encontrÃ³ el usuario.", "error")
+        flash("No se encontró el usuario.", "error")
     return redirect(url_for('perfil_cliente'))
 def obtener_cantidad_carrito(usuario_id):
     cantidad = db.session.query(func.sum(Carrito.cantidad)).filter_by(usuario_id=usuario_id).scalar()
@@ -1202,7 +1213,7 @@ def gestion_usuarios():
 def eliminar_usuario(user_id):
     usuario = Usuario.query.get(user_id)
     if not usuario:
-        flash("âš ï¸ No se encontrÃ³ el usuario.", "error")
+        flash("⚠️ No se encontró el usuario.", "error")
         return redirect(url_for('gestion_usuarios'))
     try:
         Direccion.query.filter_by(usuario_id=user_id).delete()
@@ -1211,10 +1222,10 @@ def eliminar_usuario(user_id):
         Tarjeta.query.filter_by(usuario_id=user_id).delete()
         db.session.delete(usuario)
         db.session.commit()
-        flash("âœ… Usuario eliminado correctamente, junto con sus registros asociados.", "success")
+        flash("✔️ Usuario eliminado correctamente, junto con sus registros asociados.", "success")
     except Exception as e:
         db.session.rollback()
-        flash(f"âŒ Error al eliminar usuario: {str(e)}", "error")
+        flash(f"❌ Error al eliminar usuario: {str(e)}", "error")
     return redirect(url_for('gestion_usuarios'))
 @app.route('/admin_pedidos')
 def admin_pedidos():
@@ -1290,14 +1301,14 @@ def eliminar_carrito(producto_id):
     if item:
         db.session.delete(item)
         db.session.commit()
-        flash("âŒ Producto eliminado del carrito.", "info")
+        flash("Producto eliminado del carrito.", "info")
     else:
-        flash("âš ï¸ El producto no estaba en el carrito.", "warning")
+        flash("⚠️ El producto no estaba en el carrito.", "warning")
     return redirect(url_for('carrito'))
 @app.route('/agregar_carrito/<int:producto_id>', methods=['POST'])
 def agregar_carrito(producto_id):
     if 'usuario_id' not in session:
-        flash("âš ï¸ Debes iniciar sesiÃ³n para agregar productos al carrito.", "error")
+        flash("⚠️ Debes iniciar sesión para agregar productos al carrito.", "error")
         return redirect(url_for('login'))
     usuario_id = session['usuario_id']
     producto = Producto.query.get(producto_id)
@@ -1310,10 +1321,10 @@ def agregar_carrito(producto_id):
             db.session.add(nuevo_item)
         try:
             db.session.commit()
-            flash(f"âœ… {producto.nombre} agregado al carrito.", "success")
+            flash(f"✔️ {producto.nombre} agregado al carrito.", "success")
         except Exception as e:
             db.session.rollback()
-            flash(f"âŒ Error al agregar producto al carrito: {str(e)}", "error")
+            flash(f"❌ Error al agregar producto al carrito: {str(e)}", "error")
     return redirect(url_for('productos'))
 @app.route('/metodos_pago', methods=['GET', 'POST'])
 def metodos_pago():
@@ -1381,9 +1392,9 @@ def actualizar_producto(producto_id):
                 imagen.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 producto.imagen = filename
             db.session.commit()
-            flash("âœ… Â¡Producto actualizado correctamente!", "success")
+            flash("✔️ ¡Producto actualizado correctamente!", "success")
         else:
-            flash("âš ï¸ No se detectaron cambios en el producto.", "warning")
+            flash("⚠️ No se detectaron cambios en el producto.", "warning")
         return redirect(url_for('admin_productos_productor'))
     return render_template('actualizar_producto.html', producto=producto, categorias=categorias)
 
