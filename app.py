@@ -1173,7 +1173,18 @@ def pago():
                 )
                 db.session.add(nueva_tarjeta)
                 db.session.commit()
-        nuevo_pedido = Pedido(usuario_id=usuario_id, total=total, estado="Pendiente")
+        
+        # Crear pedido con toda la información necesaria
+        nuevo_pedido = Pedido(
+            usuario_id=usuario_id, 
+            total=total, 
+            estado="Confirmado",
+            nombre=nombre,
+            correo=correo,
+            direccion=direccion,
+            metodo_pago="Tarjeta de Crédito",
+            fecha=datetime.now()
+        )
         db.session.add(nuevo_pedido)
         db.session.commit()
         for item in carrito_items:
@@ -1186,26 +1197,14 @@ def pago():
         db.session.commit()
         Carrito.query.filter_by(usuario_id=usuario_id).delete()
         db.session.commit()
+        
+        # Enviar correo de forma ASÍNCRONA
         try:
-            productos_detalle = ""
-            for producto in productos:
-                productos_detalle += f"- {producto.nombre} x{producto.cantidad} = ${producto.precio * producto.cantidad:.2f}\n"
-            msg = Message(
-                'Confirmación de compra - La Esquinita',
-                sender='laesquinita.antojitos.mx@gmail.com',
-                recipients=[correo]
-            )
-            msg.body = (
-                f"Hola {nombre},\n\n"
-                f"Tu pago se realizó con éxito. Tu pedido será enviado a:\n{direccion}\n\n"
-                f"Detalle de tu compra:\n"
-                f"{productos_detalle}\n"
-                f"Total pagado: ${total:.2f}\n\n"
-                f"¡Gracias por comprar en La Esquinita!"
-            )
-            mail.send(msg)
+            print(f"📧 Preparando envío de correo para pedido #{nuevo_pedido.id}")
+            enviar_confirmacion_pago(correo, nuevo_pedido, 'Tarjeta de Crédito')
         except Exception as e:
-            print("No se pudo enviar el correo:", e)
+            print(f"⚠️ Error programando envío de correo: {e}")
+        
         return render_template('pago.html', nombre=nombre, productos=productos, total=total)
     return render_template('metodos_pago.html', tarjetas=tarjetas, productos=productos, total=total)
 @app.route('/historial_pedidos')
