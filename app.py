@@ -285,6 +285,12 @@ def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
         traceback.print_exc()
         return False
 
+def enviar_email_async(correo, pedido, metodo):
+    
+    import time
+    time.sleep(0.1)  
+    enviar_confirmacion_pago(correo, pedido, metodo)
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -1167,12 +1173,15 @@ def pago():
         Carrito.query.filter_by(usuario_id=usuario_id).delete()
         db.session.commit()
         
-        
-        try:
-            print(f"📧 Preparando envío de correo para pedido #{nuevo_pedido.id}")
-            enviar_confirmacion_pago(correo, nuevo_pedido, 'Tarjeta de Crédito')
-        except Exception as e:
-            print(f"⚠️ Error programando envío de correo: {e}")
+        # Enviar correo en thread separado (NO BLOQUEA LA RESPUESTA)
+        print(f"📧 Programando envío de correo para pedido #{nuevo_pedido.id}")
+        thread = threading.Thread(
+            target=enviar_email_async,
+            args=(correo, nuevo_pedido, 'Tarjeta de Crédito'),
+            daemon=True
+        )
+        thread.start()
+        print(f"📧 Correo programado para envío en background")
         
         return render_template('pago.html', nombre=nombre, productos=productos, total=total)
     return render_template('metodos_pago.html', tarjetas=tarjetas, productos=productos, total=total)
@@ -1759,8 +1768,14 @@ def procesar_pago_test():
         
         print(f"⚡ Pedido guardado en {(time.time() - start_time)*1000:.0f}ms")
         
-       
-        enviar_confirmacion_pago(pedido_data['correo'], nuevo_pedido, 'MercadoPago TEST')
+      
+        thread = threading.Thread(
+            target=enviar_email_async,
+            args=(pedido_data['correo'], nuevo_pedido, 'MercadoPago TEST'),
+            daemon=True
+        )
+        thread.start()
+        print(f"📧 Correo programado para envío en background")
         
        
         session.pop('pedido_temp', None)
