@@ -114,7 +114,8 @@ sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
 def generate_captcha_code(length=5):
     
     chars = string.ascii_uppercase + string.digits
-    chars = chars.replace('0', '').replace('O', '').replace('I', '').replace('1')
+   
+    chars = chars.replace('0', '').replace('O', '').replace('I', '').replace('1', '')
     return ''.join(random.choice(chars) for _ in range(length))
 
 def create_captcha_image(code):
