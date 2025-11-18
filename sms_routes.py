@@ -49,7 +49,15 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
             verification_code = sms_service.generate_verification_code()
             
             if sms_code_manager.save_code(normalized_phone, verification_code):
-                callback_url = url_for('sms_bp.twilio_status', _external=True)
+                
+                try:
+                    callback_url = url_for('sms_bp.twilio_status', _external=True)
+                    
+                    if 'localhost' in callback_url or '127.0.0.1' in callback_url:
+                        callback_url = None
+                except:
+                    callback_url = None
+                
                 sms_result = sms_service.send_verification_sms(normalized_phone, verification_code, callback_url)
                 
                 if sms_result['success']:
@@ -156,7 +164,14 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
                     return render_template('registro_sms.html', step=1)
                 
                 verification_code = sms_service.generate_verification_code()
-                callback_url = url_for('sms_bp.twilio_status', _external=True)
+                
+                try:
+                    callback_url = url_for('sms_bp.twilio_status', _external=True)
+                    if 'localhost' in callback_url or '127.0.0.1' in callback_url:
+                        callback_url = None
+                except:
+                    callback_url = None
+                
                 sms_result = sms_service.send_verification_sms(normalized_phone, verification_code, callback_url)
                 
                 if sms_result['success']:
@@ -249,7 +264,14 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
                     return redirect(url_for('login'))
                 
                 verification_code = sms_service.generate_verification_code()
-                callback_url = url_for('sms_bp.twilio_status', _external=True)
+                
+                try:
+                    callback_url = url_for('sms_bp.twilio_status', _external=True)
+                    if 'localhost' in callback_url or '127.0.0.1' in callback_url:
+                        callback_url = None
+                except:
+                    callback_url = None
+                
                 sms_result = sms_service.send_verification_sms(usuario.telefono, verification_code, callback_url)
                 
                 if sms_result['success']:
@@ -283,7 +305,7 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
                         if usuario.tipo_usuario == 'Administrador':
                             return redirect(url_for('admin_productos'))
                         else:
-                            return redirect(url_for('productos'))
+                            return redirect(url_for('panel_cliente'))
                     else:
                         flash('Usuario no encontrado', 'error')
                         return redirect(url_for('sms_bp.login_sms'))
@@ -300,7 +322,7 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
     def twilio_status():
         try:
             data = request.form.to_dict()
-            # Log minimal delivery info; avoid sensitive data leakage
+            
             print(f"[Twilio Status] sid={data.get('MessageSid')} status={data.get('MessageStatus')} to={data.get('To')} error={data.get('ErrorCode')}")
             return ('', 204)
         except Exception as e:
@@ -309,7 +331,7 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
 
     @sms_bp.route('/sms_last_code')
     def sms_last_code():
-        # Debug-only endpoint: returns last code for a phone if explicitly enabled
+       
         if not os.environ.get('SMS_DEBUG_SHOW_CODE', '').lower() in ('1', 'true', 'yes'):
             return jsonify({'success': False, 'message': 'No autorizado'}), 403
         phone = request.args.get('phone', '').strip()
