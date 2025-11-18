@@ -582,6 +582,7 @@ def login():
             return render_template('login.html')
     
     return render_template('login.html')
+
 @app.route('/panel_cliente')
 def panel_cliente():
     if 'usuario_id' not in session:
