@@ -1,8 +1,10 @@
 from twilio.rest import Client
+from twilio.base.exceptions import TwilioRestException
 import random
 import string
 from datetime import datetime, timedelta
 import os
+from sqlalchemy import text
 
 class SMSVerification:
     def __init__(self):
@@ -78,6 +80,13 @@ No compartas este código con nadie.
                 'message': 'SMS enviado correctamente'
             }
             
+        except TwilioRestException as e:
+            print(f"[TWILIO ERROR] status={getattr(e, 'status', None)} code={getattr(e, 'code', None)} msg={str(e)}")
+            return {
+                'success': False,
+                'error': str(e),
+                'message': f'Twilio error (code {getattr(e, "code", "?")}) {str(e)}'
+            }
         except Exception as e:
             print(f"[ERROR] Error al enviar SMS: {str(e)}")
             return {
@@ -118,19 +127,19 @@ class SMSCode:
     
     def create_table(self):
         try:
-            with self.db.engine.connect() as conn:
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS sms_codes (
-                        id SERIAL PRIMARY KEY,
-                        phone_number VARCHAR(20) NOT NULL,
-                        code VARCHAR(10) NOT NULL,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        expires_at TIMESTAMP NOT NULL,
-                        used BOOLEAN DEFAULT FALSE,
-                        attempts INT DEFAULT 0
-                    )
-                """)
-                conn.commit()
+            ddl = text("""
+                CREATE TABLE IF NOT EXISTS sms_codes (
+                    id SERIAL PRIMARY KEY,
+                    phone_number VARCHAR(20) NOT NULL,
+                    code VARCHAR(10) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    expires_at TIMESTAMP NOT NULL,
+                    used BOOLEAN DEFAULT FALSE,
+                    attempts INT DEFAULT 0
+                )
+            """)
+            with self.db.engine.begin() as conn:
+                conn.execute(ddl)
         except Exception as e:
             print(f"Error creando tabla sms_codes: {e}")
     
@@ -148,20 +157,15 @@ class SMSCode:
                 return True
             
             expires_at = datetime.now() + timedelta(minutes=expires_in_minutes)
-            
-            with self.db.engine.connect() as conn:
-                conn.execute("""
-                    UPDATE sms_codes 
-                    SET used = TRUE 
-                    WHERE phone_number = %s AND used = FALSE
-                """, (phone_number,))
-                
-                conn.execute("""
-                    INSERT INTO sms_codes (phone_number, code, expires_at)
-                    VALUES (%s, %s, %s)
-                """, (phone_number, code, expires_at))
-                
-                conn.commit()
+            with self.db.engine.begin() as conn:
+                conn.execute(
+                    text("UPDATE sms_codes SET used = TRUE WHERE phone_number = :pn AND used = FALSE"),
+                    {"pn": phone_number}
+                )
+                conn.execute(
+                    text("INSERT INTO sms_codes (phone_number, code, expires_at) VALUES (:pn, :code, :exp)") ,
+                    {"pn": phone_number, "code": code, "exp": expires_at}
+                )
                 return True
                 
         except Exception as e:
@@ -188,50 +192,38 @@ class SMSCode:
                             return {'success': False, 'message': f'Código incorrecto. Te quedan {remaining} intentos'}
                 return {'success': False, 'message': 'Código expirado o no válido'}
             
-            with self.db.engine.connect() as conn:
-                result = conn.execute("""
-                    SELECT id, code, expires_at, attempts
-                    FROM sms_codes 
-                    WHERE phone_number = %s 
-                    AND used = FALSE 
-                    AND expires_at > CURRENT_TIMESTAMP
-                    ORDER BY created_at DESC 
-                    LIMIT 1
-                """, (phone_number,)).fetchone()
+            with self.db.engine.begin() as conn:
+                result = conn.execute(
+                    text("""
+                        SELECT id, code, expires_at, attempts
+                        FROM sms_codes 
+                        WHERE phone_number = :pn 
+                        AND used = FALSE 
+                        AND expires_at > CURRENT_TIMESTAMP
+                        ORDER BY created_at DESC 
+                        LIMIT 1
+                    """),
+                    {"pn": phone_number}
+                ).fetchone()
                 
                 if not result:
                     return {'success': False, 'message': 'Código expirado o no válido'}
                 
                 code_id, stored_code, expires_at, attempts = result
                 
-                conn.execute("""
-                    UPDATE sms_codes 
-                    SET attempts = attempts + 1 
-                    WHERE id = %s
-                """, (code_id,))
+                conn.execute(text("UPDATE sms_codes SET attempts = attempts + 1 WHERE id = :id"), {"id": code_id})
                 
                 if attempts >= 3:
-                    conn.execute("""
-                        UPDATE sms_codes 
-                        SET used = TRUE 
-                        WHERE id = %s
-                    """, (code_id,))
-                    conn.commit()
+                    conn.execute(text("UPDATE sms_codes SET used = TRUE WHERE id = :id"), {"id": code_id})
                     return {'success': False, 'message': 'Demasiados intentos. Solicita un nuevo código'}
                 
                 is_valid_code = input_code == stored_code
                 
                 if is_valid_code:
-                    conn.execute("""
-                        UPDATE sms_codes 
-                        SET used = TRUE 
-                        WHERE id = %s
-                    """, (code_id,))
-                    conn.commit()
+                    conn.execute(text("UPDATE sms_codes SET used = TRUE WHERE id = :id"), {"id": code_id})
                     
                     return {'success': True, 'message': 'Código verificado correctamente'}
                 else:
-                    conn.commit()
                     remaining_attempts = 3 - (attempts + 1)
                     return {
                         'success': False, 
