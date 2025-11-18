@@ -1874,6 +1874,102 @@ def forbidden(error):
     return render_template('error_404.html'), 403
 
 
+@app.route('/captcha_diagnostico')
+def captcha_diagnostico():
+    
+    resultados = {
+        'etapas': [],
+        'modo': app.config.get('ENV'),
+        'python_version': sys.version,
+    }
+    try:
+      
+        etapa = {'nombre': 'imports', 'ok': True, 'detalle': ''}
+        try:
+            import PIL
+            from PIL import Image, ImageDraw, ImageFont
+            etapa['detalle'] = f"Pillow versión: {getattr(PIL, '__version__', 'desconocida')}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error importando PIL: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        
+        etapa = {'nombre': 'crear_imagen', 'ok': True, 'detalle': ''}
+        try:
+            img = Image.new('RGB', (200, 80), color='white')
+            etapa['detalle'] = f"Imagen creada tamaño: {img.size} modo: {img.mode}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error creando imagen: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+       
+        etapa = {'nombre': 'image_draw', 'ok': True, 'detalle': ''}
+        try:
+            draw = ImageDraw.Draw(img)
+            draw.point((10, 10), fill=(255, 0, 0))
+            etapa['detalle'] = "ImageDraw operativo"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error con ImageDraw: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+       
+        etapa = {'nombre': 'fuente', 'ok': True, 'detalle': ''}
+        fuentes_intentadas = [
+            "arial.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        ]
+        fuente_usada = None
+        for ruta in fuentes_intentadas:
+            try:
+                fuente_usada = ImageFont.truetype(ruta, 36)
+                etapa['detalle'] = f"Fuente cargada: {ruta}"
+                break
+            except Exception:
+                continue
+        if not fuente_usada:
+            try:
+                fuente_usada = ImageFont.load_default()
+                etapa['detalle'] = "Fuente por defecto usada"
+            except Exception as e:
+                etapa['ok'] = False
+                etapa['detalle'] = f"Error cargando fuente: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        
+        etapa = {'nombre': 'dibujar_texto', 'ok': True, 'detalle': ''}
+        try:
+            codigo = generate_captcha_code()
+            draw.text((50, 30), codigo, font=fuente_usada, fill=(0, 0, 0))
+            etapa['detalle'] = f"Texto dibujado código: {codigo}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error dibujando texto: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        
+        etapa = {'nombre': 'base64', 'ok': True, 'detalle': ''}
+        try:
+            buffer = io.BytesIO()
+            img.save(buffer, format='PNG')
+            img_data = buffer.getvalue()
+            img_b64 = base64.b64encode(img_data).decode()
+            resultados['data_uri_inicio'] = f"data:image/png;base64,{img_b64[:50]}..."
+            etapa['detalle'] = f"Longitud base64: {len(img_b64)}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error convirtiendo a base64: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        resultados['status'] = 'ok' if all(e['ok'] for e in resultados['etapas']) else 'partial'
+        return jsonify(resultados)
+    except Exception as e:
+        return jsonify({'status': 'error', 'error': str(e)}), 500
+
+
 def init_database():
     
     try:
