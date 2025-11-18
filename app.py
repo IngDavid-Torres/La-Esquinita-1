@@ -21,6 +21,7 @@ import random
 import string
 import io
 import base64
+import threading
 load_dotenv()
 
 
@@ -221,55 +222,87 @@ app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') or 'laesquinita.antojitos.mx@gmail.com'
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD') or 'pnyy wnaj yisq wtgv'
 mail = Mail(app)
+
+def enviar_correo_async(app_context, correo_destino, pedido_data, metodo_pago):
+    
+    with app_context:
+        try:
+            subject = f"Confirmación de Pedido #{pedido_data['id']} - La Esquinita"
+            html_body = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf7; padding: 20px; border-radius: 10px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: #2e7d32; margin-bottom: 10px;">🌽 La Esquinita</h1>
+                    <h2 style="color: #ff5722;">¡Pago Confirmado!</h2>
+                </div>
+                <div style="background: #f1f8e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="color: #2e7d32; margin-top: 0;">📋 Detalles del Pedido</h3>
+                    <p><strong>Pedido #:</strong> {pedido_data['id']}</p>
+                    <p><strong>Nombre:</strong> {pedido_data['nombre']}</p>
+                    <p><strong>Correo:</strong> {pedido_data['correo']}</p>
+                    <p><strong>Dirección:</strong> {pedido_data['direccion']}</p>
+                    <p><strong>Total:</strong> ${pedido_data['total']:.2f} MXN</p>
+                    <p><strong>Método de Pago:</strong> {metodo_pago}</p>
+                    <p><strong>Estado:</strong> <span style="color: #4caf50; font-weight: bold;">{pedido_data['estado']}</span></p>
+                    <p><strong>Fecha:</strong> {pedido_data['fecha']}</p>
+                </div>
+                <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: #ff5722; margin-top: 0;">🚀 ¿Qué sigue?</h4>
+                    <p>✅ Tu pedido está siendo preparado con amor</p>
+                    <p>⏱️ Tiempo estimado de entrega: 30-45 minutos</p>
+                    <p>📞 Te contactaremos si necesitamos algo adicional</p>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <p style="color: #666;">¡Gracias por elegir La Esquinita! 🌽</p>
+                    <p style="color: #2e7d32; font-weight: bold;">El auténtico sabor mexicano</p>
+                </div>
+                <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
+                    <p style="font-size: 12px; color: #888;">
+                        Este correo fue enviado automáticamente desde La Esquinita<br>
+                        Método de pago: {metodo_pago}
+                    </p>
+                </div>
+            </div>
+            """
+            msg = Message(
+                subject=subject,
+                recipients=[correo_destino],
+                html=html_body,
+                sender=app.config['MAIL_USERNAME']
+            )
+            mail.send(msg)
+            print(f"✅ Correo enviado exitosamente a {correo_destino}")
+        except Exception as e:
+            print(f"⚠️ Error enviando correo async: {str(e)}")
+
 def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
+    
     try:
-        subject = f"Confirmación de Pedido #{pedido.id} - La Esquinita"
-        html_body = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf7; padding: 20px; border-radius: 10px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #2e7d32; margin-bottom: 10px;">La Esquinita</h1>
-                <h2 style="color: #ff5722;">Â¡Pago Confirmado!</h2>
-            </div>
-            <div style="background: #f1f8e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 style="color: #2e7d32; margin-top: 0;">Detalles del Pedido</h3>
-                <p><strong>Pedido #:</strong> {pedido.id}</p>
-                <p><strong>Nombre:</strong> {pedido.nombre}</p>
-                <p><strong>Correo:</strong> {pedido.correo}</p>
-                <p><strong>Dirección:</strong> {pedido.direccion}</p>
-                <p><strong>Total:</strong> ${pedido.total:.2f} MXN</p>
-                <p><strong>Método de Pago:</strong> {metodo_pago}</p>
-                <p><strong>Estado:</strong> <span style="color: #4caf50; font-weight: bold;">{pedido.estado}</span></p>
-                <p><strong>Fecha:</strong> {pedido.fecha.strftime('%d/%m/%Y %H:%M')}</p>
-            </div>
-            <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <h4 style="color: #ff5722; margin-top: 0;"> ¿Qué sigue?</h4>
-                <p>Tu pedido esta siendo preparado con amor </p>
-                <p> Tiempo estimado de entrega: 30-45 minutos</p>
-                <p>Te contactaremos si necesitamos algo adicional</p>
-            </div>
-            <div style="text-align: center; margin-top: 30px;">
-                <p style="color: #666;">¡Gracias por elegir La Esquinita!</p>
-                <p style="color: #2e7d32; font-weight: bold;">El automático sabor mexicano</p>
-            </div>
-            <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
-                <p style="font-size: 12px; color: #888;">
-                    Este correo fue enviado automáticamente desde La Esquinita<br>
-                    Método de pago: {metodo_pago}
-                </p>
-            </div>
-        </div>
-        """
-        msg = Message(
-            subject=subject,
-            recipients=[correo_destino],
-            html=html_body,
-            sender=app.config['MAIL_USERNAME']
+        
+        pedido_data = {
+            'id': pedido.id,
+            'nombre': pedido.nombre,
+            'correo': pedido.correo,
+            'direccion': pedido.direccion,
+            'total': pedido.total,
+            'estado': pedido.estado,
+            'fecha': pedido.fecha.strftime('%d/%m/%Y %H:%M')
+        }
+        
+       
+        app_context = app.app_context()
+        
+        
+        thread = threading.Thread(
+            target=enviar_correo_async,
+            args=(app_context, correo_destino, pedido_data, metodo_pago)
         )
-        mail.send(msg)
-        print(f"âœ… Correo de confirmaciÃ³n enviado a {correo_destino}")
+        thread.daemon = True 
+        thread.start()
+        
+        print(f"📧 Correo programado para envío asíncrono a {correo_destino}")
         return True
     except Exception as e:
-        print(f"Error enviando correo: {str(e)}")
+        print(f"⚠️ Error programando envío de correo: {str(e)}")
         return False
 def allowed_file(filename):
     return '.' in filename and \
@@ -1713,7 +1746,8 @@ def procesar_pago_test():
     usuario_id = session['usuario_id']
     
     try:
-        print("🧪 PROCESANDO PAGO TEST")
+        print("🧪 PROCESANDO PAGO TEST - INICIO")
+        start_time = time.time()
         
        
         nuevo_pedido = Pedido(
@@ -1730,7 +1764,7 @@ def procesar_pago_test():
         db.session.add(nuevo_pedido)
         db.session.flush()
         
-        
+      
         for producto_info in pedido_data['productos']:
             pedido_item = PedidoItem(
                 pedido_id=nuevo_pedido.id,
@@ -1743,17 +1777,16 @@ def procesar_pago_test():
         Carrito.query.filter_by(usuario_id=usuario_id).delete()
         db.session.commit()
         
+        print(f"⚡ Pedido guardado en {(time.time() - start_time)*1000:.0f}ms")
+        
        
-        try:
-            enviar_confirmacion_pago(pedido_data['correo'], nuevo_pedido, 'MercadoPago TEST')
-            print("✅ Correo de confirmación enviado")
-        except Exception as email_error:
-            print(f"⚠️ Error enviando email: {email_error}")
+        enviar_confirmacion_pago(pedido_data['correo'], nuevo_pedido, 'MercadoPago TEST')
         
-        
+       
         session.pop('pedido_temp', None)
         
-        flash('🧪 ¡Pago TEST procesado exitosamente! Revisa tu correo.', 'success')
+        print(f"✅ Respuesta lista en {(time.time() - start_time)*1000:.0f}ms")
+        flash('🧪 ¡Pago TEST procesado exitosamente! Recibirás un correo de confirmación en breve.', 'success')
         return render_template('pago_exitoso.html', pedido=nuevo_pedido)
         
     except Exception as e:
@@ -1764,7 +1797,7 @@ def procesar_pago_test():
 
 
 def check_database_connection():
-    """Verificar conexión a la base de datos con reintentos"""
+   
     max_retries = 3
     for attempt in range(max_retries):
         try:
