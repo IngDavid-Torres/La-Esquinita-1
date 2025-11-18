@@ -523,12 +523,6 @@ def login():
                 return render_template('login.html')
             
             
-            if not validate_captcha_session(session, captcha_input):
-                logger.warning("⚠️ CAPTCHA incorrecto")
-                flash('Código CAPTCHA incorrecto. Inténtalo de nuevo.', 'error')
-                return render_template('login.html')
-            
-            
             logger.info("🔍 Buscando admin en base de datos...")
             admin = Administrador.query.filter_by(email=email, password=password).first()
             logger.info(f"🔎 Resultado búsqueda admin: {admin}")
@@ -546,8 +540,12 @@ def login():
                 logger.info(f"📤 ENVIANDO REDIRECT A PANEL_ADMIN: {redirect_response}")
                 logger.info("🎯 RETORNANDO RESPUESTA DE REDIRECT ADMIN")
                 return redirect_response
-            else:
-                logger.warning("❌ Admin NO encontrado, continuando con verificación de usuario...")
+            
+           
+            if not validate_captcha_session(session, captcha_input):
+                logger.warning("⚠️ CAPTCHA incorrecto")
+                flash('Código CAPTCHA incorrecto. Inténtalo de nuevo.', 'error')
+                return render_template('login.html')
             
         
             logger.info("🔍 Buscando usuario en base de datos...")
