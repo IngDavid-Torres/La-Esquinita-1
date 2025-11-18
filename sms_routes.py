@@ -9,6 +9,21 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
     sms_service = SMSVerification()
     sms_code_manager = SMSCode(db)
 
+    @sms_bp.route('/sms_diagnostico')
+    def sms_diagnostico():
+        
+        try:
+            status = {
+                'twilio_account_sid_present': bool(sms_service.account_sid),
+                'twilio_auth_token_present': bool(sms_service.auth_token),
+                'twilio_phone_number_present': bool(sms_service.phone_number),
+                'development_mode': sms_service.development_mode,
+                'example_generated_code': sms_service.generate_verification_code(),
+            }
+            return jsonify({'success': True, 'diagnostico': status})
+        except Exception as e:
+            return jsonify({'success': False, 'error': str(e)}), 500
+
     @sms_bp.route('/send_sms_verification', methods=['POST'])
     def send_sms_verification():
         try:

@@ -111,8 +111,8 @@ No compartas este código con nadie.
 class SMSCode:
     def __init__(self, db):
         self.db = db
-        account_sid = os.environ.get('TWILIO_ACCOUNT_SID') or 'tu_account_sid'
-        self.development_mode = account_sid == 'tu_account_sid'
+        self.account_sid = os.environ.get('TWILIO_ACCOUNT_SID')  
+        self.development_mode = not self.account_sid  
         self.temp_codes = {}
         self.create_table()
     
@@ -171,26 +171,21 @@ class SMSCode:
     def verify_code(self, phone_number, input_code):
         try:
             if self.development_mode:
-                print(f"DEBUG: Verificando código '{input_code}' para '{phone_number}'")
-                
-                if input_code == '123456':
-                    print("DEBUG: Código de desarrollo aceptado")
-                    return {'success': True, 'message': 'Código de desarrollo verificado correctamente'}
+                print(f"DEBUG (DEV MODE): Verificando código '{input_code}' para '{phone_number}'")
                 
                 if phone_number in self.temp_codes:
-                    stored_data = self.temp_codes[phone_number]
-                    if not stored_data['used'] and datetime.now() < stored_data['expires_at']:
-                        if input_code == stored_data['code']:
-                            stored_data['used'] = True
-                            return {'success': True, 'message': 'Código verificado correctamente'}
+                    stored = self.temp_codes[phone_number]
+                    if not stored['used'] and datetime.now() < stored['expires_at']:
+                        if input_code == stored['code']:
+                            stored['used'] = True
+                            return {'success': True, 'message': 'Código verificado correctamente (dev)'}
                         else:
-                            stored_data['attempts'] += 1
-                            if stored_data['attempts'] >= 3:
-                                stored_data['used'] = True
+                            stored['attempts'] += 1
+                            if stored['attempts'] >= 3:
+                                stored['used'] = True
                                 return {'success': False, 'message': 'Demasiados intentos. Solicita un nuevo código'}
-                            remaining = 3 - stored_data['attempts']
+                            remaining = 3 - stored['attempts']
                             return {'success': False, 'message': f'Código incorrecto. Te quedan {remaining} intentos'}
-                
                 return {'success': False, 'message': 'Código expirado o no válido'}
             
             with self.db.engine.connect() as conn:
@@ -224,10 +219,7 @@ class SMSCode:
                     conn.commit()
                     return {'success': False, 'message': 'Demasiados intentos. Solicita un nuevo código'}
                 
-                is_valid_code = (
-                    input_code == stored_code or 
-                    (self.development_mode and input_code == '123456')
-                )
+                is_valid_code = input_code == stored_code
                 
                 if is_valid_code:
                     conn.execute("""
@@ -237,10 +229,7 @@ class SMSCode:
                     """, (code_id,))
                     conn.commit()
                     
-                    if input_code == '123456':
-                        return {'success': True, 'message': 'Código de desarrollo verificado correctamente'}
-                    else:
-                        return {'success': True, 'message': 'Código verificado correctamente'}
+                    return {'success': True, 'message': 'Código verificado correctamente'}
                 else:
                     conn.commit()
                     remaining_attempts = 3 - (attempts + 1)
