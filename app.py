@@ -22,6 +22,8 @@ import string
 import io
 import base64
 import threading
+import traceback
+from concurrent.futures import ThreadPoolExecutor
 load_dotenv()
 
 
@@ -223,6 +225,9 @@ app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') or 'laesquinita.an
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD') or 'pnyy wnaj yisq wtgv'
 mail = Mail(app)
 
+
+email_executor = ThreadPoolExecutor(max_workers=2)
+
 def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
     """Envía correo de confirmación de forma directa y robusta"""
     try:
@@ -285,11 +290,27 @@ def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
         traceback.print_exc()
         return False
 
-def enviar_email_async(correo, pedido, metodo):
+def enviar_email_background(correo, pedido_id, nombre, direccion, total, metodo, fecha):
     
-    import time
-    time.sleep(0.1)  
-    enviar_confirmacion_pago(correo, pedido, metodo)
+    try:
+        with app.app_context():
+            class PedidoEmail:
+                def __init__(self):
+                    self.id = pedido_id
+                    self.nombre = nombre
+                    self.correo = correo
+                    self.direccion = direccion
+                    self.total = total
+                    self.estado = "Confirmado"
+                    self.fecha = fecha
+            
+            pedido_obj = PedidoEmail()
+            print(f"📧 [BACKGROUND] Iniciando envío para pedido #{pedido_id}")
+            enviar_confirmacion_pago(correo, pedido_obj, metodo)
+            print(f"✅ [BACKGROUND] Email enviado para pedido #{pedido_id}")
+    except Exception as e:
+        print(f"❌ [BACKGROUND] Error enviando email: {str(e)}")
+        traceback.print_exc()
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -1173,15 +1194,19 @@ def pago():
         Carrito.query.filter_by(usuario_id=usuario_id).delete()
         db.session.commit()
         
-        # Enviar correo en thread separado (NO BLOQUEA LA RESPUESTA)
+       
         print(f"📧 Programando envío de correo para pedido #{nuevo_pedido.id}")
-        thread = threading.Thread(
-            target=enviar_email_async,
-            args=(correo, nuevo_pedido, 'Tarjeta de Crédito'),
-            daemon=True
+        email_executor.submit(
+            enviar_email_background,
+            correo,
+            nuevo_pedido.id,
+            nombre,
+            direccion,
+            total,
+            'Tarjeta de Crédito',
+            nuevo_pedido.fecha
         )
-        thread.start()
-        print(f"📧 Correo programado para envío en background")
+        print(f"✅ Correo programado en ThreadPoolExecutor")
         
         return render_template('pago.html', nombre=nombre, productos=productos, total=total)
     return render_template('metodos_pago.html', tarjetas=tarjetas, productos=productos, total=total)
@@ -1768,18 +1793,21 @@ def procesar_pago_test():
         
         print(f"⚡ Pedido guardado en {(time.time() - start_time)*1000:.0f}ms")
         
-      
-        thread = threading.Thread(
-            target=enviar_email_async,
-            args=(pedido_data['correo'], nuevo_pedido, 'MercadoPago TEST'),
-            daemon=True
+        # Programar envío de email en background
+        email_executor.submit(
+            enviar_email_background,
+            pedido_data['correo'],
+            nuevo_pedido.id,
+            pedido_data['nombre'],
+            pedido_data['direccion'],
+            pedido_data['total'],
+            'MercadoPago TEST',
+            nuevo_pedido.fecha
         )
-        thread.start()
-        print(f"📧 Correo programado para envío en background")
+        print(f"📧 Correo programado en ThreadPoolExecutor")
         
        
-        session.pop('pedido_temp', None)
-        
+        session.pop('pedido_temp', None)        
         print(f"✅ Respuesta lista en {(time.time() - start_time)*1000:.0f}ms")
         flash('🧪 ¡Pago TEST procesado exitosamente! Recibirás un correo de confirmación en breve.', 'success')
         return render_template('pago_exitoso.html', pedido=nuevo_pedido)
