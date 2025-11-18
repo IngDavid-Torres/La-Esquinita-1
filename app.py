@@ -2085,11 +2085,11 @@ def test_email_config():
 
 @app.route('/admin/send-test-email-secret/<email>')
 def send_test_email(email):
-    """Enviar correo de prueba"""
+    
     try:
         print(f"🧪 Intentando enviar correo de prueba a {email}")
         
-        # Crear datos de prueba
+       
         pedido_data = {
             'id': 999,
             'nombre': 'Usuario de Prueba',
@@ -2100,7 +2100,7 @@ def send_test_email(email):
             'fecha': datetime.now().strftime('%d/%m/%Y %H:%M')
         }
         
-        # Intentar envío síncrono para ver errores
+        
         try:
             subject = f"🧪 TEST - Confirmación de Pedido - La Esquinita"
             html_body = f"""
@@ -2155,7 +2155,7 @@ if __name__ == '__main__':
     
     try:
         with app.app_context():
-            # Verificar conexión a base de datos
+            
             db_connected, db_message = check_database_connection()
             if not db_connected:
                 print(f"❌ Error de conexión a base de datos: {db_message}")
