@@ -490,9 +490,6 @@
                 <button type="button" class="captcha-refresh" id="refreshCaptcha" title="Generar nuevo código">🔄</button>
             </div>
             <div class="captcha-error" id="captchaError">El código CAPTCHA es incorrecto</div>
-            <div id="adminNotice" style="display: none; background: #e8f5e8; color: #2e7d32; padding: 10px; border-radius: 4px; margin: 10px 0; text-align: center; font-size: 14px;">
-                ✅ Acceso de administrador detectado - CAPTCHA no requerido
-            </div>
             
             <button type="submit">Ingresar</button>
         </form>
@@ -566,11 +563,6 @@ function generateCaptcha() {
         });
 }
 
-function validateCaptcha() {
-    // La validación ahora se hace en el servidor
-    return true;
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     generateCaptcha();
     
@@ -581,47 +573,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
-function handleEmailChange() {
-    
-    const captchaContainer = document.getElementById('captchaContainer');
-    const adminNotice = document.getElementById('adminNotice');
-    const captchaInput = document.getElementById('captchaInput');
-    
-    
-    captchaContainer.style.display = 'block';
-    if (adminNotice) adminNotice.style.display = 'none';
-    captchaInput.setAttribute('required', 'required');
-    
-   
-    generateCaptcha();
-}
-
-
-document.querySelector('input[name="email"]').addEventListener('input', handleEmailChange);
-document.querySelector('input[name="email"]').addEventListener('blur', handleEmailChange);
-
 document.getElementById('loginForm').addEventListener('submit', function(e){
     e.preventDefault();
     
     
-    const email = document.querySelector('input[name="email"]').value.trim();
-    const isAdmin = email === 'admin@laesquinita.com';
-    
-   
-    if (!isAdmin && !validateCaptcha()) {
+    const captchaInput = document.getElementById('captchaInput').value.trim();
+    if (!captchaInput) {
         document.getElementById('captchaError').style.display = 'block';
-        generateCaptcha();
+        document.getElementById('captchaError').textContent = 'Por favor ingresa el código CAPTCHA';
         return;
     }
     
-    
+  
     document.getElementById('captchaError').style.display = 'none';
     
+    
     document.getElementById('alerta-cargando').style.display = 'flex';
+    
+    
     setTimeout(() => {
         e.target.submit();
-    }, 1000); 
+    }, 800); 
 });
 </script>
 </body>
