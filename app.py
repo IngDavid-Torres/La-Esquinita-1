@@ -1453,7 +1453,12 @@ def agregar_producto_admin():
         flash("Producto agregado correctamente.", "success")
         return redirect(url_for('admin_productos'))
     categorias = Categoria.query.all()
+    print(f"DEBUG: Número de categorías encontradas: {len(categorias)}")
+    for cat in categorias:
+        print(f"DEBUG: Categoría ID={cat.id}, Nombre={cat.nombre}")
     return render_template('agregar_producto_admin.html', categorias=categorias)
+
+
 @app.route('/actualizar_producto_admin/<int:producto_id>', methods=['GET', 'POST'])
 def actualizar_producto_admin(producto_id):
     producto = Producto.query.get_or_404(producto_id)
