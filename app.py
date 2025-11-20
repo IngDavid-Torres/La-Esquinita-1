@@ -2193,6 +2193,27 @@ def send_test_email(email):
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+# ============================================
+# INICIALIZACIÓN DE RUTAS DE MERCADO PAGO
+# ============================================
+try:
+    from mercadopago_routes import init_mercadopago_routes
+    init_mercadopago_routes(
+        app=app,
+        db=db,
+        Carrito=Carrito,
+        Producto=Producto,
+        Pedido=Pedido,
+        PedidoItem=PedidoItem,
+        Usuario=Usuario,
+        enviar_email_background=enviar_email_background
+    )
+    print("✅ Rutas de Mercado Pago inicializadas correctamente")
+except Exception as mp_error:
+    print(f"⚠️ Error inicializando rutas de Mercado Pago: {mp_error}")
+    import traceback
+    traceback.print_exc()
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     
