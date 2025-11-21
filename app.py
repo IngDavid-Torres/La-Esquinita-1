@@ -57,6 +57,8 @@ app.config['DEBUG'] = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
 app.config['TESTING'] = False
 
 
+app.config['PREFERRED_URL_SCHEME'] = 'https'
+
 app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'

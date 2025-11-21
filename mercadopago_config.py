@@ -5,11 +5,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Credenciales de Mercado Pago desde variables de entorno
+
 MP_ACCESS_TOKEN = os.environ.get('MP_ACCESS_TOKEN')
 MP_PUBLIC_KEY = os.environ.get('MP_PUBLIC_KEY')
 
-# Validar que las credenciales estén configuradas
+
 if not MP_ACCESS_TOKEN or not MP_PUBLIC_KEY:
     print("⚠️ ADVERTENCIA: Credenciales de Mercado Pago no configuradas")
     print("📋 Configure MP_ACCESS_TOKEN y MP_PUBLIC_KEY en el archivo .env")
@@ -18,10 +18,10 @@ if not MP_ACCESS_TOKEN or not MP_PUBLIC_KEY:
     MP_ACCESS_TOKEN = "TEST-7916427332588639-102718-00ee5129ad06c2ceba14e4e44b94d22e-191563398"
     MP_PUBLIC_KEY = "TEST-c1e625f3-6498-4c5e-9fda-d2b6b5a0a7de-191563398"
 
-# Inicializar SDK
+
 sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
 
-# Configuración de entorno
+
 ENVIRONMENT = 'test' if MP_ACCESS_TOKEN.startswith('TEST-') else 'production'
 
 if ENVIRONMENT == 'production':
@@ -58,7 +58,11 @@ def create_preference(items, payer_info, urls, external_reference):
             "name": payer_info.get("name", ""),
             "email": payer_info.get("email", "")
         },
-        "back_urls": urls,
+        "back_urls": {
+            "success": urls.get("success"),
+            "failure": urls.get("failure"),
+            "pending": urls.get("pending")
+        },
         "auto_return": "approved",
         "external_reference": external_reference,
         "statement_descriptor": "LA ESQUINITA MX",
@@ -74,10 +78,20 @@ def create_preference(items, payer_info, urls, external_reference):
     }
     
     try:
+        print(f"📤 Enviando preferencia a MercadoPago:")
+        print(f"   Items: {len(items)}")
+        print(f"   Payer: {payer_info.get('email')}")
+        print(f"   Back URLs: success={preference_data['back_urls']['success'][:50]}...")
+        
         preference_response = sdk.preference().create(preference_data)
+        
+        print(f"📥 Respuesta de MercadoPago: status={preference_response.get('status')}")
+        
         return preference_response
     except Exception as e:
         print(f"❌ Error creando preferencia: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return None
 
 def get_payment_info(payment_id):
@@ -112,8 +126,7 @@ def validate_webhook_signature(request_data, x_signature, x_request_id):
     Returns:
         bool: True si la firma es válida
     """
-    # En producción, implementar validación real de firma
-    # Por ahora, aceptamos todos los webhooks en modo test
+    
     if is_test_environment():
         return True
     

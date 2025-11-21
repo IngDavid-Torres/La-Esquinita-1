@@ -1,6 +1,4 @@
-"""
-Rutas y handlers para pagos con Mercado Pago
-"""
+
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
 from datetime import datetime
 from mercadopago_config import create_preference, get_payment_info, is_test_environment, MP_PUBLIC_KEY
@@ -27,7 +25,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
             flash("Tu carrito está vacío", "error")
             return redirect(url_for('carrito'))
         
-        # Calcular productos y total
+        
         productos = []
         total = 0
         items_mp = []
@@ -46,18 +44,18 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
                     "currency_id": "MXN"
                 })
         
-        # Si es POST, procesar el pago
+       
         if request.method == 'POST':
             print("🔄 POST recibido en pago_mercadopago")
             
-            # Obtener datos del formulario
+            
             nombre = request.form.get('nombre', '').strip()
             correo = request.form.get('correo', '').strip()
             direccion = request.form.get('direccion', '').strip()
             
             print(f"📝 Datos recibidos: nombre='{nombre}', correo='{correo}', direccion='{direccion}'")
             
-            # Validaciones
+           
             if not nombre or len(nombre) < 3:
                 flash("El nombre debe tener al menos 3 caracteres", "error")
                 return render_template('pago_mercadopago.html', 
@@ -79,7 +77,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
                                      total=total,
                                      mp_public_key=MP_PUBLIC_KEY)
             
-            # Guardar datos temporales en sesión
+            
             session['pedido_temp'] = {
                 'nombre': nombre,
                 'correo': correo,
@@ -88,7 +86,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
                 'productos': [{'id': p.id, 'cantidad': p.cantidad} for p in productos]
             }
             
-            # Modo de prueba - simular pago exitoso
+            
             if is_test_environment():
                 print("🧪 MODO TEST - Simulando pago exitoso")
                 return render_template('pago_test_processing.html', 
@@ -98,20 +96,29 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
                                      total=total,
                                      productos=productos)
             
-            # Crear preferencia de pago real
+           
             try:
                 external_ref = f"laesquinita-{usuario_id}-{int(datetime.now().timestamp())}"
                 
+               
                 urls = {
                     "success": url_for('pago_exitoso', _external=True),
                     "failure": url_for('pago_fallido', _external=True),
                     "pending": url_for('pago_pendiente', _external=True)
                 }
                 
+                print(f"🔗 URLs generadas para MercadoPago:")
+                print(f"   Success: {urls['success']}")
+                print(f"   Failure: {urls['failure']}")
+                print(f"   Pending: {urls['pending']}")
+                
                 payer_info = {
                     "name": nombre,
                     "email": correo
                 }
+                
+                print(f"👤 Datos del pagador: {payer_info}")
+                print(f"🛒 Items: {len(items_mp)} productos")
                 
                 preference_response = create_preference(items_mp, payer_info, urls, external_ref)
                 
@@ -119,7 +126,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
                     preference = preference_response["response"]
                     init_point = preference["init_point"]
                     
-                    # Guardar el ID de preferencia en sesión
+                    
                     session['mp_preference_id'] = preference["id"]
                     
                     print(f"✅ Preferencia creada: {preference['id']}")
@@ -142,7 +149,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
                                      total=total,
                                      mp_public_key=MP_PUBLIC_KEY)
         
-        # GET - Mostrar formulario
+       
         return render_template('pago_mercadopago.html', 
                              productos=productos, 
                              total=total,
@@ -155,7 +162,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
         """
         print("✅ PAGO EXITOSO - Procesando...")
         
-        # Obtener parámetros de Mercado Pago
+        
         payment_id = request.args.get('payment_id')
         status = request.args.get('status')
         external_reference = request.args.get('external_reference')
@@ -176,7 +183,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
             pedido_data = session['pedido_temp']
             usuario_id = session['usuario_id']
             
-            # Crear el pedido en la base de datos
+           
             nuevo_pedido = Pedido(
                 usuario_id=usuario_id,
                 nombre=pedido_data['nombre'],
@@ -190,9 +197,9 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
             )
             
             db.session.add(nuevo_pedido)
-            db.session.flush()  # Para obtener el ID
+            db.session.flush()  
             
-            # Agregar items del pedido
+            
             for prod in pedido_data['productos']:
                 item = PedidoItem(
                     pedido_id=nuevo_pedido.id,
@@ -201,14 +208,14 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
                 )
                 db.session.add(item)
             
-            # Limpiar el carrito
+            
             Carrito.query.filter_by(usuario_id=usuario_id).delete()
             
             db.session.commit()
             
             print(f"✅ Pedido #{nuevo_pedido.id} creado exitosamente")
             
-            # Enviar email de confirmación en segundo plano
+           
             try:
                 enviar_email_background(
                     pedido_data['correo'],
@@ -222,7 +229,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
             except Exception as email_error:
                 print(f"⚠️ Error enviando email: {email_error}")
             
-            # Limpiar datos temporales
+            
             session.pop('pedido_temp', None)
             session.pop('mp_preference_id', None)
             
@@ -257,9 +264,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
     
     @app.route('/pago_pendiente')
     def pago_pendiente():
-        """
-        Callback cuando el pago está pendiente
-        """
+        
         print("⏳ PAGO PENDIENTE")
         
         payment_id = request.args.get('payment_id')
@@ -284,21 +289,21 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
             data = request.get_json()
             print(f"📦 Data recibida: {json.dumps(data, indent=2)}")
             
-            # Obtener headers importantes
+           
             x_signature = request.headers.get('X-Signature')
             x_request_id = request.headers.get('X-Request-Id')
             
             print(f"🔐 X-Signature: {x_signature}")
             print(f"🆔 X-Request-Id: {x_request_id}")
             
-            # Procesar según el tipo de notificación
+         
             if data.get('type') == 'payment':
                 payment_id = data.get('data', {}).get('id')
                 
                 if payment_id:
                     print(f"💳 Procesando payment_id: {payment_id}")
                     
-                    # Obtener información del pago
+                    
                     payment_info = get_payment_info(payment_id)
                     
                     if payment_info:
@@ -346,7 +351,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
             pedido_data = session['pedido_temp']
             usuario_id = session['usuario_id']
             
-            # Crear pedido
+          
             nuevo_pedido = Pedido(
                 usuario_id=usuario_id,
                 nombre=pedido_data['nombre'],
@@ -362,7 +367,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
             db.session.add(nuevo_pedido)
             db.session.flush()
             
-            # Agregar items
+            
             for prod in pedido_data['productos']:
                 item = PedidoItem(
                     pedido_id=nuevo_pedido.id,
@@ -371,12 +376,12 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
                 )
                 db.session.add(item)
             
-            # Limpiar carrito
+           
             Carrito.query.filter_by(usuario_id=usuario_id).delete()
             
             db.session.commit()
             
-            # Enviar email
+           
             try:
                 enviar_email_background(
                     pedido_data['correo'],
@@ -390,7 +395,7 @@ def init_mercadopago_routes(app, db, Carrito, Producto, Pedido, PedidoItem, Usua
             except Exception as email_error:
                 print(f"⚠️ Error enviando email: {email_error}")
             
-            # Limpiar sesión
+         
             session.pop('pedido_temp', None)
             
             return jsonify({
