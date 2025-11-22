@@ -1571,13 +1571,10 @@ def admin_login_direct():
 
 @app.route('/health')
 def health_check():
-    
     try:
         db_connected, db_message = check_database_connection()
-        
         status = 'healthy' if db_connected else 'unhealthy'
         status_code = 200 if db_connected else 500
-        
         return jsonify({
             'status': status,
             'message': 'La Esquinita API funcionando correctamente' if db_connected else 'Error en base de datos',
@@ -1618,183 +1615,6 @@ def forbidden(error):
 
 
 
-
-
-@app.route('/captcha_diagnostico')
-def captcha_diagnostico():
-    
-    resultados = {
-        'etapas': [],
-        'modo': app.config.get('ENV'),
-        'python_version': sys.version,
-    }
-    try:
-      
-        etapa = {'nombre': 'imports', 'ok': True, 'detalle': ''}
-        try:
-            import PIL
-            from PIL import Image, ImageDraw, ImageFont
-            etapa['detalle'] = f"Pillow versión: {getattr(PIL, '__version__', 'desconocida')}"
-        except Exception as e:
-            etapa['ok'] = False
-            etapa['detalle'] = f"Error importando PIL: {str(e)}"
-        resultados['etapas'].append(etapa)
-
-        
-        etapa = {'nombre': 'crear_imagen', 'ok': True, 'detalle': ''}
-        try:
-            img = Image.new('RGB', (200, 80), color='white')
-            etapa['detalle'] = f"Imagen creada tamaño: {img.size} modo: {img.mode}"
-        except Exception as e:
-            etapa['ok'] = False
-            etapa['detalle'] = f"Error creando imagen: {str(e)}"
-        resultados['etapas'].append(etapa)
-
-       
-        etapa = {'nombre': 'image_draw', 'ok': True, 'detalle': ''}
-        try:
-            draw = ImageDraw.Draw(img)
-            draw.point((10, 10), fill=(255, 0, 0))
-            etapa['detalle'] = "ImageDraw operativo"
-        except Exception as e:
-            etapa['ok'] = False
-            etapa['detalle'] = f"Error con ImageDraw: {str(e)}"
-        resultados['etapas'].append(etapa)
-
-       
-        etapa = {'nombre': 'fuente', 'ok': True, 'detalle': ''}
-        fuentes_intentadas = [
-            "arial.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-        ]
-        fuente_usada = None
-        for ruta in fuentes_intentadas:
-            try:
-                fuente_usada = ImageFont.truetype(ruta, 36)
-                etapa['detalle'] = f"Fuente cargada: {ruta}"
-                break
-            except Exception:
-                continue
-        if not fuente_usada:
-            try:
-                fuente_usada = ImageFont.load_default()
-                etapa['detalle'] = "Fuente por defecto usada"
-            except Exception as e:
-                etapa['ok'] = False
-                etapa['detalle'] = f"Error cargando fuente: {str(e)}"
-        resultados['etapas'].append(etapa)
-
-        
-        etapa = {'nombre': 'dibujar_texto', 'ok': True, 'detalle': ''}
-        try:
-            codigo = generate_captcha_code()
-            draw.text((50, 30), codigo, font=fuente_usada, fill=(0, 0, 0))
-            etapa['detalle'] = f"Texto dibujado código: {codigo}"
-        except Exception as e:
-            etapa['ok'] = False
-            etapa['detalle'] = f"Error dibujando texto: {str(e)}"
-        resultados['etapas'].append(etapa)
-
-        
-        etapa = {'nombre': 'base64', 'ok': True, 'detalle': ''}
-        try:
-            buffer = io.BytesIO()
-            img.save(buffer, format='PNG')
-            img_data = buffer.getvalue()
-            img_b64 = base64.b64encode(img_data).decode()
-            resultados['data_uri_inicio'] = f"data:image/png;base64,{img_b64[:50]}..."
-            etapa['detalle'] = f"Longitud base64: {len(img_b64)}"
-        except Exception as e:
-            etapa['ok'] = False
-            etapa['detalle'] = f"Error convirtiendo a base64: {str(e)}"
-        resultados['etapas'].append(etapa)
-
-        resultados['status'] = 'ok' if all(e['ok'] for e in resultados['etapas']) else 'partial'
-        return jsonify(resultados)
-    except Exception as e:
-        return jsonify({'status': 'error', 'error': str(e)}), 500
-
-
-def init_database():
-    
-    try:
-        with app.app_context():
-            logger.info("🔧 Inicializando base de datos...")
-            
-            
-            db_connected, db_message = check_database_connection()
-            if not db_connected:
-                logger.warning(f"❌ Error de conexión a base de datos: {db_message}")
-                logger.info("🔄 Intentando crear tablas de todas formas...")
-
-            db.create_all()
-            crear_admin()
-         
-            try:
-                from sms_verification import SMSCode
-                SMSCode(db).create_table()
-                logger.info("✅ Tabla sms_codes verificada/creada")
-            except Exception as e:
-                logger.warning(f"⚠️ No se pudo verificar/crear sms_codes: {e}")
-            logger.info("✅ Tablas creadas y administrador registrado 🚀")
-            
-    except Exception as init_error:
-        logger.error(f"⚠️ Error durante inicialización: {str(init_error)}")
-        logger.info("🔄 Continuando con el servidor...")
-
-
-if not app.config.get('TESTING'):
-    init_database()
-
-@app.route('/admin-direct', methods=['GET', 'POST'])
-
-@app.route('/health')
-def health_check():
-    
-    try:
-        db_connected, db_message = check_database_connection()
-        
-        status = 'healthy' if db_connected else 'unhealthy'
-        status_code = 200 if db_connected else 500
-        
-        return jsonify({
-            'status': status,
-            'message': 'La Esquinita API funcionando correctamente' if db_connected else 'Error en base de datos',
-            'timestamp': datetime.utcnow().isoformat(),
-            'database': 'connected' if db_connected else 'disconnected',
-            'database_message': db_message
-        }), status_code
-    except Exception as e:
-        return jsonify({
-            'status': 'unhealthy',
-            'message': f'Error en el sistema: {str(e)}',
-            'timestamp': datetime.utcnow().isoformat(),
-            'database': 'error'
-        }), 500
-
-@app.errorhandler(404)
-def page_not_found(error):
-    
-    return render_template('error_404.html'), 404
-
-@app.errorhandler(500)
-def internal_server_error(error):
-    
-    try:
-        db.session.rollback()
-    except Exception as db_error:
-        print(f"Error during rollback: {str(db_error)}")
-    
-   
-    print(f"Error 500: {str(error)}")
-    
-    return render_template('error_500.html'), 500
-
-@app.errorhandler(403)
-def forbidden(error):
-    
-    return render_template('error_404.html'), 403
 
 
 @app.route('/captcha_diagnostico')
@@ -1955,13 +1775,10 @@ def admin_login_direct():
 
 @app.route('/health')
 def health_check():
-    
     try:
         db_connected, db_message = check_database_connection()
-        
         status = 'healthy' if db_connected else 'unhealthy'
         status_code = 200 if db_connected else 500
-        
         return jsonify({
             'status': status,
             'message': 'La Esquinita API funcionando correctamente' if db_connected else 'Error en base de datos',
@@ -1999,6 +1816,9 @@ def internal_server_error(error):
 def forbidden(error):
     
     return render_template('error_404.html'), 403
+
+
+
 
 
 @app.route('/captcha_diagnostico')
@@ -2156,50 +1976,3 @@ def admin_login_direct():
         <p><button type="submit">Entrar</button></p>
     </form>
     '''
-
-@app.route('/health')
-def health_check():
-    
-    try:
-        db_connected, db_message = check_database_connection()
-        
-        status = 'healthy' if db_connected else 'unhealthy'
-        status_code = 200 if db_connected else 500
-        
-        return jsonify({
-            'status': status,
-            'message': 'La Esquinita API funcionando correctamente' if db_connected else 'Error en base de datos',
-            'timestamp': datetime.utcnow().isoformat(),
-            'database': 'connected' if db_connected else 'disconnected',
-            'database_message': db_message
-        }), status_code
-    except Exception as e:
-        return jsonify({
-            'status': 'unhealthy',
-            'message': f'Error en el sistema: {str(e)}',
-            'timestamp': datetime.utcnow().isoformat(),
-            'database': 'error'
-        }), 500
-
-@app.errorhandler(404)
-def page_not_found(error):
-    
-    return render_template('error_404.html'), 404
-
-@app.errorhandler(500)
-def internal_server_error(error):
-    
-    try:
-        db.session.rollback()
-    except Exception as db_error:
-        print(f"Error during rollback: {str(db_error)}")
-    
-   
-    print(f"Error 500: {str(error)}")
-    
-    return render_template('error_500.html'), 500
-
-@app.errorhandler(403)
-def forbidden(error):
-    
-    return render_template('error_404.html'), 403
