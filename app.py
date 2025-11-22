@@ -620,38 +620,7 @@ def login():
     
     return render_template('login.html')
 
-@app.route('/panel_cliente')
-def panel_cliente():
-    if 'usuario_id' not in session:
-        return redirect(url_for('login'))
-    usuario = Usuario.query.get(session['usuario_id'])
-    direccion = Direccion.query.filter_by(usuario_id=session['usuario_id']).first()
-    cantidad_carrito = db.session.query(func.sum(Carrito.cantidad)).filter_by(usuario_id=session['usuario_id']).scalar() or 0
-    response = make_response(render_template('panel_cliente.html', usuario=usuario, direccion=direccion, cantidad_carrito=cantidad_carrito))
-    return add_security_headers(response)
-@app.route('/perfil_cliente', methods=['GET'])
-def perfil_cliente():
-    usuario = Usuario.query.get(session['usuario_id'])
-    direccion = Direccion.query.filter_by(usuario_id=session['usuario_id']).first()
-    return render_template('perfil_cliente.html', usuario=usuario, direccion=direccion)
-@app.route('/panel_admin')
-def panel_admin():
-    logger.info(f"🎯 PANEL_ADMIN ACCEDIDO - Método: {request.method}")
-    logger.info(f"🔍 Session actual COMPLETA: {dict(session)}")
-    logger.info(f"🔍 Session.get('usuario_id'): {session.get('usuario_id')}")
-    logger.info(f"🔍 Session.get('tipo_usuario'): {session.get('tipo_usuario')}")
-    logger.info(f"🔍 'usuario_id' in session: {'usuario_id' in session}")
-    logger.info(f"🔍 session.get('tipo_usuario') != 'Administrador': {session.get('tipo_usuario') != 'Administrador'}")
-    logger.info(f"🌐 Headers: {dict(request.headers)}")
-    logger.info(f"🍪 Cookies: {dict(request.cookies)}")
-   
-    if 'usuario_id' not in session or session.get('tipo_usuario') != 'Administrador':
-        logger.warning(f"⚠️ ACCESO DENEGADO a panel_admin")
-        logger.warning(f"   - 'usuario_id' in session: {'usuario_id' in session}")
-        logger.warning(f"   - session.get('tipo_usuario'): {session.get('tipo_usuario')}")
-        logger.warning(f"   - Session completa: {dict(session)}")
-        flash('Acceso denegado. Solo administradores pueden acceder a esta página.', 'error')
-        return redirect(url_for('login'))
+
     
     logger.info(f"✅ Admin autenticado accediendo a panel: {session.get('usuario_nombre')}")
     
