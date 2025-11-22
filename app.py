@@ -848,11 +848,7 @@ def carrito():
             total += producto.precio * item.cantidad
     return render_template('carrito.html', productos=productos_en_carrito, total=total)
 
-@app.route('/pago_mercadopago', methods=['GET','POST'])
-def pago_mercadopago_deprecated():
-    
-    flash('Redirigiendo a la nueva página de pago...', 'info')
-    return redirect(url_for('pago_mercadopago'))
+
 
 
 def send_confirmation_email(email, nombre, pedido):
