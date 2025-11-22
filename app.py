@@ -406,12 +406,6 @@ class PedidoItem(db.Model):
     cantidad = db.Column(db.Integer, nullable=False)
     producto = db.relationship('Producto')
     pedido = db.relationship('Pedido', backref='items')
-class Tarjeta(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
-    numero = db.Column(db.String(16), nullable=False)
-    propietario = db.Column(db.String(100), nullable=False)
-    fecha_expiracion = db.Column(db.String(5), nullable=False)
 @app.route('/')
 def inicio():
     cantidad_carrito = 0
@@ -633,8 +627,7 @@ def panel_cliente():
     usuario = Usuario.query.get(session['usuario_id'])
     direccion = Direccion.query.filter_by(usuario_id=session['usuario_id']).first()
     cantidad_carrito = db.session.query(func.sum(Carrito.cantidad)).filter_by(usuario_id=session['usuario_id']).scalar() or 0
-    tarjetas = Tarjeta.query.filter_by(usuario_id=session['usuario_id']).all()
-    response = make_response(render_template('panel_cliente.html', usuario=usuario, direccion=direccion, cantidad_carrito=cantidad_carrito, tarjetas=tarjetas))
+    response = make_response(render_template('panel_cliente.html', usuario=usuario, direccion=direccion, cantidad_carrito=cantidad_carrito))
     return add_security_headers(response)
 @app.route('/perfil_cliente', methods=['GET'])
 def perfil_cliente():
@@ -892,7 +885,6 @@ def pago():
     if 'usuario_id' not in session:
         return redirect(url_for('login'))
     usuario_id = session['usuario_id']
-    tarjetas = Tarjeta.query.filter_by(usuario_id=usuario_id).all()
     carrito_items = Carrito.query.filter_by(usuario_id=usuario_id).all()
     productos = []
     total = 0
@@ -903,38 +895,9 @@ def pago():
             productos.append(producto)
             total += producto.precio * item.cantidad
     if request.method == 'POST':
-        tarjeta_id = request.form.get('tarjeta_guardada')
-        if tarjeta_id:
-            tarjeta = Tarjeta.query.get(int(tarjeta_id))
-            nombre = request.form['nombre']
-            correo = request.form['correo']
-            direccion = request.form['direccion']
-            numero_tarjeta = tarjeta.numero
-            propietario = tarjeta.propietario
-            fecha_expiracion = tarjeta.fecha_expiracion
-        else:
-            nombre = request.form['nombre']
-            correo = request.form['correo']
-            direccion = request.form['direccion']
-            numero_tarjeta = request.form['numero_tarjeta']
-            propietario = request.form['propietario']
-            fecha_expiracion = request.form['fecha_expiracion']
-            cvv = request.form['cvv']
-            tarjeta_existente = Tarjeta.query.filter_by(
-                usuario_id=usuario_id,
-                numero=numero_tarjeta
-            ).first()
-            if not tarjeta_existente:
-                nueva_tarjeta = Tarjeta(
-                    usuario_id=usuario_id,
-                    numero=numero_tarjeta,
-                    propietario=propietario,
-                    fecha_expiracion=fecha_expiracion
-                )
-                db.session.add(nueva_tarjeta)
-                db.session.commit()
-        
-      
+        nombre = request.form.get('nombre', '')
+        correo = request.form.get('correo', '')
+        direccion = request.form.get('direccion', '')
         nuevo_pedido = Pedido(
             usuario_id=usuario_id, 
             total=total, 
@@ -942,7 +905,7 @@ def pago():
             nombre=nombre,
             correo=correo,
             direccion=direccion,
-            metodo_pago="Tarjeta de Crédito",
+            metodo_pago="MercadoPago",
             fecha=datetime.now()
         )
         db.session.add(nuevo_pedido)
@@ -967,13 +930,13 @@ def pago():
             nombre,
             direccion,
             total,
-            'Tarjeta de Crédito',
+            'MercadoPago',
             nuevo_pedido.fecha
         )
         print(f"✅ Correo programado en ThreadPoolExecutor")
         
         return render_template('pago.html', nombre=nombre, productos=productos, total=total)
-    return render_template('metodos_pago.html', tarjetas=tarjetas, productos=productos, total=total)
+    return render_template('metodos_pago.html', productos=productos, total=total)
 @app.route('/historial_pedidos')
 def historial_pedidos():
     if 'usuario_id' not in session:
@@ -1040,7 +1003,6 @@ def eliminar_usuario(user_id):
         Direccion.query.filter_by(usuario_id=user_id).delete()
         Pedido.query.filter_by(usuario_id=user_id).delete()
         Carrito.query.filter_by(usuario_id=user_id).delete()
-        Tarjeta.query.filter_by(usuario_id=user_id).delete()
         db.session.delete(usuario)
         db.session.commit()
         flash("✔️ Usuario eliminado correctamente, junto con sus registros asociados.", "success")
@@ -1152,8 +1114,7 @@ def metodos_pago():
     if 'usuario_id' not in session:
         return redirect(url_for('login'))
     usuario_id = session['usuario_id']
-    tarjetas = Tarjeta.query.filter_by(usuario_id=usuario_id).all()
-    return render_template('metodos_pago.html', tarjetas=tarjetas)
+    return render_template('metodos_pago.html', productos=productos, total=total)
 @app.route('/detalle_pedido/<int:pedido_id>')
 def detalle_pedido(pedido_id):
     if 'usuario_id' not in session:
@@ -1295,29 +1256,6 @@ def eliminar_producto_admin(producto_id):
     flash("Producto eliminado permanentemente.", "success")
     return redirect(url_for('admin_productos'))
 
-@app.route('/eliminar_tarjeta/<int:tarjeta_id>', methods=['POST'])
-def eliminar_tarjeta(tarjeta_id):
-    tarjeta = Tarjeta.query.get_or_404(tarjeta_id)
-    if tarjeta.usuario_id == session['usuario_id']:
-        db.session.delete(tarjeta)
-        db.session.commit()
-    return redirect(url_for('panel_cliente'))
-@app.route('/agregar_tarjeta', methods=['GET', 'POST'])
-def agregar_tarjeta():
-    if request.method == 'POST':
-        numero = request.form['numero_tarjeta']
-        propietario = request.form['propietario']
-        fecha_expiracion = request.form['fecha_expiracion']
-        nueva_tarjeta = Tarjeta(
-            usuario_id=session['usuario_id'],
-            numero=numero,
-            propietario=propietario,
-            fecha_expiracion=fecha_expiracion
-        )
-        db.session.add(nueva_tarjeta)
-        db.session.commit()
-        return redirect(url_for('panel_cliente'))
-    return render_template('agregar_tarjeta.html')
 @app.route('/desactivar_producto/<int:producto_id>', methods=['POST'])
 def desactivar_producto(producto_id):
     producto = Producto.query.get_or_404(producto_id)
@@ -1431,11 +1369,9 @@ def logout_total():
         response.set_cookie(cookie, '', expires=0, path='/')
         response.set_cookie(cookie, '', expires=0, path='/', domain=request.host)
     response.headers['Clear-Site-Data'] = '"cache", "cookies", "storage"'
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['Expires'] = '0'
     flash('🧹 Logout total ejecutado - Destrucción completa de sesión', 'success')
     return response
 
@@ -1451,9 +1387,6 @@ def logout_paranoid():
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['Referrer-Policy'] = 'no-referrer'
     flash('⚡ Logout paranoid ejecutado - Máxima seguridad aplicada', 'success')
     return response
 
@@ -1510,8 +1443,6 @@ def logout_paranoid_admin():
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-Content-Type-Options'] = 'nosniff'
     flash('⚡ Logout paranoid ejecutado - Máxima seguridad aplicada', 'success')
     return response
 
@@ -1714,6 +1645,9 @@ def forbidden(error):
     return render_template('error_404.html'), 403
 
 
+
+
+
 @app.route('/captcha_diagnostico')
 def captcha_diagnostico():
     
@@ -1821,7 +1755,7 @@ def init_database():
             if not db_connected:
                 logger.warning(f"❌ Error de conexión a base de datos: {db_message}")
                 logger.info("🔄 Intentando crear tablas de todas formas...")
-            
+
             db.create_all()
             crear_admin()
          
@@ -1841,189 +1775,486 @@ def init_database():
 if not app.config.get('TESTING'):
     init_database()
 
-@app.route('/admin/init-categorias-railway-secret-2024')
-def init_categorias_railway():
-    
-    try:
-        categorias = ["Elotes", "Esquites", "Patitas", "Maruchan"]
-        insertadas = 0
-        existentes = 0
-        
-        for nombre in categorias:
-            cat_existe = Categoria.query.filter_by(nombre=nombre).first()
-            if not cat_existe:
-                nueva_cat = Categoria(nombre=nombre)
-                db.session.add(nueva_cat)
-                insertadas += 1
-            else:
-                existentes += 1
-        
-        db.session.commit()
-        
-        # Verificar
-        todas = Categoria.query.all()
-        resultado = {
-            "status": "success",
-            "insertadas": insertadas,
-            "existentes": existentes,
-            "total_en_db": len(todas),
-            "categorias": [{"id": c.id, "nombre": c.nombre} for c in todas]
-        }
-        return jsonify(resultado), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-@app.route('/admin/test-email-config-secret')
-def test_email_config():
-    """Ruta para probar configuración de email"""
-    try:
-        config_info = {
-            "MAIL_SERVER": app.config.get('MAIL_SERVER'),
-            "MAIL_PORT": app.config.get('MAIL_PORT'),
-            "MAIL_USE_TLS": app.config.get('MAIL_USE_TLS'),
-            "MAIL_USERNAME": app.config.get('MAIL_USERNAME'),
-            "MAIL_PASSWORD_SET": "✅ Sí" if app.config.get('MAIL_PASSWORD') else "❌ No",
-            "MAIL_PASSWORD_LENGTH": len(app.config.get('MAIL_PASSWORD', ''))
-        }
-        return jsonify(config_info), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/admin/send-test-email-secret/<email>')
-def send_test_email(email):
-    
-    try:
-        print(f"🧪 Intentando enviar correo de prueba a {email}")
-        
-       
-        pedido_data = {
-            'id': 999,
-            'nombre': 'Usuario de Prueba',
-            'correo': email,
-            'direccion': 'Dirección de prueba 123',
-            'total': 100.00,
-            'estado': 'TEST',
-            'fecha': datetime.now().strftime('%d/%m/%Y %H:%M')
-        }
-        
+@app.route('/admin-direct', methods=['GET', 'POST'])
+def admin_login_direct():
+    """Login directo para admin sin CAPTCHA"""
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
         
         try:
-            subject = f"🧪 TEST - Confirmación de Pedido - La Esquinita"
-            html_body = f"""
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf7; padding: 20px; border-radius: 10px;">
-                <h1 style="color: #2e7d32;">🌽 La Esquinita - EMAIL TEST</h1>
-                <p>Este es un correo de prueba.</p>
-                <p><strong>Pedido #:</strong> {pedido_data['id']}</p>
-                <p><strong>Nombre:</strong> {pedido_data['nombre']}</p>
-                <p><strong>Total:</strong> ${pedido_data['total']:.2f} MXN</p>
-                <p><strong>Fecha:</strong> {pedido_data['fecha']}</p>
-                <p>Si recibes este correo, la configuración está correcta ✅</p>
-            </div>
-            """
-            
-            msg = Message(
-                subject=subject,
-                recipients=[email],
-                html=html_body,
-                sender=app.config['MAIL_USERNAME']
-            )
-            
-            print(f"📧 Configuración SMTP:")
-            print(f"   Server: {app.config['MAIL_SERVER']}:{app.config['MAIL_PORT']}")
-            print(f"   Username: {app.config['MAIL_USERNAME']}")
-            print(f"   TLS: {app.config['MAIL_USE_TLS']}")
-            
-            mail.send(msg)
-            print(f"✅ Correo de prueba enviado exitosamente a {email}")
-            
-            return jsonify({
-                "status": "success",
-                "message": f"Correo enviado a {email}",
-                "smtp_server": app.config['MAIL_SERVER'],
-                "smtp_username": app.config['MAIL_USERNAME']
-            }), 200
-            
-        except Exception as mail_error:
-            print(f"❌ Error enviando correo: {str(mail_error)}")
-            import traceback
-            traceback.print_exc()
-            return jsonify({
-                "status": "error",
-                "message": str(mail_error),
-                "type": type(mail_error).__name__
-            }), 500
-            
+            admin = Administrador.query.filter_by(email=email, password=password).first()
+            if admin:
+                session['usuario_id'] = admin.id
+                session['usuario_nombre'] = admin.nombre
+                session['tipo_usuario'] = "Administrador"
+                return redirect(url_for('panel_admin'))
+            else:
+                return "❌ Credenciales incorrectas. Verifique admin@laesquinita.com / admin123"
+        except Exception as e:
+            return f"❌ Error: {str(e)}"
+    
+    
+    return '''
+    <h2>🔐 Login Admin Directo</h2>
+    <form method="POST">
+        <p>Email: <input type="email" name="email" value="admin@laesquinita.com" required></p>
+        <p>Password: <input type="password" name="password" value="admin123" required></p>
+        <p><button type="submit">Entrar</button></p>
+    </form>
+    '''
+
+@app.route('/health')
+def health_check():
+    
+    try:
+        db_connected, db_message = check_database_connection()
+        
+        status = 'healthy' if db_connected else 'unhealthy'
+        status_code = 200 if db_connected else 500
+        
+        return jsonify({
+            'status': status,
+            'message': 'La Esquinita API funcionando correctamente' if db_connected else 'Error en base de datos',
+            'timestamp': datetime.utcnow().isoformat(),
+            'database': 'connected' if db_connected else 'disconnected',
+            'database_message': db_message
+        }), status_code
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({
+            'status': 'unhealthy',
+            'message': f'Error en el sistema: {str(e)}',
+            'timestamp': datetime.utcnow().isoformat(),
+            'database': 'error'
+        }), 500
 
-# ============================================
-# INICIALIZACIÓN DE RUTAS DE MERCADO PAGO
-# ============================================
-try:
-    from mercadopago_routes import init_mercadopago_routes
-    init_mercadopago_routes(
-        app=app,
-        db=db,
-        Carrito=Carrito,
-        Producto=Producto,
-        Pedido=Pedido,
-        PedidoItem=PedidoItem,
-        Usuario=Usuario,
-        enviar_email_background=enviar_email_background
-    )
-    print("✅ Rutas de Mercado Pago inicializadas correctamente")
-except Exception as mp_error:
-    print(f"⚠️ Error inicializando rutas de Mercado Pago: {mp_error}")
-    import traceback
-    traceback.print_exc()
+@app.errorhandler(404)
+def page_not_found(error):
+    
+    return render_template('error_404.html'), 404
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+@app.errorhandler(500)
+def internal_server_error(error):
+    
+    try:
+        db.session.rollback()
+    except Exception as db_error:
+        print(f"Error during rollback: {str(db_error)}")
+    
+   
+    print(f"Error 500: {str(error)}")
+    
+    return render_template('error_500.html'), 500
+
+@app.errorhandler(403)
+def forbidden(error):
+    
+    return render_template('error_404.html'), 403
+
+
+@app.route('/captcha_diagnostico')
+def captcha_diagnostico():
+    
+    resultados = {
+        'etapas': [],
+        'modo': app.config.get('ENV'),
+        'python_version': sys.version,
+    }
+    try:
+      
+        etapa = {'nombre': 'imports', 'ok': True, 'detalle': ''}
+        try:
+            import PIL
+            from PIL import Image, ImageDraw, ImageFont
+            etapa['detalle'] = f"Pillow versión: {getattr(PIL, '__version__', 'desconocida')}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error importando PIL: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        
+        etapa = {'nombre': 'crear_imagen', 'ok': True, 'detalle': ''}
+        try:
+            img = Image.new('RGB', (200, 80), color='white')
+            etapa['detalle'] = f"Imagen creada tamaño: {img.size} modo: {img.mode}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error creando imagen: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+       
+        etapa = {'nombre': 'image_draw', 'ok': True, 'detalle': ''}
+        try:
+            draw = ImageDraw.Draw(img)
+            draw.point((10, 10), fill=(255, 0, 0))
+            etapa['detalle'] = "ImageDraw operativo"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error con ImageDraw: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+       
+        etapa = {'nombre': 'fuente', 'ok': True, 'detalle': ''}
+        fuentes_intentadas = [
+            "arial.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        ]
+        fuente_usada = None
+        for ruta in fuentes_intentadas:
+            try:
+                fuente_usada = ImageFont.truetype(ruta, 36)
+                etapa['detalle'] = f"Fuente cargada: {ruta}"
+                break
+            except Exception:
+                continue
+        if not fuente_usada:
+            try:
+                fuente_usada = ImageFont.load_default()
+                etapa['detalle'] = "Fuente por defecto usada"
+            except Exception as e:
+                etapa['ok'] = False
+                etapa['detalle'] = f"Error cargando fuente: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        
+        etapa = {'nombre': 'dibujar_texto', 'ok': True, 'detalle': ''}
+        try:
+            codigo = generate_captcha_code()
+            draw.text((50, 30), codigo, font=fuente_usada, fill=(0, 0, 0))
+            etapa['detalle'] = f"Texto dibujado código: {codigo}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error dibujando texto: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        
+        etapa = {'nombre': 'base64', 'ok': True, 'detalle': ''}
+        try:
+            buffer = io.BytesIO()
+            img.save(buffer, format='PNG')
+            img_data = buffer.getvalue()
+            img_b64 = base64.b64encode(img_data).decode()
+            resultados['data_uri_inicio'] = f"data:image/png;base64,{img_b64[:50]}..."
+            etapa['detalle'] = f"Longitud base64: {len(img_b64)}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error convirtiendo a base64: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        resultados['status'] = 'ok' if all(e['ok'] for e in resultados['etapas']) else 'partial'
+        return jsonify(resultados)
+    except Exception as e:
+        return jsonify({'status': 'error', 'error': str(e)}), 500
+
+
+def init_database():
     
     try:
         with app.app_context():
+            logger.info("🔧 Inicializando base de datos...")
+            
             
             db_connected, db_message = check_database_connection()
             if not db_connected:
-                print(f"❌ Error de conexión a base de datos: {db_message}")
-                print("🔄 Intentando crear tablas de todas formas...")
-            
+                logger.warning(f"❌ Error de conexión a base de datos: {db_message}")
+                logger.info("🔄 Intentando crear tablas de todas formas...")
+
             db.create_all()
             crear_admin()
+         
             try:
                 from sms_verification import SMSCode
                 SMSCode(db).create_table()
-                print("✅ Tabla sms_codes verificada/creada")
+                logger.info("✅ Tabla sms_codes verificada/creada")
             except Exception as e:
-                print(f"⚠️ No se pudo verificar/crear sms_codes: {e}")
-            print("✅ Tablas creadas y administrador registrado 🚀")
+                logger.warning(f"⚠️ No se pudo verificar/crear sms_codes: {e}")
+            logger.info("✅ Tablas creadas y administrador registrado 🚀")
             
     except Exception as init_error:
-        print(f"⚠️ Error durante inicialización: {str(init_error)}")
-        print("🔄 Continuando con el servidor...")
+        logger.error(f"⚠️ Error durante inicialización: {str(init_error)}")
+        logger.info("🔄 Continuando con el servidor...")
+
+
+if not app.config.get('TESTING'):
+    init_database()
+
+@app.route('/admin-direct', methods=['GET', 'POST'])
+def admin_login_direct():
+    """Login directo para admin sin CAPTCHA"""
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+        
+        try:
+            admin = Administrador.query.filter_by(email=email, password=password).first()
+            if admin:
+                session['usuario_id'] = admin.id
+                session['usuario_nombre'] = admin.nombre
+                session['tipo_usuario'] = "Administrador"
+                return redirect(url_for('panel_admin'))
+            else:
+                return "❌ Credenciales incorrectas. Verifique admin@laesquinita.com / admin123"
+        except Exception as e:
+            return f"❌ Error: {str(e)}"
     
-    app.run(host='0.0.0.0', port=port, debug=False)
+    
+    return '''
+    <h2>🔐 Login Admin Directo</h2>
+    <form method="POST">
+        <p>Email: <input type="email" name="email" value="admin@laesquinita.com" required></p>
+        <p>Password: <input type="password" name="password" value="admin123" required></p>
+        <p><button type="submit">Entrar</button></p>
+    </form>
+    '''
+
+@app.route('/health')
+def health_check():
+    
+    try:
+        db_connected, db_message = check_database_connection()
+        
+        status = 'healthy' if db_connected else 'unhealthy'
+        status_code = 200 if db_connected else 500
+        
+        return jsonify({
+            'status': status,
+            'message': 'La Esquinita API funcionando correctamente' if db_connected else 'Error en base de datos',
+            'timestamp': datetime.utcnow().isoformat(),
+            'database': 'connected' if db_connected else 'disconnected',
+            'database_message': db_message
+        }), status_code
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'message': f'Error en el sistema: {str(e)}',
+            'timestamp': datetime.utcnow().isoformat(),
+            'database': 'error'
+        }), 500
+
+@app.errorhandler(404)
+def page_not_found(error):
+    
+    return render_template('error_404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    
+    try:
+        db.session.rollback()
+    except Exception as db_error:
+        print(f"Error during rollback: {str(db_error)}")
+    
+   
+    print(f"Error 500: {str(error)}")
+    
+    return render_template('error_500.html'), 500
+
+@app.errorhandler(403)
+def forbidden(error):
+    
+    return render_template('error_404.html'), 403
+
+
+@app.route('/captcha_diagnostico')
+def captcha_diagnostico():
+    
+    resultados = {
+        'etapas': [],
+        'modo': app.config.get('ENV'),
+        'python_version': sys.version,
+    }
+    try:
+      
+        etapa = {'nombre': 'imports', 'ok': True, 'detalle': ''}
+        try:
+            import PIL
+            from PIL import Image, ImageDraw, ImageFont
+            etapa['detalle'] = f"Pillow versión: {getattr(PIL, '__version__', 'desconocida')}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error importando PIL: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        
+        etapa = {'nombre': 'crear_imagen', 'ok': True, 'detalle': ''}
+        try:
+            img = Image.new('RGB', (200, 80), color='white')
+            etapa['detalle'] = f"Imagen creada tamaño: {img.size} modo: {img.mode}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error creando imagen: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+       
+        etapa = {'nombre': 'image_draw', 'ok': True, 'detalle': ''}
+        try:
+            draw = ImageDraw.Draw(img)
+            draw.point((10, 10), fill=(255, 0, 0))
+            etapa['detalle'] = "ImageDraw operativo"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error con ImageDraw: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+       
+        etapa = {'nombre': 'fuente', 'ok': True, 'detalle': ''}
+        fuentes_intentadas = [
+            "arial.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        ]
+        fuente_usada = None
+        for ruta in fuentes_intentadas:
+            try:
+                fuente_usada = ImageFont.truetype(ruta, 36)
+                etapa['detalle'] = f"Fuente cargada: {ruta}"
+                break
+            except Exception:
+                continue
+        if not fuente_usada:
+            try:
+                fuente_usada = ImageFont.load_default()
+                etapa['detalle'] = "Fuente por defecto usada"
+            except Exception as e:
+                etapa['ok'] = False
+                etapa['detalle'] = f"Error cargando fuente: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        
+        etapa = {'nombre': 'dibujar_texto', 'ok': True, 'detalle': ''}
+        try:
+            codigo = generate_captcha_code()
+            draw.text((50, 30), codigo, font=fuente_usada, fill=(0, 0, 0))
+            etapa['detalle'] = f"Texto dibujado código: {codigo}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error dibujando texto: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        
+        etapa = {'nombre': 'base64', 'ok': True, 'detalle': ''}
+        try:
+            buffer = io.BytesIO()
+            img.save(buffer, format='PNG')
+            img_data = buffer.getvalue()
+            img_b64 = base64.b64encode(img_data).decode()
+            resultados['data_uri_inicio'] = f"data:image/png;base64,{img_b64[:50]}..."
+            etapa['detalle'] = f"Longitud base64: {len(img_b64)}"
+        except Exception as e:
+            etapa['ok'] = False
+            etapa['detalle'] = f"Error convirtiendo a base64: {str(e)}"
+        resultados['etapas'].append(etapa)
+
+        resultados['status'] = 'ok' if all(e['ok'] for e in resultados['etapas']) else 'partial'
+        return jsonify(resultados)
+    except Exception as e:
+        return jsonify({'status': 'error', 'error': str(e)}), 500
+
+
+def init_database():
+    
     try:
         with app.app_context():
+            logger.info("🔧 Inicializando base de datos...")
+            
             
             db_connected, db_message = check_database_connection()
             if not db_connected:
-                print(f"❌ Error de conexión a base de datos: {db_message}")
-                print("🔄 Intentando crear tablas de todas formas...")
-            
+                logger.warning(f"❌ Error de conexión a base de datos: {db_message}")
+                logger.info("🔄 Intentando crear tablas de todas formas...")
+
             db.create_all()
             crear_admin()
+         
             try:
                 from sms_verification import SMSCode
                 SMSCode(db).create_table()
-                print("✅ Tabla sms_codes verificada/creada")
+                logger.info("✅ Tabla sms_codes verificada/creada")
             except Exception as e:
-                print(f"⚠️ No se pudo verificar/crear sms_codes: {e}")
-            print("✅ Tablas creadas y administrador registrado 🚀")
+                logger.warning(f"⚠️ No se pudo verificar/crear sms_codes: {e}")
+            logger.info("✅ Tablas creadas y administrador registrado 🚀")
             
     except Exception as init_error:
-        print(f"⚠️ Error durante inicialización: {str(init_error)}")
-        print("🔄 Continuando con el servidor...")
+        logger.error(f"⚠️ Error durante inicialización: {str(init_error)}")
+        logger.info("🔄 Continuando con el servidor...")
+
+
+if not app.config.get('TESTING'):
+    init_database()
+
+@app.route('/admin-direct', methods=['GET', 'POST'])
+def admin_login_direct():
+    """Login directo para admin sin CAPTCHA"""
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+        
+        try:
+            admin = Administrador.query.filter_by(email=email, password=password).first()
+            if admin:
+                session['usuario_id'] = admin.id
+                session['usuario_nombre'] = admin.nombre
+                session['tipo_usuario'] = "Administrador"
+                return redirect(url_for('panel_admin'))
+            else:
+                return "❌ Credenciales incorrectas. Verifique admin@laesquinita.com / admin123"
+        except Exception as e:
+            return f"❌ Error: {str(e)}"
     
-    app.run(host='0.0.0.0', port=port, debug=False)
+    
+    return '''
+    <h2>🔐 Login Admin Directo</h2>
+    <form method="POST">
+        <p>Email: <input type="email" name="email" value="admin@laesquinita.com" required></p>
+        <p>Password: <input type="password" name="password" value="admin123" required></p>
+        <p><button type="submit">Entrar</button></p>
+    </form>
+    '''
+
+@app.route('/health')
+def health_check():
+    
+    try:
+        db_connected, db_message = check_database_connection()
+        
+        status = 'healthy' if db_connected else 'unhealthy'
+        status_code = 200 if db_connected else 500
+        
+        return jsonify({
+            'status': status,
+            'message': 'La Esquinita API funcionando correctamente' if db_connected else 'Error en base de datos',
+            'timestamp': datetime.utcnow().isoformat(),
+            'database': 'connected' if db_connected else 'disconnected',
+            'database_message': db_message
+        }), status_code
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'message': f'Error en el sistema: {str(e)}',
+            'timestamp': datetime.utcnow().isoformat(),
+            'database': 'error'
+        }), 500
+
+@app.errorhandler(404)
+def page_not_found(error):
+    
+    return render_template('error_404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    
+    try:
+        db.session.rollback()
+    except Exception as db_error:
+        print(f"Error during rollback: {str(db_error)}")
+    
+   
+    print(f"Error 500: {str(error)}")
+    
+    return render_template('error_500.html'), 500
+
+@app.errorhandler(403)
+def forbidden(error):
+    
+    return render_template('error_404.html'), 403
