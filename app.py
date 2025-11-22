@@ -1114,7 +1114,10 @@ def metodos_pago():
     if 'usuario_id' not in session:
         return redirect(url_for('login'))
     usuario_id = session['usuario_id']
+    productos = []
+    total = 0.0
     return render_template('metodos_pago.html', productos=productos, total=total)
+
 @app.route('/detalle_pedido/<int:pedido_id>')
 def detalle_pedido(pedido_id):
     if 'usuario_id' not in session:
@@ -1776,33 +1779,6 @@ if not app.config.get('TESTING'):
     init_database()
 
 @app.route('/admin-direct', methods=['GET', 'POST'])
-def admin_login_direct():
-    """Login directo para admin sin CAPTCHA"""
-    if request.method == 'POST':
-        email = request.form.get('email', '').strip()
-        password = request.form.get('password', '').strip()
-        
-        try:
-            admin = Administrador.query.filter_by(email=email, password=password).first()
-            if admin:
-                session['usuario_id'] = admin.id
-                session['usuario_nombre'] = admin.nombre
-                session['tipo_usuario'] = "Administrador"
-                return redirect(url_for('panel_admin'))
-            else:
-                return "❌ Credenciales incorrectas. Verifique admin@laesquinita.com / admin123"
-        except Exception as e:
-            return f"❌ Error: {str(e)}"
-    
-    
-    return '''
-    <h2>🔐 Login Admin Directo</h2>
-    <form method="POST">
-        <p>Email: <input type="email" name="email" value="admin@laesquinita.com" required></p>
-        <p>Password: <input type="password" name="password" value="admin123" required></p>
-        <p><button type="submit">Entrar</button></p>
-    </form>
-    '''
 
 @app.route('/health')
 def health_check():
