@@ -231,7 +231,7 @@ mail = Mail(app)
 email_executor = ThreadPoolExecutor(max_workers=2)
 
 def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
-    """Envía correo de confirmación de forma directa y robusta"""
+    
     try:
         print(f"📧 INICIO envío correo a {correo_destino}")
         print(f"📧 SMTP Server: {app.config.get('MAIL_SERVER')}")
@@ -830,56 +830,8 @@ def keep_alive():
         session.permanent = True
         return {'status': 'success', 'message': 'Sesión renovada'}, 200
     return {'status': 'error', 'message': 'No hay sesión activa'}, 401
-@app.route('/webhook/mercadopago', methods=['POST'])
-def webhook_mercadopago():
-    try:
-        data = request.get_json()
-        if data and data.get('type') == 'payment':
-            payment_id = data['data']['id']
-            payment_response = sdk.payment().get(payment_id)
-            payment = payment_response["response"]
-            if payment_response["status"] == 200:
-                external_reference = payment.get('external_reference', '')
-                payment_status = payment.get('status', '')
-                if external_reference.startswith('laesquinita-'):
-                    parts = external_reference.split('-')
-                    if len(parts) >= 2:
-                        usuario_id = int(parts[1])
-                        if payment_status == 'approved':
-                            pedido_data = session.get('pedido_temp')
-                            if pedido_data:
-                                try:
-                                    nuevo_pedido = Pedido(
-                                        usuario_id=usuario_id,
-                                        nombre=pedido_data['nombre'],
-                                        correo=pedido_data['correo'],
-                                        direccion=pedido_data['direccion'],
-                                        metodo_pago='MercadoPago',
-                                        total=pedido_data['total'],
-                                        estado='Confirmado',
-                                        payment_id=str(payment_id)
-                                    )
-                                    db.session.add(nuevo_pedido)
-                                    for producto_data in pedido_data['productos']:
-                                        detalle = PedidoItem(
-                                            pedido_id=nuevo_pedido.id,
-                                            producto_id=producto_data['id'],
-                                            cantidad=producto_data['cantidad']
-                                        )
-                                        db.session.add(detalle)
-                                    Carrito.query.filter_by(usuario_id=usuario_id).delete()
-                                    db.session.commit()
-                                    try:
-                                        enviar_confirmacion_pago(pedido_data['correo'], nuevo_pedido, 'MercadoPago TEST')
-                                    except Exception as email_error:
-                                        print(f"Error enviando email de confirmaciÃ³n: {email_error}")
-                                except Exception as e:
-                                    db.session.rollback()
-                                    print(f"Error procesando webhook: {str(e)}")
-        return jsonify({'status': 'success'}), 200
-    except Exception as e:
-        print(f"Error en webhook MercadoPago: {str(e)}")
-        return jsonify({'status': 'error'}), 500
+
+
 @app.route('/carrito')
 def carrito():
     if not session.get('usuario_nombre'):
@@ -895,200 +847,14 @@ def carrito():
             productos_en_carrito.append(producto)
             total += producto.precio * item.cantidad
     return render_template('carrito.html', productos=productos_en_carrito, total=total)
-def calcular_total_carrito(usuario_id):
-    carrito_items = Carrito.query.filter_by(usuario_id=usuario_id).all()
-    if not carrito_items:
-        return 0
-    total = sum(item.producto.precio * item.cantidad for item in carrito_items)
-    return total
-@app.route('/pago_mercadopago', methods=['GET', 'POST'])
-def pago_mercadopago():
-    if 'usuario_id' not in session:
-        return redirect(url_for('login'))
-    usuario_id = session['usuario_id']
-    carrito_items = Carrito.query.filter_by(usuario_id=usuario_id).all()
-    if not carrito_items:
-        flash("Tu carrito está vacío", "error")
-        return redirect(url_for('carrito'))
-    productos = []
-    total = 0
-    items_mp = []
-    for item in carrito_items:
-        producto = Producto.query.get(item.producto_id)
-        if producto:
-            producto.cantidad = item.cantidad
-            productos.append(producto)
-            subtotal = producto.precio * item.cantidad
-            total += subtotal
-            items_mp.append({
-                "title": producto.nombre,
-                "quantity": item.cantidad,
-                "unit_price": float(producto.precio),
-                "currency_id": "MXN"
-            })
-    if request.method == 'POST':
-        print("🔄 POST recibido en pago_mercadopago")
-        
-        
-        nombre = request.form.get('nombre', '').strip()
-        correo = request.form.get('correo', '').strip()
-        direccion = request.form.get('direccion', '').strip()
-        
-        print(f"📝 Datos recibidos: nombre='{nombre}', correo='{correo}', direccion='{direccion}'")
-        
-        
-        if not nombre or len(nombre) < 3:
-            flash("El nombre debe tener al menos 3 caracteres", "error")
-            return render_template('pago_mercadopago.html', productos=productos, total=total)
-        
-        if not correo or '@' not in correo:
-            flash("Por favor ingresa un correo válido", "error")
-            return render_template('pago_mercadopago.html', productos=productos, total=total)
-        
-        if not direccion or len(direccion) < 10:
-            flash("La dirección debe ser más específica (mínimo 10 caracteres)", "error")
-            return render_template('pago_mercadopago.html', productos=productos, total=total)
-        
-        preference_data = {
-            "items": items_mp,
-            "payer": {
-                "name": nombre,
-                "email": correo
-            },
-            "back_urls": {
-                "success": url_for('pago_exitoso', _external=True),
-                "failure": url_for('pago_fallido', _external=True),
-                "pending": url_for('pago_pendiente', _external=True)
-            },
-            "notification_url": url_for('webhook_mercadopago', _external=True),
-            "auto_return": "approved",
-            "external_reference": f"laesquinita-{usuario_id}-{int(datetime.now().timestamp())}",
-            "payment_methods": {
-                "excluded_payment_methods": [],
-                "excluded_payment_types": [],
-                "installments": 12
-            },
-            "shipments": {
-                "cost": 0,
-                "mode": "not_specified"
-            }
-        }
-        
-        
-        if MP_ACCESS_TOKEN.startswith("TEST-"):
-            print("🧪 MODO TEST DETECTADO - Saltando API de MercadoPago")
-            session['pedido_temp'] = {
-                'nombre': nombre,
-                'correo': correo,
-                'direccion': direccion,
-                'total': total,
-                'productos': [{'id': p.id, 'cantidad': p.cantidad} for p in productos]
-            }
-            return render_template('pago_test_processing.html', 
-                                 nombre=nombre, correo=correo, 
-                                 direccion=direccion, total=total,
-                                 productos=productos)
-        
-        try:
-            print(f"🧪 DEBUG: Creando preferencia con datos: {preference_data}")
-            preference_response = sdk.preference().create(preference_data)
-            print(f"🧪 DEBUG: Respuesta de MercadoPago: {preference_response}")
-            preference = preference_response["response"]
-            if preference_response["status"] == 201:
-                session['pedido_temp'] = {
-                    'nombre': nombre,
-                    'correo': correo,
-                    'direccion': direccion,
-                    'total': total,
-                    'productos': [{'id': p.id, 'cantidad': p.cantidad} for p in productos]
-                }
-                print(f"ðŸ”§ DEBUG: Redirigiendo a: {preference['init_point']}")
-                if MP_ACCESS_TOKEN.startswith("TEST-"):
-                    print("🧪 Modo TEST detectado - Mostrando simulación")
-                    return render_template('pago_test_processing.html', 
-                                         nombre=nombre, correo=correo, 
-                                         direccion=direccion, total=total,
-                                         productos=productos)
-                else:
-                    
-                    return redirect(preference["init_point"])
-            else:
-                print(f"âŒ DEBUG: Error en status: {preference_response}")
-                flash("Error al procesar el pago", "error")
-                return redirect(url_for('carrito'))
-        except Exception as e:
-            print(f"âŒ DEBUG: ExcepciÃ³n: {str(e)}")
-            flash(f"Error: {str(e)}", "error")
-            return redirect(url_for('carrito'))
-    return render_template('pago_mercadopago.html', productos=productos, total=total)
-@app.route('/pago_exitoso')
-def pago_exitoso():
-    if 'usuario_id' not in session or 'pedido_temp' not in session:
-        return redirect(url_for('inicio'))
-    pedido_data = session['pedido_temp']
-    usuario_id = session['usuario_id']
-    try:
-        print(f"DEBUG: Procesando pago exitoso para usuario {usuario_id}")
-        print(f"DEBUG: Datos del pedido: {pedido_data}")
-        carrito_antes = Carrito.query.filter_by(usuario_id=usuario_id).all()
-        print(f"🧪DEBUG: Items en carrito ANTES: {len(carrito_antes)}")
-        nuevo_pedido = Pedido(
-            usuario_id=usuario_id,
-            estado='Confirmado',
-            total=pedido_data['total'],
-            fecha=datetime.now(),
-            direccion=pedido_data['direccion']
-        )
-        db.session.add(nuevo_pedido)
-        db.session.flush()
-        print(f"DEBUG: Pedido creado con ID: {nuevo_pedido.id}")
-        for producto_info in pedido_data['productos']:
-            pedido_item = PedidoItem(
-                pedido_id=nuevo_pedido.id,
-                producto_id=producto_info['id'],
-                cantidad=producto_info['cantidad']
-            )
-            db.session.add(pedido_item)
-            print(f"DEBUG: Agregado item: Producto {producto_info['id']}, Cantidad {producto_info['cantidad']}")
-        print(f"DEBUG: Limpiando carrito para usuario {usuario_id}")
-        items_eliminados = Carrito.query.filter_by(usuario_id=usuario_id).delete()
-        print(f"DEBUG: Items eliminados del carrito: {items_eliminados}")
-        db.session.commit()
-        print(f"DEBUG: Transacción confirmada en base de datos")
-        carrito_despues = Carrito.query.filter_by(usuario_id=usuario_id).all()
-        print(f"DEBUG: Items en carrito DESPUÉS: {len(carrito_despues)}")
-        try:
-            enviar_confirmacion_pago(pedido_data['correo'], nuevo_pedido, 'MercadoPago')
-        except Exception as email_error:
-            print(f"❌ Error enviando email de confirmación: {email_error}")
-        session.pop('pedido_temp', None)
-        print(f"DEBUG: Datos temporales limpiados")
-        flash('¡Pago procesado exitosamente!', 'success')
-        return render_template('pago_exitoso.html', pedido=nuevo_pedido)
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Error al procesar el pedido: {str(e)}', 'error')
-        return redirect(url_for('carrito'))
-@app.route('/pago_fallido')
-def pago_fallido():
-    error_code = request.args.get('error_code', 'No especificado')
-    error_message = request.args.get('error_message', 'Error al procesar el pago')
-    session.pop('pedido_temp', None)
-    flash('El pago no pudo ser procesado', 'error')
-    return render_template('pago_fallido.html',
-                         error_code=error_code,
-                         error_message=error_message)
-@app.route('/pago_pendiente')
-def pago_pendiente():
-    if 'pedido_temp' not in session:
-        return redirect(url_for('inicio'))
-    pedido_data = session['pedido_temp']
-    payment_id = request.args.get('payment_id', '')
-    payment_method = request.args.get('payment_type', 'MercadoPago')
-    return render_template('pago_pendiente.html',
-                         payment_id=payment_id,
-                         payment_method=payment_method,
-                         total=pedido_data.get('total', 0))
+
+@app.route('/pago_mercadopago', methods=['GET','POST'])
+def pago_mercadopago_deprecated():
+    
+    flash('Redirigiendo a la nueva página de pago...', 'info')
+    return redirect(url_for('pago_mercadopago'))
+
+
 def send_confirmation_email(email, nombre, pedido):
     try:
         msg = Message(
