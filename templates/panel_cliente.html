@@ -730,7 +730,7 @@
       <a href="{{ url_for('productos') }}"><span>🛒</span>Hacer Pedido</a>
       <a href="{{ url_for('contacto') }}"><span>📞</span>Contacto</a>
       <a href="{{ url_for('perfil_cliente') }}"><span>✏️</span>Editar mi perfil</a>
-      <a href="{{ url_for('pedidos_cliente') }}"><span>📦</span>Mis Pedidos</a>
+      <a href="{{ url_for('historial_pedidos') }}"><span>📦</span>Mi Historia de Pedidos</a>
     </nav>
     <button class="logout" onclick="mostrarModalLogout()"><span>🚪</span>Cerrar sesión</button>
   </aside>
@@ -761,7 +761,7 @@
       <div class="dashboard-sections">
       <div class="section-box">
         <h2>Mis Pedidos y Bandeja de Mensajes</h2>
-        <button class="btn" onclick="window.location.href='{{ url_for('pedidos_cliente') }}'">Ver Mis Pedidos</button>
+        <button class="btn" onclick="window.location.href='{{ url_for('pedidos_cliente') }}'">Mis Pedidos</button>
         <button class="btn" onclick="window.location.href='{{ url_for('bandeja_mensajes_cliente') }}'">Bandeja de Mensajes</button>
       </div>
       <div class="section-box">
