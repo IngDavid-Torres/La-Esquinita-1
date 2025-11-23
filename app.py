@@ -975,19 +975,7 @@ def pago_mercadopago():
         }
         
         
-        if MP_ACCESS_TOKEN.startswith("TEST-"):
-            print("🧪 MODO TEST DETECTADO - Saltando API de MercadoPago")
-            session['pedido_temp'] = {
-                'nombre': nombre,
-                'correo': correo,
-                'direccion': direccion,
-                'total': total,
-                'productos': [{'id': p.id, 'cantidad': p.cantidad} for p in productos]
-            }
-            return render_template('pago_test_processing.html', 
-                                 nombre=nombre, correo=correo, 
-                                 direccion=direccion, total=total,
-                                 productos=productos)
+        
         
         try:
             print(f"🧪 DEBUG: Creando preferencia con datos: {preference_data}")
@@ -1002,22 +990,14 @@ def pago_mercadopago():
                     'total': total,
                     'productos': [{'id': p.id, 'cantidad': p.cantidad} for p in productos]
                 }
-                print(f"ðŸ”§ DEBUG: Redirigiendo a: {preference['init_point']}")
-                if MP_ACCESS_TOKEN.startswith("TEST-"):
-                    print("🧪 Modo TEST detectado - Mostrando simulación")
-                    return render_template('pago_test_processing.html', 
-                                         nombre=nombre, correo=correo, 
-                                         direccion=direccion, total=total,
-                                         productos=productos)
-                else:
-                    
-                    return redirect(preference["init_point"])
+                print(f"🔗 Redirigiendo a: {preference['init_point']}")
+                return redirect(preference["init_point"])
             else:
-                print(f"âŒ DEBUG: Error en status: {preference_response}")
+                print(f"❌ Error en status: {preference_response}")
                 flash("Error al procesar el pago", "error")
                 return redirect(url_for('carrito'))
         except Exception as e:
-            print(f"âŒ DEBUG: ExcepciÃ³n: {str(e)}")
+            print(f"❌ Excepción: {str(e)}")
             flash(f"Error: {str(e)}", "error")
             return redirect(url_for('carrito'))
     return render_template('pago_mercadopago.html', productos=productos, total=total)
