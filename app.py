@@ -1055,9 +1055,12 @@ def pago_fallido():
     error_message = request.args.get('error_message', 'Error al procesar el pago')
     session.pop('pedido_temp', None)
     flash('El pago no pudo ser procesado', 'error')
+    from datetime import datetime
+    fecha_hora = datetime.now().strftime('%d/%m/%Y %H:%M')
     return render_template('pago_fallido.html',
                          error_code=error_code,
-                         error_message=error_message)
+                         error_message=error_message,
+                         fecha_hora=fecha_hora)
 @app.route('/pago_pendiente')
 def pago_pendiente():
     if 'pedido_temp' not in session:
@@ -2212,3 +2215,5 @@ if __name__ == '__main__':
         print("🔄 Continuando con el servidor...")
     
     app.run(host='0.0.0.0', port=port, debug=False)
+
+

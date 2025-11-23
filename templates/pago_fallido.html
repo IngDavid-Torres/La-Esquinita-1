@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Error en el Pago | AgroConnect</title>
+  <title>Error en el Pago | La Esquinita</title>
   <style>
     :root {
       --primary: #00a650;
@@ -189,7 +189,7 @@
       <h3>🚫 Información del error</h3>
       <p><strong>Código de error:</strong> {{ error_code if error_code else 'No especificado' }}</p>
       <p><strong>Descripción:</strong> {{ error_message if error_message else 'Error al procesar el pago' }}</p>
-      <p><strong>Fecha y hora:</strong> {{ moment().format('DD/MM/YYYY HH:mm') }}</p>
+      <p><strong>Fecha y hora:</strong> {{ fecha_hora }}</p>
     </div>
 
     <div class="posibles-causas">
