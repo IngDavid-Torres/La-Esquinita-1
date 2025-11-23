@@ -956,11 +956,11 @@ def pago_mercadopago():
                 "email": correo
             },
             "back_urls": {
-                "success": url_for('pago_exitoso', _external=True),
-                "failure": url_for('pago_fallido', _external=True),
-                "pending": url_for('pago_pendiente', _external=True)
+                "success": url_for('pago_exitoso', _external=True).replace('http://', 'https://'),
+                "failure": url_for('pago_fallido', _external=True).replace('http://', 'https://'),
+                "pending": url_for('pago_pendiente', _external=True).replace('http://', 'https://')
             },
-            "notification_url": url_for('webhook_mercadopago', _external=True),
+            "notification_url": url_for('webhook_mercadopago', _external=True).replace('http://', 'https://'),
             "auto_return": "approved",
             "external_reference": f"laesquinita-{usuario_id}-{int(datetime.now().timestamp())}",
             "payment_methods": {
