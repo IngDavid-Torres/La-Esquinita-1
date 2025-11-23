@@ -475,6 +475,16 @@ def enviar_mensaje():
     flash("Tu mensaje fue enviado con Ã©xito.", "success")
     return redirect(url_for('contacto'))
 
+
+@app.route('/historial_pedidos')
+def historial_pedidos():
+    if 'usuario_id' not in session:
+        return redirect(url_for('login'))
+    pedidos = Pedido.query.filter_by(usuario_id=session['usuario_id']).order_by(Pedido.fecha.desc()).all()
+    cantidad_carrito = db.session.query(func.sum(Carrito.cantidad)).filter_by(usuario_id=session['usuario_id']).scalar() or 0
+    total = sum(pedido.total for pedido in pedidos) if pedidos else 0.00
+    return render_template('pedidos_cliente.html', pedidos=pedidos, cantidad_carrito=cantidad_carrito, total=total)
+
 @app.route('/generate_captcha')
 def generate_captcha():
    
