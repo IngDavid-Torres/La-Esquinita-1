@@ -111,8 +111,8 @@ except Exception as db_init_error:
 UPLOAD_FOLDER = 'static/images'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-MP_ACCESS_TOKEN = os.environ.get('MP_ACCESS_TOKEN') or "TEST-7916427332588639-102718-00ee5129ad06c2ceba14e4e44b94d22e-191563398"
-MP_PUBLIC_KEY = os.environ.get('MP_PUBLIC_KEY') or "TEST-c1e625f3-6498-4c5e-9fda-d2b6b5a0a7de-191563398"
+MP_ACCESS_TOKEN = os.environ.get('MP_ACCESS_TOKEN') or "TEST-8747729118528796-112018-075ce20a669c331564f0a0f830d574b1-536559101"
+MP_PUBLIC_KEY = os.environ.get('MP_PUBLIC_KEY') or "TEST-b701319e-69c2-4b01-9acf-619bb56428d5"
 sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
 
 
