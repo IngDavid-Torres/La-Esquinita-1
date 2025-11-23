@@ -1185,24 +1185,9 @@ def pago():
             nombre,
             direccion,
             total,
-            'Tarjeta de Crédito',
+            "Tarjeta de Crédito",
             nuevo_pedido.fecha
         )
-        print(f"✅ Correo programado en ThreadPoolExecutor")
-        
-        return render_template('pago.html', nombre=nombre, productos=productos, total=total)
-    return render_template('metodos_pago.html', tarjetas=tarjetas, productos=productos, total=total)
-@app.route('/historial_pedidos')
-def historial_pedidos():
-    if 'usuario_id' not in session:
-        return redirect(url_for('login'))
-    pedidos = Pedido.query.filter_by(usuario_id=session['usuario_id']).order_by(Pedido.fecha.desc()).all()
-    return render_template('historial_pedidos.html', pedidos=pedidos)
-@app.route('/guardar_perfil', methods=['POST'])
-def guardar_perfil():
-    if 'usuario_id' not in session:
-        flash("Debes iniciar sesión.", "error")
-        return redirect(url_for('login'))
     usuario = Usuario.query.get(session['usuario_id'])
     if usuario:
         usuario.nombre = request.form['nombre']
@@ -2176,23 +2161,7 @@ def send_test_email(email):
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
-try:
-    from mercadopago_routes import init_mercadopago_routes
-    init_mercadopago_routes(
-        app=app,
-        db=db,
-        Carrito=Carrito,
-        Producto=Producto,
-        Pedido=Pedido,
-        PedidoItem=PedidoItem,
-        Usuario=Usuario,
-        enviar_email_background=enviar_email_background
-    )
-    print("✅ Rutas de Mercado Pago inicializadas correctamente")
-except Exception as mp_error:
-    print(f"⚠️ Error inicializando rutas de Mercado Pago: {mp_error}")
-    import traceback
-    traceback.print_exc()
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
