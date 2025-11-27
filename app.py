@@ -649,14 +649,7 @@ def panel_cliente():
 
 @app.route('/perfil_cliente', methods=['GET'])
 def perfil_cliente():
-    if 'usuario_id' not in session:
-        flash('Debes iniciar sesión para ver tu perfil.', 'error')
-        return redirect(url_for('login'))
     usuario = Usuario.query.get(session['usuario_id'])
-    if not usuario:
-        flash('Usuario no encontrado. Por favor inicia sesión nuevamente.', 'error')
-        session.clear()
-        return redirect(url_for('login'))
     direccion = Direccion.query.filter_by(usuario_id=session['usuario_id']).first()
     return render_template('perfil_cliente.html', usuario=usuario, direccion=direccion)
 
