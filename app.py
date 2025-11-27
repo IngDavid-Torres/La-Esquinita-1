@@ -613,7 +613,7 @@ def login():
                 session['usuario_id'] = usuario.id
                 session['usuario_nombre'] = usuario.nombre
                 session['tipo_usuario'] = usuario.tipo_usuario
-                session.permanent = True  # Mantener sesión activa
+                session.permanent = True 
                 flash(f'Bienvenido {usuario.nombre}', 'success')
                 if usuario.tipo_usuario == "Cliente":
                     logger.info("🔄 REDIRIGIENDO A PANEL_CLIENTE")
@@ -646,11 +646,20 @@ def panel_cliente():
     tarjetas = Tarjeta.query.filter_by(usuario_id=session['usuario_id']).all()
     response = make_response(render_template('panel_cliente.html', usuario=usuario, direccion=direccion, cantidad_carrito=cantidad_carrito, tarjetas=tarjetas))
     return add_security_headers(response)
+
 @app.route('/perfil_cliente', methods=['GET'])
 def perfil_cliente():
+    if 'usuario_id' not in session:
+        flash('Debes iniciar sesión para ver tu perfil.', 'error')
+        return redirect(url_for('login'))
     usuario = Usuario.query.get(session['usuario_id'])
+    if not usuario:
+        flash('Usuario no encontrado. Por favor inicia sesión nuevamente.', 'error')
+        session.clear()
+        return redirect(url_for('login'))
     direccion = Direccion.query.filter_by(usuario_id=session['usuario_id']).first()
     return render_template('perfil_cliente.html', usuario=usuario, direccion=direccion)
+
 @app.route('/panel_admin')
 def panel_admin():
     logger.info(f"🎯 PANEL_ADMIN ACCEDIDO - Método: {request.method}")
@@ -759,12 +768,12 @@ def logout():
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
-    flash(f'SesiÃ³n cerrada correctamente. Â¡Hasta pronto, {user_name}! ðŸ‘‹', 'success')
+    flash(f'Sesión cerrada correctamente. ¡Hasta pronto, {user_name}! 👋', 'success')
     return response
 @app.route('/logout/admin')
 def logout_admin():
     if session.get('tipo_usuario') != 'Administrador':
-        flash('Acceso denegado. Solo administradores pueden usar esta funciÃ³n.', 'error')
+        flash('Acceso denegado. Solo administradores pueden usar esta función.', 'error')
         return redirect(url_for('inicio'))
     admin_name = session.get('usuario_nombre', 'Administrador')
     session_keys_to_clear = [
@@ -1093,7 +1102,7 @@ def send_confirmation_email(email, nombre, pedido):
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background: #00a650; color: white; padding: 20px; text-align: center;">
                 <h1> La Esquinita</h1>
-                <h2>Â¡Pedido Confirmado!</h2>
+                <h2>¡Pedido Confirmado!</h2>
             </div>
             <div style="padding: 20px;">
                 <p>Hola <strong>{nombre}</strong>,</p>
@@ -1108,7 +1117,7 @@ def send_confirmation_email(email, nombre, pedido):
                 <p>Te mantendremos informado sobre el estado de tu pedido.</p>
                 <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
                 <div style="text-align: center; margin-top: 30px;">
-                    <p>Â¡Gracias por elegir La Esquinita!</p>
+                    <p>¡Gracias por elegir La Esquinita!</p>
                 </div>
             </div>
         </div>
@@ -1297,7 +1306,7 @@ def agregar_producto():
         return redirect(url_for('login'))
     productor_id = session.get('productor_id')
     if not productor_id:
-        flash("No se encontrÃ³ el productor asociado a este usuario.", "error")
+        flash("No se encontró el productor asociado a este usuario.", "error")
         return redirect(url_for('admin_productos_productor'))
     nombre = request.form['nombre']
     descripcion = request.form['descripcion']
@@ -1318,7 +1327,7 @@ def agregar_producto():
     )
     db.session.add(nuevo_producto)
     db.session.commit()
-    flash("âœ… Â¡Producto subido correctamente!", "success")
+    flash("¡Producto subido correctamente!", "success")
     return redirect(url_for('admin_productos_productor'))
 @app.route('/editar_producto/<int:producto_id>', methods=['GET', 'POST'])
 def editar_producto(producto_id):
@@ -1329,6 +1338,7 @@ def editar_producto(producto_id):
         db.session.commit()
         return redirect(url_for('admin_productos_productor'))
     return render_template('editar_producto.html', producto=producto)
+
 @app.route('/eliminar_carrito/<int:producto_id>', methods=['POST'])
 def eliminar_carrito(producto_id):
     if 'usuario_id' not in session:
@@ -1363,6 +1373,7 @@ def agregar_carrito(producto_id):
             db.session.rollback()
             flash(f"❌ Error al agregar producto al carrito: {str(e)}", "error")
     return redirect(url_for('productos'))
+
 @app.route('/metodos_pago', methods=['GET', 'POST'])
 def metodos_pago():
     if 'usuario_id' not in session:
@@ -1370,6 +1381,8 @@ def metodos_pago():
     usuario_id = session['usuario_id']
     tarjetas = Tarjeta.query.filter_by(usuario_id=usuario_id).all()
     return render_template('metodos_pago.html', tarjetas=tarjetas)
+
+
 @app.route('/detalle_pedido/<int:pedido_id>')
 def detalle_pedido(pedido_id):
     if 'usuario_id' not in session:
@@ -1392,7 +1405,7 @@ def marcar_entregado(pedido_id):
     pedido = Pedido.query.get_or_404(pedido_id)
     pedido.estado = "Entregado"
     db.session.commit()
-    flash("âœ… Pedido entregado exitosamente.", "success")
+    flash("Pedido entregado exitosamente.", "success")
     return redirect(url_for('admin_pedidos'))
 @app.route('/eliminar_producto/<int:producto_id>', methods=['POST'])
 def eliminar_producto(producto_id):
@@ -1502,6 +1515,8 @@ def actualizar_producto_admin(producto_id):
         flash("Producto actualizado correctamente.", "success")
         return redirect(url_for('admin_productos'))
     return render_template('actualizar_producto_admin.html', producto=producto)
+
+
 @app.route('/eliminar_producto_admin/<int:producto_id>', methods=['POST'])
 def eliminar_producto_admin(producto_id):
     producto = Producto.query.get_or_404(producto_id)
@@ -1568,7 +1583,7 @@ def responder_mensaje(mensaje_id):
         db.session.commit()
         flash('Respuesta enviada correctamente.', 'success')
     else:
-        flash('La respuesta no puede estar vacÃ­a.', 'danger')
+        flash('La respuesta no puede estar vacía.', 'danger')
     return redirect(url_for('admin_mensajes'))
 @app.route('/bandeja_mensajes_productor')
 def bandeja_mensajes_productor():
@@ -1589,7 +1604,7 @@ def enviar_mensaje_productor():
             flash('Mensaje enviado correctamente.', 'success')
             return redirect(url_for('bandeja_mensajes_productor'))
         else:
-            flash('El mensaje no puede estar vacÃ­o.', 'danger')
+            flash('El mensaje no puede estar vacío.', 'danger')
     return render_template('enviar_mensaje_productor.html')
 @app.route('/bandeja_mensajes_cliente')
 def bandeja_mensajes_cliente():
@@ -1597,6 +1612,7 @@ def bandeja_mensajes_cliente():
         return redirect(url_for('login'))
     mensajes = Contacto.query.filter_by(usuario_id=session['usuario_id']).order_by(Contacto.fecha.desc()).all()
     return render_template('bandeja_mensajes_cliente.html', mensajes=mensajes)
+
 @app.route('/actualizar_usuario/<int:user_id>', methods=['GET', 'POST'])
 def actualizar_usuario(user_id):
     usuario = Usuario.query.get(user_id)
@@ -1773,7 +1789,7 @@ def procesar_pago_test():
         
         print(f"⚡ Pedido guardado en {(time.time() - start_time)*1000:.0f}ms")
         
-        # Programar envío de email en background
+        
         email_executor.submit(
             enviar_email_background,
             pedido_data['correo'],
@@ -1818,7 +1834,7 @@ def check_database_connection():
                 except:
                     pass
                 import time
-                time.sleep(0.5)  # Esperar medio segundo antes del siguiente intento
+                time.sleep(0.5)  
             else:
                 return False, f"Connection failed after {max_retries} attempts: {str(e)}"
     
@@ -1855,7 +1871,7 @@ def test_simple():
 
 @app.route('/admin-direct', methods=['GET', 'POST'])
 def admin_login_direct():
-    """Login directo para admin sin CAPTCHA"""
+    
     if request.method == 'POST':
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '').strip()
@@ -2076,7 +2092,7 @@ def init_categorias_railway():
         
         db.session.commit()
         
-        # Verificar
+       
         todas = Categoria.query.all()
         resultado = {
             "status": "success",
