@@ -22,6 +22,8 @@ def get_sdk():
     return sdk
 def is_test_environment():
     return ENVIRONMENT == 'test'
+
+
 def create_preference(items, payer_info, urls, external_reference):
     preference_data = {
         "items": items,
@@ -44,7 +46,6 @@ def create_preference(items, payer_info, urls, external_reference):
                 {"id": "atm"},
                 {"id": "digital_currency"}
             ],
-            "excluded_payment_methods": [],
             "installments": 12
         },
         "shipments": {
@@ -52,19 +53,35 @@ def create_preference(items, payer_info, urls, external_reference):
             "mode": "not_specified"
         }
     }
+
     try:
-        print(f"📤 Enviando preferencia a MercadoPago:")
+        print(f"📤 Enviando preferencia a Mercado Pago...")
         print(f"   Items: {len(items)}")
-        print(f"   Payer: {payer_info.get('email')}")
-        print(f"   Back URLs: success={preference_data['back_urls']['success'][:50]}...")
+        print(f"   Comprador: {payer_info.get('email')}")
+        print(f"   Entorno: {'SANDBOX' if ENVIRONMENT == 'test' else 'PRODUCCIÓN'}")
+
         preference_response = sdk.preference().create(preference_data)
-        print(f"📥 Respuesta de MercadoPago: status={preference_response.get('status')}")
-        return preference_response
+        status = preference_response.get('status')
+        response = preference_response.get('response', {})
+
+        print(f"📥 Respuesta Mercado Pago: status={status}, id={response.get('id')}")
+
+       
+        return {
+            "status": status,
+            "response": {
+                "id": response.get("id"),
+                "init_point": response.get("init_point"),
+                "sandbox_init_point": response.get("sandbox_init_point")
+            }
+        }
+
     except Exception as e:
         print(f"❌ Error creando preferencia: {str(e)}")
         import traceback
         traceback.print_exc()
         return None
+
 def get_payment_info(payment_id):
     try:
         payment_response = sdk.payment().get(payment_id)
