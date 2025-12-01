@@ -889,26 +889,34 @@ def webhook_mercadopago():
     try:
         data = request.get_json()
         if data and data.get('type') == 'payment':
+            logger.info(f"[WEBHOOK] Datos recibidos: {data}")
             payment_id = data['data']['id']
+            logger.info(f"[WEBHOOK] payment_id: {payment_id}")
             payment_response = sdk.payment().get(payment_id)
+            logger.info(f"[WEBHOOK] payment_response: {payment_response}")
             payment = payment_response["response"]
             if payment_response["status"] == 200:
                 external_reference = payment.get('external_reference', '')
                 payment_status = payment.get('status', '')
+                logger.info(f"[WEBHOOK] external_reference: {external_reference}, payment_status: {payment_status}")
                 if external_reference.startswith('laesquinita-'):
                     parts = external_reference.split('-')
                     if len(parts) >= 2:
                         usuario_id = int(parts[1])
+                        logger.info(f"[WEBHOOK] usuario_id extraído: {usuario_id}")
                         if payment_status == 'approved':
                             try:
-                                # Buscar si ya existe un pedido para este usuario y payment_id
                                 pedido_existente = Pedido.query.filter_by(usuario_id=usuario_id, payment_id=str(payment_id)).first()
+                                logger.info(f"[WEBHOOK] pedido_existente: {pedido_existente}")
                                 if not pedido_existente:
-                                    # Buscar datos del usuario
                                     usuario = Usuario.query.get(usuario_id)
-                                    # Buscar productos en el carrito
+                                    logger.info(f"[WEBHOOK] usuario: {usuario}")
                                     carrito_items = Carrito.query.filter_by(usuario_id=usuario_id).all()
+                                    logger.info(f"[WEBHOOK] carrito_items encontrados: {len(carrito_items)}")
+                                    for item in carrito_items:
+                                        logger.info(f"[WEBHOOK] Producto en carrito: id={item.producto_id}, cantidad={item.cantidad}")
                                     total = sum(item.producto.precio * item.cantidad for item in carrito_items)
+                                    logger.info(f"[WEBHOOK] total calculado: {total}")
                                     nuevo_pedido = Pedido(
                                         usuario_id=usuario_id,
                                         nombre=usuario.nombre if usuario else '',
@@ -930,16 +938,17 @@ def webhook_mercadopago():
                                         db.session.add(detalle)
                                     Carrito.query.filter_by(usuario_id=usuario_id).delete()
                                     db.session.commit()
-                                    print(f"✅ Carrito del usuario {usuario_id} vaciado tras pago exitoso.")
+                                    logger.info(f"[WEBHOOK] Carrito del usuario {usuario_id} vaciado tras pago exitoso.")
                                     try:
-                                        enviar_confirmacion_pago(nuevo_pedido.correo, nuevo_pedido, 'MercadoPago')
+                                        resultado_envio = enviar_confirmacion_pago(nuevo_pedido.correo, nuevo_pedido, 'MercadoPago')
+                                        logger.info(f"[WEBHOOK] Resultado envío correo: {resultado_envio}")
                                     except Exception as email_error:
-                                        print(f"Error enviando email de confirmación: {email_error}")
+                                        logger.error(f"[WEBHOOK] Error enviando email de confirmación: {email_error}")
                                 else:
-                                    print(f"Pedido ya existe para usuario {usuario_id} y payment_id {payment_id}")
+                                    logger.info(f"[WEBHOOK] Pedido ya existe para usuario {usuario_id} y payment_id {payment_id}")
                             except Exception as e:
                                 db.session.rollback()
-                                print(f"Error procesando webhook: {str(e)}")
+                                logger.error(f"[WEBHOOK] Error procesando webhook: {str(e)}")
         return jsonify({'status': 'success'}), 200
     except Exception as e:
         print(f"Error en webhook MercadoPago: {str(e)}")
