@@ -900,38 +900,46 @@ def webhook_mercadopago():
                     if len(parts) >= 2:
                         usuario_id = int(parts[1])
                         if payment_status == 'approved':
-                            pedido_data = session.get('pedido_temp')
-                            if pedido_data:
-                                try:
+                            try:
+                                # Buscar si ya existe un pedido para este usuario y payment_id
+                                pedido_existente = Pedido.query.filter_by(usuario_id=usuario_id, payment_id=str(payment_id)).first()
+                                if not pedido_existente:
+                                    # Buscar datos del usuario
+                                    usuario = Usuario.query.get(usuario_id)
+                                    # Buscar productos en el carrito
+                                    carrito_items = Carrito.query.filter_by(usuario_id=usuario_id).all()
+                                    total = sum(item.producto.precio * item.cantidad for item in carrito_items)
                                     nuevo_pedido = Pedido(
                                         usuario_id=usuario_id,
-                                        nombre=pedido_data['nombre'],
-                                        correo=pedido_data['correo'],
-                                        direccion=pedido_data['direccion'],
+                                        nombre=usuario.nombre if usuario else '',
+                                        correo=usuario.email if usuario else '',
+                                        direccion=usuario.direcciones[0].direccion if usuario and usuario.direcciones else '',
                                         metodo_pago='MercadoPago',
-                                        total=pedido_data['total'],
+                                        total=total,
                                         estado='Confirmado',
                                         payment_id=str(payment_id)
                                     )
                                     db.session.add(nuevo_pedido)
-                                    for producto_data in pedido_data['productos']:
+                                    db.session.flush()
+                                    for item in carrito_items:
                                         detalle = PedidoItem(
                                             pedido_id=nuevo_pedido.id,
-                                            producto_id=producto_data['id'],
-                                            cantidad=producto_data['cantidad']
+                                            producto_id=item.producto_id,
+                                            cantidad=item.cantidad
                                         )
                                         db.session.add(detalle)
-                                    # Vaciar el carrito del usuario tras pago exitoso
                                     Carrito.query.filter_by(usuario_id=usuario_id).delete()
                                     db.session.commit()
                                     print(f"✅ Carrito del usuario {usuario_id} vaciado tras pago exitoso.")
                                     try:
-                                        enviar_confirmacion_pago(pedido_data['correo'], nuevo_pedido, 'MercadoPago TEST')
+                                        enviar_confirmacion_pago(nuevo_pedido.correo, nuevo_pedido, 'MercadoPago')
                                     except Exception as email_error:
                                         print(f"Error enviando email de confirmación: {email_error}")
-                                except Exception as e:
-                                    db.session.rollback()
-                                    print(f"Error procesando webhook: {str(e)}")
+                                else:
+                                    print(f"Pedido ya existe para usuario {usuario_id} y payment_id {payment_id}")
+                            except Exception as e:
+                                db.session.rollback()
+                                print(f"Error procesando webhook: {str(e)}")
         return jsonify({'status': 'success'}), 200
     except Exception as e:
         print(f"Error en webhook MercadoPago: {str(e)}")
