@@ -931,7 +931,7 @@ def webhook_mercadopago():
         external_reference = None
         payment_status = None
 
-        # Detectar tipo de evento y extraer payment_id
+     
         if data:
             if data.get('type') == 'payment' and 'data' in data and 'id' in data['data']:
                 payment_id = data['data']['id']
@@ -941,10 +941,11 @@ def webhook_mercadopago():
                 payment_id = request.args.get('id')
 
         if not payment_id:
-            logger.warning("[MercadoPago Webhook] No se encontró payment_id en el payload.")
-            return jsonify({'error': 'No payment_id found'}), 400
+           logger.warning("[MercadoPago Webhook] No se encontró payment_id en el payload.")
+           return jsonify({'status': 'ok', 'message': 'sin payment_id (test)'}), 200
 
-        # Consultar el estado del pago usando el SDK
+
+      
         try:
             payment_response = sdk.payment().get(payment_id)
             logger.info(f"[MercadoPago Webhook] payment_response: {payment_response}")
