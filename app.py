@@ -1,4 +1,5 @@
 ﻿from flask_sqlalchemy import SQLAlchemy
+from mercadopago_config import create_preference
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
 from datetime import datetime
 import os
@@ -559,6 +560,41 @@ def registro():
         return redirect(url_for('login'))
     tipo_usuario = request.args.get('tipo', 'Cliente')
     return render_template('registro.html', tipo_usuario=tipo_usuario)
+
+
+
+
+@app.route('/crear_pago', methods=['POST'])
+def crear_pago():
+    if 'usuario_id' not in session:
+        return jsonify({'error': 'No autenticado'}), 401
+
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Datos no recibidos'}), 400
+
+    # Ejemplo de datos esperados
+    # {
+    #   "items": [{"title": "Producto", "quantity": 1, "unit_price": 100}],
+    #   "payer_info": {"name": "Juan", "email": "juan@email.com"},
+    #   "urls": {"success": "https://tuapp.com/pago_exitoso", "failure": "https://tuapp.com/pago_fallido", "pending": "https://tuapp.com/pago_pendiente"},
+    #   "external_reference": "pedido-123"
+    # }
+
+    items = data.get('items', [])
+    payer_info = data.get('payer_info', {})
+    urls = data.get('urls', {})
+    external_reference = data.get('external_reference', f"pedido-{session['usuario_id']}-{int(time.time())}")
+
+    preference_response = create_preference(items, payer_info, urls, external_reference)
+    if not preference_response or preference_response.get('status') != 201:
+        return jsonify({'error': 'No se pudo crear la preferencia', 'details': preference_response}), 500
+
+    init_point = preference_response['response'].get('init_point')
+    return jsonify({'init_point': init_point, 'preference_id': preference_response['response'].get('id')})
+
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -925,6 +961,7 @@ def pago_mercadopago():
     productos = []
     total = 0
     items_mp = []
+    items_json_list = []
     for item in carrito_items:
         producto = Producto.query.get(item.producto_id)
         if producto:
@@ -938,29 +975,28 @@ def pago_mercadopago():
                 "unit_price": float(producto.precio),
                 "currency_id": "MXN"
             })
+            items_json_list.append({
+                "title": producto.nombre,
+                "quantity": item.cantidad,
+                "unit_price": float(producto.precio)
+            })
+    import json
+    items_json = json.dumps(items_json_list)
     if request.method == 'POST':
         print("🔄 POST recibido en pago_mercadopago")
-        
-        
         nombre = request.form.get('nombre', '').strip()
         correo = request.form.get('correo', '').strip()
         direccion = request.form.get('direccion', '').strip()
-        
         print(f"📝 Datos recibidos: nombre='{nombre}', correo='{correo}', direccion='{direccion}'")
-        
-        
         if not nombre or len(nombre) < 3:
             flash("El nombre debe tener al menos 3 caracteres", "error")
-            return render_template('pago_mercadopago.html', productos=productos, total=total)
-        
+            return render_template('pago_mercadopago.html', productos=productos, total=total, items_json=items_json)
         if not correo or '@' not in correo:
             flash("Por favor ingresa un correo válido", "error")
-            return render_template('pago_mercadopago.html', productos=productos, total=total)
-        
+            return render_template('pago_mercadopago.html', productos=productos, total=total, items_json=items_json)
         if not direccion or len(direccion) < 10:
             flash("La dirección debe ser más específica (mínimo 10 caracteres)", "error")
-            return render_template('pago_mercadopago.html', productos=productos, total=total)
-        
+            return render_template('pago_mercadopago.html', productos=productos, total=total, items_json=items_json)
         preference_data = {
             "items": items_mp,
             "payer": {
@@ -1012,7 +1048,7 @@ def pago_mercadopago():
             print(f"❌ Excepción: {str(e)}")
             flash(f"Error: {str(e)}", "error")
             return redirect(url_for('carrito'))
-    return render_template('pago_mercadopago.html', productos=productos, total=total)
+    return render_template('pago_mercadopago.html', productos=productos, total=total, items_json=items_json)
 @app.route('/pago_exitoso')
 def pago_exitoso():
     if 'usuario_id' not in session or 'pedido_temp' not in session:

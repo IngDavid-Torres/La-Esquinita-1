@@ -235,60 +235,79 @@
       </div>
     </div>
 
-    <form class="form-pago" action="{{ url_for('pago_mercadopago') }}" method="post" onsubmit="return validateAndSubmit(event)">
+
+    <form class="form-pago" id="formPago" autocomplete="off">
       <input type="text" name="nombre" placeholder="📝 Nombre completo" required minlength="3" id="nombre">
       <input type="email" name="correo" placeholder="📧 Correo electrónico" required id="correo">
       <input type="text" name="direccion" placeholder="📍 Dirección de envío completa" required minlength="10" id="direccion">
-      
-      <button type="submit" class="boton-pago" id="submitBtn">
+      <button type="submit" class="boton-pago" id="submitBtn" data-total="{{ "%.2f"|format(total) }}">
         🚀 Continuar con MercadoPago - ${{ "%.2f"|format(total) }}
       </button>
     </form>
 
     <script>
-      function validateAndSubmit(event) {
-        console.log('Formulario enviado - iniciando validación');
-        
+      document.getElementById('formPago').addEventListener('submit', async function(event) {
+        event.preventDefault();
         const nombre = document.getElementById('nombre').value.trim();
         const correo = document.getElementById('correo').value.trim();
         const direccion = document.getElementById('direccion').value.trim();
-        
-        console.log('Datos del formulario:', { nombre, correo, direccion });
-        
-    
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Validaciones
         if (nombre.length < 3) {
           alert('El nombre debe tener al menos 3 caracteres');
-          event.preventDefault();
-          return false;
+          return;
         }
-        
         if (!correo.includes('@') || !correo.includes('.')) {
           alert('Por favor ingresa un correo válido');
-          event.preventDefault();
-          return false;
+          return;
         }
-        
         if (direccion.length < 10) {
           alert('La dirección debe ser más específica (mínimo 10 caracteres)');
-          event.preventDefault();
-          return false;
+          return;
         }
-        
-        
-        const submitBtn = document.getElementById('submitBtn');
+
         submitBtn.disabled = true;
         submitBtn.innerHTML = '⏳ Procesando...';
+
         
-        console.log('Validación exitosa - enviando formulario');
-        return true;
-      }
-      
-      
-      window.addEventListener('beforeunload', function() {
-        const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) {
+        
+        const items = JSON.parse(document.getElementById('itemsJson').textContent);
+  <!-- Array de productos para JS -->
+  <script id="itemsJson" type="application/json">{{ items_json | safe }}</script>
+
+        const datosPago = {
+          items: items,
+          payer_info: {
+            name: nombre,
+            email: correo
+          },
+          urls: {
+            success: window.location.origin + "/pago_exitoso",
+            failure: window.location.origin + "/pago_fallido",
+            pending: window.location.origin + "/pago_pendiente"
+          },
+          external_reference: "pedido-{{ session['usuario_id'] if session['usuario_id'] else 'anonimo' }}-{{ total }}"
+        };
+
+        try {
+          const respuesta = await fetch("/crear_pago", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datosPago)
+          });
+          const resultado = await respuesta.json();
+          if (resultado.init_point) {
+            window.location.href = resultado.init_point;
+          } else {
+            alert("Error al generar el pago: " + (resultado.error || "Intenta de nuevo"));
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '🚀 Continuar con MercadoPago - $' + submitBtn.dataset.total;
+          }
+        } catch (err) {
+          alert("Error de conexión: " + err);
           submitBtn.disabled = false;
-          submitBtn.innerHTML = '🚀 Continuar con MercadoPago - ${{ "%.2f"|format(total) }}';
+          submitBtn.innerHTML = '🚀 Continuar con MercadoPago - $' + submitBtn.dataset.total;
         }
       });
     </script>
