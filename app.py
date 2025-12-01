@@ -574,14 +574,6 @@ def crear_pago():
     if not data:
         return jsonify({'error': 'Datos no recibidos'}), 400
 
-    # Ejemplo de datos esperados
-    # {
-    #   "items": [{"title": "Producto", "quantity": 1, "unit_price": 100}],
-    #   "payer_info": {"name": "Juan", "email": "juan@email.com"},
-    #   "urls": {"success": "https://tuapp.com/pago_exitoso", "failure": "https://tuapp.com/pago_fallido", "pending": "https://tuapp.com/pago_pendiente"},
-    #   "external_reference": "pedido-123"
-    # }
-
     items = data.get('items', [])
     payer_info = data.get('payer_info', {})
     urls = data.get('urls', {})
@@ -589,21 +581,20 @@ def crear_pago():
 
     preference_response = create_preference(items, payer_info, urls, external_reference)
     if not preference_response or preference_response.get('status') != 201:
-       
         error_json = preference_response.get('response')
         logger.error(f"MercadoPago ERROR JSON: {error_json}")
-        print(f"MercadoPago ERROR JSON: {error_json}")
         return jsonify({'error': 'Error al crear preferencia', 'mp_error': error_json}), 500
 
-    init_point = preference_response['response'].get('init_point')
-   
-    if init_point:
-        if 'sandbox.mercadopago.com.mx' in init_point:
-            logger.info(f"Mercado Pago checkout SANDBOX: {init_point}")
-        else:
-            logger.warning(f"Mercado Pago checkout PRODUCCIÓN: {init_point}")
+    mp_access_token = os.environ.get('MP_ACCESS_TOKEN', '')
+    if mp_access_token.startswith('TEST-'):
+        init_point = preference_response['response'].get('sandbox_init_point')
     else:
+        init_point = preference_response['response'].get('init_point')
+
+    if not init_point:
         logger.error("No se recibió init_point en la respuesta de Mercado Pago.")
+        return jsonify({'error': 'No init_point recibido'}), 500
+
     return jsonify({'init_point': init_point, 'preference_id': preference_response['response'].get('id')})
 
 
@@ -1668,6 +1659,7 @@ def desactivar_producto_admin(producto_id):
 @app.route('/admin_mensajes')
 def admin_mensajes():
     mensajes = Contacto.query.order_by(Contacto.id.desc()).all()
+   
     return render_template('admin_mensajes.html', mensajes=mensajes)
 @app.route('/eliminar_mensaje/<int:mensaje_id>', methods=['POST'])
 def eliminar_mensaje(mensaje_id):
