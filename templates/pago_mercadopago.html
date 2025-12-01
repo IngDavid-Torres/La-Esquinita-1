@@ -219,8 +219,12 @@
           submitBtn.disabled = true;
           submitBtn.innerHTML = '⏳ Procesando...';
 
-          // Obtener los items correctamente
-          const items = JSON.parse(document.getElementById('itemsJson').textContent);
+          // Obtener los items correctamente y asegurar currency_id
+          let items = JSON.parse(document.getElementById('itemsJson').textContent);
+          items = items.map(item => ({
+            ...item,
+            currency_id: item.currency_id ? item.currency_id : 'MXN'
+          }));
 
           const datosPago = {
             items: items,
