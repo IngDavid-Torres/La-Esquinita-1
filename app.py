@@ -1016,15 +1016,18 @@ def calcular_total_carrito(usuario_id):
 def pago_mercadopago():
     if 'usuario_id' not in session:
         return redirect(url_for('login'))
+
     usuario_id = session['usuario_id']
     carrito_items = Carrito.query.filter_by(usuario_id=usuario_id).all()
     if not carrito_items:
         flash("Tu carrito está vacío", "error")
         return redirect(url_for('carrito'))
+
     productos = []
     total = 0
     items_mp = []
     items_json_list = []
+
     for item in carrito_items:
         producto = Producto.query.get(item.producto_id)
         if producto:
@@ -1043,14 +1046,16 @@ def pago_mercadopago():
                 "quantity": item.cantidad,
                 "unit_price": float(producto.precio)
             })
+
     import json
     items_json = json.dumps(items_json_list)
+
     if request.method == 'POST':
         print("🔄 POST recibido en pago_mercadopago")
         nombre = request.form.get('nombre', '').strip()
         correo = request.form.get('correo', '').strip()
         direccion = request.form.get('direccion', '').strip()
-        print(f"📝 Datos recibidos: nombre='{nombre}', correo='{correo}', direccion='{direccion}'")
+
         if not nombre or len(nombre) < 3:
             flash("El nombre debe tener al menos 3 caracteres", "error")
             return render_template('pago_mercadopago.html', productos=productos, total=total, items_json=items_json)
@@ -1060,6 +1065,7 @@ def pago_mercadopago():
         if not direccion or len(direccion) < 10:
             flash("La dirección debe ser más específica (mínimo 10 caracteres)", "error")
             return render_template('pago_mercadopago.html', productos=productos, total=total, items_json=items_json)
+
         preference_data = {
             "items": items_mp,
             "payer": {
@@ -1084,16 +1090,14 @@ def pago_mercadopago():
                 "mode": "not_specified"
             }
         }
-        
-        
-        
-        
+
         try:
-            print(f"🧪 DEBUG: Creando preferencia con datos: {preference_data}")
+            print(f"🧪 Creando preferencia con datos: {preference_data}")
             preference_response = sdk.preference().create(preference_data)
-            print(f"🧪 DEBUG: Respuesta de MercadoPago: {preference_response}")
-            preference = preference_response["response"]
+            print(f"🧪 Respuesta MercadoPago: {preference_response}")
+
             if preference_response["status"] == 201:
+                preference = preference_response["response"]
                 session['pedido_temp'] = {
                     'nombre': nombre,
                     'correo': correo,
@@ -1101,17 +1105,33 @@ def pago_mercadopago():
                     'total': total,
                     'productos': [{'id': p.id, 'cantidad': p.cantidad} for p in productos]
                 }
-                print(f"🔗 Redirigiendo a: {preference['init_point']}")
-                return redirect(preference["init_point"])
+
+                # ✅ Corregido: usa sandbox_init_point si es entorno de prueba
+                init_point = preference.get("init_point")
+                sandbox_point = preference.get("sandbox_init_point")
+
+                if MP_ACCESS_TOKEN.startswith("TEST-") and sandbox_point:
+                    print(f"🧩 Redirigiendo a SANDBOX: {sandbox_point}")
+                    return redirect(sandbox_point)
+                elif init_point:
+                    print(f"🧩 Redirigiendo a PRODUCCIÓN: {init_point}")
+                    return redirect(init_point)
+                else:
+                    print("❌ No se encontró ningún punto de inicio de pago.")
+                    flash("Error al iniciar el pago. Intenta de nuevo.", "error")
+                    return redirect(url_for('carrito'))
             else:
-                print(f"❌ Error en status: {preference_response}")
-                flash("Error al procesar el pago", "error")
+                print(f"❌ Error en respuesta de MercadoPago: {preference_response}")
+                flash("Error al procesar el pago.", "error")
                 return redirect(url_for('carrito'))
+
         except Exception as e:
-            print(f"❌ Excepción: {str(e)}")
-            flash(f"Error: {str(e)}", "error")
+            print(f"❌ Excepción al crear preferencia: {str(e)}")
+            flash(f"Error al crear la preferencia de pago: {str(e)}", "error")
             return redirect(url_for('carrito'))
+
     return render_template('pago_mercadopago.html', productos=productos, total=total, items_json=items_json)
+
 @app.route('/pago_exitoso')
 def pago_exitoso():
     if 'usuario_id' not in session or 'pedido_temp' not in session:
