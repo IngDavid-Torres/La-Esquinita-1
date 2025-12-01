@@ -931,73 +931,73 @@ def keep_alive():
 
 @app.route('/webhook/mercadopago', methods=['POST'])
 def webhook_mercadopago():
+
     try:
-        data = request.get_json()
-        if data and data.get('type') == 'payment':
-            logger.info(f"[WEBHOOK] Datos recibidos: {data}")
-            payment_id = data['data']['id']
-            logger.info(f"[WEBHOOK] payment_id: {payment_id}")
+        data = request.get_json(force=True, silent=True)
+        logger.info(f"[MercadoPago Webhook] Payload recibido: {data}")
+
+        payment_id = None
+        external_reference = None
+        payment_status = None
+
+        # Detectar tipo de evento y extraer payment_id
+        if data:
+            if data.get('type') == 'payment' and 'data' in data and 'id' in data['data']:
+                payment_id = data['data']['id']
+            elif 'id' in data:
+                payment_id = data['id']
+            elif request.args.get('id'):
+                payment_id = request.args.get('id')
+
+        if not payment_id:
+            logger.warning("[MercadoPago Webhook] No se encontró payment_id en el payload.")
+            return jsonify({'error': 'No payment_id found'}), 400
+
+        # Consultar el estado del pago usando el SDK
+        try:
             payment_response = sdk.payment().get(payment_id)
-            logger.info(f"[WEBHOOK] payment_response: {payment_response}")
-            payment = payment_response["response"]
-            if payment_response["status"] == 200:
-                external_reference = payment.get('external_reference', '')
-                payment_status = payment.get('status', '')
-                logger.info(f"[WEBHOOK] external_reference: {external_reference}, payment_status: {payment_status}")
-                if external_reference.startswith('laesquinita-'):
-                    parts = external_reference.split('-')
-                    if len(parts) >= 2:
-                        usuario_id = int(parts[1])
-                        logger.info(f"[WEBHOOK] usuario_id extraído: {usuario_id}")
-                        if payment_status == 'approved':
-                            try:
-                                pedido_existente = Pedido.query.filter_by(usuario_id=usuario_id, payment_id=str(payment_id)).first()
-                                logger.info(f"[WEBHOOK] pedido_existente: {pedido_existente}")
-                                if not pedido_existente:
-                                    usuario = Usuario.query.get(usuario_id)
-                                    logger.info(f"[WEBHOOK] usuario: {usuario}")
-                                    carrito_items = Carrito.query.filter_by(usuario_id=usuario_id).all()
-                                    logger.info(f"[WEBHOOK] carrito_items encontrados: {len(carrito_items)}")
-                                    for item in carrito_items:
-                                        logger.info(f"[WEBHOOK] Producto en carrito: id={item.producto_id}, cantidad={item.cantidad}")
-                                    total = sum(item.producto.precio * item.cantidad for item in carrito_items)
-                                    logger.info(f"[WEBHOOK] total calculado: {total}")
-                                    nuevo_pedido = Pedido(
-                                        usuario_id=usuario_id,
-                                        nombre=usuario.nombre if usuario else '',
-                                        correo=usuario.email if usuario else '',
-                                        direccion=usuario.direcciones[0].direccion if usuario and usuario.direcciones else '',
-                                        metodo_pago='MercadoPago',
-                                        total=total,
-                                        estado='Confirmado',
-                                        payment_id=str(payment_id)
-                                    )
-                                    db.session.add(nuevo_pedido)
-                                    db.session.flush()
-                                    for item in carrito_items:
-                                        detalle = PedidoItem(
-                                            pedido_id=nuevo_pedido.id,
-                                            producto_id=item.producto_id,
-                                            cantidad=item.cantidad
-                                        )
-                                        db.session.add(detalle)
-                                    Carrito.query.filter_by(usuario_id=usuario_id).delete()
-                                    db.session.commit()
-                                    logger.info(f"[WEBHOOK] Carrito del usuario {usuario_id} vaciado tras pago exitoso.")
-                                    try:
-                                        resultado_envio = enviar_confirmacion_pago(nuevo_pedido.correo, nuevo_pedido, 'MercadoPago')
-                                        logger.info(f"[WEBHOOK] Resultado envío correo: {resultado_envio}")
-                                    except Exception as email_error:
-                                        logger.error(f"[WEBHOOK] Error enviando email de confirmación: {email_error}")
-                                else:
-                                    logger.info(f"[WEBHOOK] Pedido ya existe para usuario {usuario_id} y payment_id {payment_id}")
-                            except Exception as e:
-                                db.session.rollback()
-                                logger.error(f"[WEBHOOK] Error procesando webhook: {str(e)}")
-        return jsonify({'status': 'success'}), 200
+            logger.info(f"[MercadoPago Webhook] payment_response: {payment_response}")
+        except Exception as sdk_error:
+            logger.error(f"[MercadoPago Webhook] Error consultando pago: {sdk_error}")
+            return jsonify({'error': 'Error consultando pago'}), 500
+
+        payment = payment_response.get("response", {})
+        external_reference = payment.get('external_reference', '')
+        payment_status = payment.get('status', '')
+        logger.info(f"[MercadoPago Webhook] external_reference: {external_reference}, payment_status: {payment_status}")
+
+        # Buscar el pedido por payment_id
+        pedido = Pedido.query.filter_by(payment_id=str(payment_id)).first()
+        if not pedido and external_reference:
+            # Si no existe, buscar por referencia externa
+            if external_reference.startswith('laesquinita-'):
+                parts = external_reference.split('-')
+                if len(parts) >= 2:
+                    usuario_id = int(parts[1])
+                    pedido = Pedido.query.filter_by(usuario_id=usuario_id, payment_id=str(payment_id)).first()
+
+        if not pedido:
+            logger.warning(f"[MercadoPago Webhook] No se encontró pedido para payment_id {payment_id} o referencia {external_reference}")
+            return jsonify({'error': 'Pedido no encontrado'}), 404
+
+        # Actualizar estado del pedido según el estado del pago
+        if payment_status == 'approved':
+            pedido.estado = 'Pagado'
+        elif payment_status == 'pending':
+            pedido.estado = 'Pendiente'
+        elif payment_status == 'rejected':
+            pedido.estado = 'Rechazado'
+        else:
+            pedido.estado = payment_status.capitalize()
+
+        db.session.commit()
+        logger.info(f"[MercadoPago Webhook] Pedido {pedido.id} actualizado a estado: {pedido.estado}")
+
+        return jsonify({'success': True, 'pedido_id': pedido.id, 'estado': pedido.estado}), 200
+
     except Exception as e:
-        print(f"Error en webhook MercadoPago: {str(e)}")
-        return jsonify({'status': 'error'}), 500
+        logger.error(f"[MercadoPago Webhook] Error general: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
     
     
 @app.route('/carrito')
