@@ -588,7 +588,11 @@ def crear_pago():
 
     preference_response = create_preference(items, payer_info, urls, external_reference)
     if not preference_response or preference_response.get('status') != 201:
-        return jsonify({'error': 'No se pudo crear la preferencia', 'details': preference_response}), 500
+       
+        error_json = preference_response.get('response')
+        logger.error(f"MercadoPago ERROR JSON: {error_json}")
+        print(f"MercadoPago ERROR JSON: {error_json}")
+        return jsonify({'error': 'Error al crear preferencia', 'mp_error': error_json}), 500
 
     init_point = preference_response['response'].get('init_point')
     return jsonify({'init_point': init_point, 'preference_id': preference_response['response'].get('id')})
@@ -1080,6 +1084,7 @@ def pago_exitoso():
             print(f"DEBUG: Agregado item: Producto {producto_info['id']}, Cantidad {producto_info['cantidad']}")
         print(f"DEBUG: Limpiando carrito para usuario {usuario_id}")
         items_eliminados = Carrito.query.filter_by(usuario_id=usuario_id).delete()
+        db.session.commit()
         print(f"DEBUG: Items eliminados del carrito: {items_eliminados}")
         db.session.commit()
         print(f"DEBUG: Transacción confirmada en base de datos")
@@ -1692,11 +1697,9 @@ def logout_total():
         response.set_cookie(cookie, '', expires=0, path='/')
         response.set_cookie(cookie, '', expires=0, path='/', domain=request.host)
     response.headers['Clear-Site-Data'] = '"cache", "cookies", "storage"'
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['Expires'] = '0'
     flash('🧹 Logout total ejecutado - Destrucción completa de sesión', 'success')
     return response
 
@@ -1712,9 +1715,6 @@ def logout_paranoid():
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['Referrer-Policy'] = 'no-referrer'
     flash('⚡ Logout paranoid ejecutado - Máxima seguridad aplicada', 'success')
     return response
 
@@ -1771,8 +1771,6 @@ def logout_paranoid_admin():
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-Content-Type-Options'] = 'nosniff'
     flash('⚡ Logout paranoid ejecutado - Máxima seguridad aplicada', 'success')
     return response
 
