@@ -114,6 +114,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 MP_ACCESS_TOKEN = os.environ.get('MP_ACCESS_TOKEN') or "TEST-8747729118528796-112018-075ce20a669c331564f0a0f830d574b1-536559101"
 MP_PUBLIC_KEY = os.environ.get('MP_PUBLIC_KEY') or "TEST-b701319e-69c2-4b01-9acf-619bb56428d5"
+# Usa credenciales de prueba para sandbox
 sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
 
 
@@ -595,6 +596,14 @@ def crear_pago():
         return jsonify({'error': 'Error al crear preferencia', 'mp_error': error_json}), 500
 
     init_point = preference_response['response'].get('init_point')
+   
+    if init_point:
+        if 'sandbox.mercadopago.com.mx' in init_point:
+            logger.info(f"Mercado Pago checkout SANDBOX: {init_point}")
+        else:
+            logger.warning(f"Mercado Pago checkout PRODUCCIÓN: {init_point}")
+    else:
+        logger.error("No se recibió init_point en la respuesta de Mercado Pago.")
     return jsonify({'init_point': init_point, 'preference_id': preference_response['response'].get('id')})
 
 
