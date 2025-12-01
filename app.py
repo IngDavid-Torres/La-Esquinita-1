@@ -882,6 +882,8 @@ def keep_alive():
         session.permanent = True
         return {'status': 'success', 'message': 'Sesión renovada'}, 200
     return {'status': 'error', 'message': 'No hay sesión activa'}, 401
+
+
 @app.route('/webhook/mercadopago', methods=['POST'])
 def webhook_mercadopago():
     try:
@@ -919,12 +921,14 @@ def webhook_mercadopago():
                                             cantidad=producto_data['cantidad']
                                         )
                                         db.session.add(detalle)
+                                    # Vaciar el carrito del usuario tras pago exitoso
                                     Carrito.query.filter_by(usuario_id=usuario_id).delete()
                                     db.session.commit()
+                                    print(f"✅ Carrito del usuario {usuario_id} vaciado tras pago exitoso.")
                                     try:
                                         enviar_confirmacion_pago(pedido_data['correo'], nuevo_pedido, 'MercadoPago TEST')
                                     except Exception as email_error:
-                                        print(f"Error enviando email de confirmaciÃ³n: {email_error}")
+                                        print(f"Error enviando email de confirmación: {email_error}")
                                 except Exception as e:
                                     db.session.rollback()
                                     print(f"Error procesando webhook: {str(e)}")
@@ -932,6 +936,8 @@ def webhook_mercadopago():
     except Exception as e:
         print(f"Error en webhook MercadoPago: {str(e)}")
         return jsonify({'status': 'error'}), 500
+    
+    
 @app.route('/carrito')
 def carrito():
     if not session.get('usuario_nombre'):
