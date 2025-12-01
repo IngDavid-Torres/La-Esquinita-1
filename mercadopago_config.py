@@ -1,4 +1,3 @@
-
 import os
 import mercadopago
 from dotenv import load_dotenv
@@ -39,7 +38,12 @@ def create_preference(items, payer_info, urls, external_reference):
         "external_reference": external_reference,
         "statement_descriptor": "LA ESQUINITA MX",
         "payment_methods": {
-            "excluded_payment_types": ["ticket", "bank_transfer", "atm", "digital_currency"],
+            "excluded_payment_types": [
+                {"id": "ticket"},
+                {"id": "bank_transfer"},
+                {"id": "atm"},
+                {"id": "digital_currency"}
+            ],
             "excluded_payment_methods": [],
             "installments": 12
         },
