@@ -106,73 +106,73 @@
     }
 
     .resumen-pedido h3 {
-      color: var(--secondary);
-      margin-bottom: 15px;
+      /* ...estilos... */
     }
+      <!-- Array de productos para JS -->
+      <script id="itemsJson" type="application/json">{{ items_json | safe }}</script>
+        <script>
+          document.getElementById('formPago').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const nombre = document.getElementById('nombre').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
 
-    .producto-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-    }
+            // Validaciones
+            if (nombre.length < 3) {
+              alert('El nombre debe tener al menos 3 caracteres');
+              return;
+            }
+            if (!correo.includes('@') || !correo.includes('.')) {
+              alert('Por favor ingresa un correo válido');
+              return;
+            }
+            if (direccion.length < 10) {
+              alert('La dirección debe ser más específica (mínimo 10 caracteres)');
+              return;
+            }
 
-    .producto-item:last-child {
-      border-bottom: none;
-      font-weight: bold;
-      font-size: 1.2em;
-      color: var(--primary);
-    }
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '⏳ Procesando...';
 
-    .form-pago {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
+            // Obtener los items correctamente
+            const items = JSON.parse(document.getElementById('itemsJson').textContent);
 
-    .form-pago input {
-      width: 100%;
-      padding: 15px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 1em;
-      transition: border-color 0.3s;
-    }
+            const datosPago = {
+              items: items,
+              payer_info: {
+                name: nombre,
+                email: correo
+              },
+              urls: {
+                success: window.location.origin + "/pago_exitoso",
+                failure: window.location.origin + "/pago_fallido",
+                pending: window.location.origin + "/pago_pendiente"
+              },
+              external_reference: "pedido-{{ session['usuario_id'] if session['usuario_id'] else 'anonimo' }}-{{ total }}"
+            };
 
-    .form-pago input:focus {
-      border-color: var(--primary);
-      outline: none;
-    }
-
-    .boton-pago {
-      background: linear-gradient(135deg, var(--primary), #00d566);
-      color: white;
-      padding: 18px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.2em;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
-      margin-top: 20px;
-    }
-
-    .boton-pago:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 166, 80, 0.3);
-    }
-
-    .seguridad-info {
-      background: #e8f5e8;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 20px;
-      text-align: center;
-      font-size: 0.9em;
-      color: var(--secondary);
-    }
-
+            try {
+              const respuesta = await fetch("/crear_pago", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datosPago)
+              });
+              const resultado = await respuesta.json();
+              if (resultado.init_point) {
+                window.location.href = resultado.init_point;
+              } else {
+                alert("Error al generar el pago: " + (resultado.error || "Intenta de nuevo"));
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '🚀 Continuar con MercadoPago - $' + submitBtn.dataset.total;
+              }
+            } catch (err) {
+              alert("Error de conexión: " + err);
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = '🚀 Continuar con MercadoPago - $' + submitBtn.dataset.total;
+            }
+          });
+        </script>
     .volver-link {
       display: inline-block;
       margin-top: 20px;
@@ -272,7 +272,7 @@
 
         
         
-        const items = JSON.parse(document.getElementById('itemsJson').textContent);
+          const items = JSON.parse(document.getElementById('itemsJson').textContent);
   <!-- Array de productos para JS -->
   <script id="itemsJson" type="application/json">{{ items_json | safe }}</script>
 
