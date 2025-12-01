@@ -702,6 +702,42 @@ def perfil_cliente():
     direccion = Direccion.query.filter_by(usuario_id=session['usuario_id']).first()
     return render_template('perfil_cliente.html', usuario=usuario, direccion=direccion)
 
+
+@app.route('/guardar_perfil', methods=['POST'])
+def guardar_perfil():
+    if 'usuario_id' not in session:
+        flash('Debes iniciar sesión para editar tu perfil.', 'error')
+        return redirect(url_for('login'))
+
+    usuario = Usuario.query.get(session['usuario_id'])
+    direccion = Direccion.query.filter_by(usuario_id=session['usuario_id']).first()
+
+    nombre = request.form.get('nombre')
+    email = request.form.get('email')
+    password = request.form.get('password')
+    nueva_direccion = request.form.get('direccion')
+
+    # Validaciones básicas
+    if not nombre or not email:
+        flash('Nombre y correo son obligatorios.', 'error')
+        return redirect(url_for('perfil_cliente'))
+
+    usuario.nombre = nombre
+    usuario.email = email
+    if password and password != usuario.password:
+        usuario.password = password
+
+    if direccion:
+        direccion.direccion = nueva_direccion
+    else:
+        if nueva_direccion:
+            direccion = Direccion(usuario_id=usuario.id, direccion=nueva_direccion)
+            db.session.add(direccion)
+
+    db.session.commit()
+    flash('Cambios guardados exitosamente.', 'success')
+    return redirect(url_for('perfil_cliente'))
+
 @app.route('/panel_admin')
 def panel_admin():
     logger.info(f"🎯 PANEL_ADMIN ACCEDIDO - Método: {request.method}")
