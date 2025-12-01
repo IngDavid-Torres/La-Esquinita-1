@@ -191,76 +191,65 @@
     <div class="header-pago">
       <h2>💳 Finalizar Compra</h2>
       <div class="mercadopago-logo">🔒 Pago Seguro con MercadoPago</div>
-      <!-- Array de productos para JS -->
-      <script id="itemsJson" type="application/json">{{ items_json | safe }}</script>
+    </div>
 
-      <script>
-        document.getElementById('formPago').addEventListener('submit', async function(event) {
-          event.preventDefault();
-          const nombre = document.getElementById('nombre').value.trim();
-          const correo = document.getElementById('correo').value.trim();
-          const direccion = document.getElementById('direccion').value.trim();
-          const submitBtn = document.getElementById('submitBtn');
+    <div class="resumen-pedido">
+      <h3>Resumen de tu pedido</h3>
+      <!-- Aquí se mostrarán los productos con JS -->
+    </div>
 
-          // Validaciones
-          if (nombre.length < 3) {
-            alert('El nombre debe tener al menos 3 caracteres');
-            return;
-          }
-          if (!correo.includes('@') || !correo.includes('.')) {
-            alert('Por favor ingresa un correo válido');
-            return;
-          }
-          if (direccion.length < 10) {
-            alert('La dirección debe ser más específica (mínimo 10 caracteres)');
-            return;
-          }
+    <form class="form-pago" id="formPago" autocomplete="off">
+      <input type="text" name="nombre" placeholder="📝 Nombre completo" required minlength="3" id="nombre">
+      <input type="email" name="correo" placeholder="📧 Correo electrónico" required id="correo">
+      <input type="text" name="direccion" placeholder="📍 Dirección de envío completa" required minlength="10" id="direccion">
+      <button type="submit" class="boton-pago" id="submitBtn" data-total="{{ "%.2f"|format(total) }}">
+        🚀 Pagar con MercadoPago - ${{ "%.2f"|format(total) }}
+      </button>
+    </form>
 
-          submitBtn.disabled = true;
-          submitBtn.innerHTML = '⏳ Procesando...';
+    <!-- Array de productos para JS -->
+    <script id="itemsJson" type="application/json">{{ items_json | safe }}</script>
 
-          // Obtener los items correctamente y asegurar currency_id
-          let items = JSON.parse(document.getElementById('itemsJson').textContent);
-          items = items.map(item => ({
-            ...item,
-            currency_id: item.currency_id ? item.currency_id : 'MXN'
-          }));
+    <script>
+      document.getElementById('formPago').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const nombre = document.getElementById('nombre').value.trim();
+        const correo = document.getElementById('correo').value.trim();
+        const direccion = document.getElementById('direccion').value.trim();
+        const submitBtn = document.getElementById('submitBtn');
 
-          const datosPago = {
-            items: items,
-            payer_info: {
-              name: nombre,
-              email: correo
-            },
-            urls: {
-              success: window.location.origin + "/pago_exitoso",
-              failure: window.location.origin + "/pago_fallido",
-              pending: window.location.origin + "/pago_pendiente"
-            },
-            external_reference: "pedido-{{ session['usuario_id'] if session['usuario_id'] else 'anonimo' }}-{{ total }}"
-          };
+        // Validaciones
+        if (nombre.length < 3) {
+          alert('El nombre debe tener al menos 3 caracteres');
+          return;
+        }
+        if (!correo.includes('@') || !correo.includes('.')) {
+          alert('Por favor ingresa un correo válido');
+          return;
+        }
+        if (direccion.length < 10) {
+          alert('La dirección debe ser más específica (mínimo 10 caracteres)');
+          return;
+        }
 
-          try {
-            const respuesta = await fetch("/crear_pago", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(datosPago)
-            });
-            const resultado = await respuesta.json();
-            if (resultado.init_point) {
-              window.location.href = resultado.init_point;
-            } else {
-              alert("Error al generar el pago: " + (resultado.error || "Intenta de nuevo"));
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = '🚀 Pagar con MercadoPago - $' + submitBtn.dataset.total;
-            }
-          } catch (err) {
-            alert("Error de conexión: " + err);
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '🚀 Pagar con MercadoPago - $' + submitBtn.dataset.total;
-          }
-        });
-      </script>
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Procesando...';
+
+        // Obtener los items correctamente y asegurar currency_id
+        let items = JSON.parse(document.getElementById('itemsJson').textContent);
+        items = items.map(item => ({
+          ...item,
+          currency_id: item.currency_id ? item.currency_id : 'MXN'
+        }));
+
+        const datosPago = {
+          items: items,
+          payer_info: {
+            name: nombre,
+            email: correo
+          },
+          urls: {
+            success: window.location.origin + "/pago_exitoso",
             failure: window.location.origin + "/pago_fallido",
             pending: window.location.origin + "/pago_pendiente"
           },
@@ -279,12 +268,12 @@
           } else {
             alert("Error al generar el pago: " + (resultado.error || "Intenta de nuevo"));
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '🚀 Continuar con MercadoPago - $' + submitBtn.dataset.total;
+            submitBtn.innerHTML = '🚀 Pagar con MercadoPago - $' + submitBtn.dataset.total;
           }
         } catch (err) {
           alert("Error de conexión: " + err);
           submitBtn.disabled = false;
-          submitBtn.innerHTML = '🚀 Continuar con MercadoPago - $' + submitBtn.dataset.total;
+          submitBtn.innerHTML = '🚀 Pagar con MercadoPago - $' + submitBtn.dataset.total;
         }
       });
     </script>
