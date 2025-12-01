@@ -194,8 +194,17 @@
     </div>
 
     <div class="resumen-pedido">
-      <h3>Resumen de tu pedido</h3>
-      <!-- Aquí se mostrarán los productos con JS -->
+      <h3>📋 Resumen de tu pedido</h3>
+      {% for producto in productos %}
+      <div class="producto-item">
+        <span>{{ producto.nombre }} x{{ producto.cantidad }}</span>
+        <span>${{ "%.2f"|format(producto.precio * producto.cantidad) }}</span>
+      </div>
+      {% endfor %}
+      <div class="producto-item">
+        <span>TOTAL A PAGAR</span>
+        <span>${{ "%.2f"|format(total) }}</span>
+      </div>
     </div>
 
     <form class="form-pago" id="formPago" autocomplete="off">
