@@ -1,4 +1,7 @@
-﻿from flask_sqlalchemy import SQLAlchemy
+﻿def enviar_confirmacion_pago_background(correo_destino, pedido, metodo_pago):
+    with app.app_context():
+        enviar_confirmacion_pago(correo_destino, pedido, metodo_pago)
+from flask_sqlalchemy import SQLAlchemy
 from mercadopago_config import create_preference
 import paypalrestsdk
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
@@ -1257,8 +1260,7 @@ def pago_exitoso():
         t6 = time.time()
         print(f"[TIMING] Carrito después de limpiar: {t6} (+{t6-start_time:.2f}s)")
         try:
-            
-            email_executor.submit(enviar_confirmacion_pago, pedido_data['correo'], nuevo_pedido, 'MercadoPago')
+            email_executor.submit(enviar_confirmacion_pago_background, pedido_data['correo'], nuevo_pedido, 'MercadoPago')
         except Exception as email_error:
             print(f"❌ Error lanzando thread de email: {email_error}")
         t7 = time.time()
