@@ -106,27 +106,30 @@
       line-height: 1.6;
     }
 
-    /* NAVBAR */
+   
     header {
       position: fixed;
       top: 0; left: 0;
       width: 100%;
-      padding: 30px 40px;
+      padding: 18px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255, 255, 255, 0.85);
+      gap: 16px;
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(10px);
       z-index: 1000;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
     .logo img {
-      height: 80px;
+      height: 56px;
       border-radius: 8px;
     }
     nav {
       display: flex;
-      gap: 70px;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
     }
     nav a {
       display: flex;
@@ -138,16 +141,16 @@
       transition: color 0.3s;
     }
     nav a img {
-      width: 40px;
-      height: 40px;
+      width: 28px;
+      height: 28px;
     }
     nav a:hover {
       color: var(--accent);
     }
 
-    /* HERO */
+   
     .hero {
-      height: 100vh;
+      min-height: 80vh;
       background: url("{{ url_for('static', filename='images/elote-y-esquites.jpg') }}") no-repeat center/cover;
       display: flex;
       align-items: center;
@@ -168,12 +171,13 @@
       max-width: 700px;
     }
     .hero-content h1 {
-      font-size: 3em;
-      margin-bottom: 15px;
+      font-size: 2.2em;
+      margin-bottom: 12px;
+      line-height: 1.2;
     }
     .hero-content p {
-      font-size: 1.2em;
-      margin-bottom: 20px;
+      font-size: 1.05em;
+      margin-bottom: 16px;
     }
     .btn-primary {
       background: var(--accent);
@@ -192,8 +196,8 @@
     /* PRODUCTOS */
     .productos {
       max-width: 1200px;
-      margin: 80px auto;
-      padding: 0 20px;
+      margin: 64px auto;
+      padding: 0 16px;
     }
     .productos h2 {
       text-align: center;
@@ -203,8 +207,8 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
       align-items: stretch; 
     }
     .card {
@@ -226,7 +230,7 @@
     }
     .card img {
       width: 100%;
-      height: 180px;
+      height: 160px;
       object-fit: cover;
     }
     .card h3 {
@@ -313,9 +317,40 @@
       color: var(--primary);
     }
 
+    @media(max-width:1024px){
+      header { padding: 16px 14px; }
+      .logo img { height: 52px; }
+      nav a { font-size: 0.95em; }
+    }
+
     @media(max-width:768px){
-      .hero-content h1 { font-size: 2em; }
-      .hero-content p { font-size: 1em; }
+      header { padding: 14px 12px; }
+      .logo img { height: 46px; }
+      nav { gap: 12px; }
+      nav a { font-size: 0.92em; }
+      .hero { min-height: 70vh; }
+      .hero-content { padding: 0 14px; }
+      .hero-content h1 { font-size: 1.8em; }
+      .hero-content p { font-size: 0.98em; }
+      .grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+      .card img { height: 140px; }
+      .btn-primary { padding: 10px 22px; }
+      .accesibilidad-bar { left: 10px; bottom: 10px; }
+    }
+
+    @media(max-width:480px){
+      header { flex-direction: column; align-items: flex-start; gap: 10px; }
+      nav { width: 100%; justify-content: space-between; }
+      .hero { min-height: 64vh; }
+      .hero-content h1 { font-size: 1.6em; }
+      .hero-content p { font-size: 0.95em; }
+      .productos { margin: 40px auto; }
+      .grid { grid-template-columns: 1fr; gap: 12px; }
+      .card { border-radius: 14px; }
+      .card img { height: 160px; }
+      .chatbot-container { width: 88vw; height: 60vh; right: 0; }
+      .chatbot-toggle { width: 52px; height: 52px; }
+      .accesibilidad-bar { left: 8px; bottom: 80px; }
     }
 
     /* CHATBOT STYLES */
@@ -355,6 +390,8 @@
       right: 0;
       width: 350px;
       height: 500px;
+      max-width: 90vw;
+      max-height: 70vh;
       background: white;
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
