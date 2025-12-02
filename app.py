@@ -65,7 +65,7 @@ app = Flask(__name__)
 
 
 
-@app.route('/pago_paypal', methods=['GET'])
+@app.route('/pago_paypal', methods=['GET', 'POST'])
 def pago_paypal():
     if 'usuario_id' not in session:
         return redirect(url_for('login'))
@@ -77,6 +77,24 @@ def pago_paypal():
         return redirect(url_for('carrito'))
 
     total = sum(item.producto.precio * item.cantidad for item in carrito_items)
+
+    if request.method == 'GET':
+        usuario = Usuario.query.get(usuario_id)
+        direccion_obj = Direccion.query.filter_by(usuario_id=usuario_id).first()
+        return render_template('pago_paypal.html',
+                              nombre=usuario.nombre if usuario else '',
+                              correo=usuario.email if usuario else '',
+                              direccion=direccion_obj.direccion if direccion_obj else '',
+                              total=total)
+
+    # POST: procesar datos del formulario y crear el pago
+    nombre = request.form.get('nombre', '').strip()
+    correo = request.form.get('correo', '').strip()
+    direccion = request.form.get('direccion', '').strip()
+    if not nombre or not correo or not direccion or len(direccion) < 10:
+        flash('Completa todos los campos correctamente.', 'error')
+        return redirect(url_for('pago_paypal'))
+
     items_paypal = []
     for item in carrito_items:
         items_paypal.append({
@@ -87,87 +105,47 @@ def pago_paypal():
             "quantity": item.cantidad
         })
 
-   
-   
-    usuario = Usuario.query.get(usuario_id)
-    direccion_obj = Direccion.query.filter_by(usuario_id=usuario_id).first()
-    def pago_paypal():
-        if 'usuario_id' not in session:
-            return redirect(url_for('login'))
+    session['pedido_temp'] = {
+        'nombre': nombre,
+        'correo': correo,
+        'direccion': direccion,
+        'total': total,
+        'productos': [{'id': item.producto.id, 'cantidad': item.cantidad} for item in carrito_items],
+        'metodo_pago': 'PayPal'
+    }
 
-        usuario_id = session['usuario_id']
-        carrito_items = Carrito.query.filter_by(usuario_id=usuario_id).all()
-        if not carrito_items:
-            flash('No hay productos en el carrito.', 'error')
-            return redirect(url_for('carrito'))
-
-        total = sum(item.producto.precio * item.cantidad for item in carrito_items)
-
-        if request.method == 'GET':
-            usuario = Usuario.query.get(usuario_id)
-            direccion_obj = Direccion.query.filter_by(usuario_id=usuario_id).first()
-            return render_template('pago_paypal.html',
-                                  nombre=usuario.nombre if usuario else '',
-                                  correo=usuario.email if usuario else '',
-                                  direccion=direccion_obj.direccion if direccion_obj else '',
-                                  total=total)
-
-        # POST: procesar datos del formulario y crear el pago
-        nombre = request.form.get('nombre', '').strip()
-        correo = request.form.get('correo', '').strip()
-        direccion = request.form.get('direccion', '').strip()
-        if not nombre or not correo or not direccion or len(direccion) < 10:
-            flash('Completa todos los campos correctamente.', 'error')
-            return redirect(url_for('pago_paypal'))
-
-        items_paypal = []
-        for item in carrito_items:
-            items_paypal.append({
-                "name": item.producto.nombre,
-                "sku": str(item.producto.id),
-                "price": str(item.producto.precio),
-                "currency": "MXN",
-                "quantity": item.cantidad
-            })
-
-        session['pedido_temp'] = {
-            'nombre': nombre,
-            'correo': correo,
-            'direccion': direccion,
-            'total': total,
-            'productos': [{'id': item.producto.id, 'cantidad': item.cantidad} for item in carrito_items],
-            'metodo_pago': 'PayPal'
-        }
-
-        payment = paypalrestsdk.Payment({
-            "intent": "sale",
-            "payer": {
-                "payment_method": "paypal"
+    payment = paypalrestsdk.Payment({
+        "intent": "sale",
+        "payer": {
+            "payment_method": "paypal"
+        },
+        "redirect_urls": {
+            "return_url": url_for('pago_exitoso', _external=True),
+            "cancel_url": url_for('pago_fallido', _external=True)
+        },
+        "transactions": [{
+            "item_list": {"items": items_paypal},
+            "amount": {
+                "total": str(total),
+                "currency": "MXN"
             },
-            "redirect_urls": {
-                "return_url": url_for('pago_exitoso', _external=True),
-                "cancel_url": url_for('pago_fallido', _external=True)
-            },
-            "transactions": [{
-                "item_list": {"items": items_paypal},
-                "amount": {
-                    "total": str(total),
-                    "currency": "MXN"
-                },
-                "description": "Compra en La Esquinita"
-            }]
-        })
+            "description": "Compra en La Esquinita"
+        }]
+    })
 
-        if payment.create():
-            for link in payment.links:
-                if link.rel == "approval_url":
-                    approval_url = str(link.href)
-                    return redirect(approval_url)
-            flash('No se encontró el enlace de aprobación de PayPal.', 'error')
-            return redirect(url_for('carrito'))
-        else:
-            flash('Error al crear el pago con PayPal.', 'error')
-            return redirect(url_for('carrito'))
+    if payment.create():
+        for link in payment.links:
+            if link.rel == "approval_url":
+                approval_url = str(link.href)
+                return redirect(approval_url)
+        flash('No se encontró el enlace de aprobación de PayPal.', 'error')
+        return redirect(url_for('carrito'))
+    else:
+        flash('Error al crear el pago con PayPal.', 'error')
+        return redirect(url_for('carrito'))
+
+# --- Configuración de SQLAlchemy según el motor ---
+DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL and 'postgresql://' in DATABASE_URL:
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_pre_ping': True,
@@ -178,12 +156,11 @@ if DATABASE_URL and 'postgresql://' in DATABASE_URL:
         'connect_args': {
             'connect_timeout': 30,
             'application_name': 'la_esquinita_app',
-            'sslmode': 'prefer'  
+            'sslmode': 'prefer'
         }
     }
     print("🐘 Configuración PostgreSQL para Railway")
 else:
-    
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_pre_ping': True,
         'connect_args': {'timeout': 20}
@@ -322,6 +299,14 @@ app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') or 'laesquinita.an
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD') or 'pnyy wnaj yisq wtgv'
 mail = Mail(app)
 
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+print(f"🚀 Iniciando La Esquinita en modo: {app.config['ENV']}")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL or 'sqlite:///laesquinita.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 email_executor = ThreadPoolExecutor(max_workers=2)
 
