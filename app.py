@@ -87,7 +87,7 @@ def pago_paypal():
                               direccion=direccion_obj.direccion if direccion_obj else '',
                               total=total)
 
-    # POST: procesar datos del formulario y crear el pago
+    
     nombre = request.form.get('nombre', '').strip()
     correo = request.form.get('correo', '').strip()
     direccion = request.form.get('direccion', '').strip()
@@ -144,12 +144,11 @@ def pago_paypal():
         flash('Error al crear el pago con PayPal.', 'error')
         return redirect(url_for('carrito'))
 
-db = SQLAlchemy(app)
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL or 'sqlite:///laesquinita.db'
 if DATABASE_URL and 'postgresql://' in DATABASE_URL:
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_pre_ping': True,
         'pool_recycle': 300,
@@ -164,6 +163,7 @@ if DATABASE_URL and 'postgresql://' in DATABASE_URL:
     }
     print("🐘 Configuración PostgreSQL para Railway")
 else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///laesquinita.db'
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_pre_ping': True,
         'connect_args': {'timeout': 20}
