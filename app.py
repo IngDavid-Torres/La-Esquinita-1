@@ -288,7 +288,7 @@ def mantener_sesion_activa():
         session.permanent = True
         session.modified = True
 
-SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY') or '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'
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 SENDGRID_FROM_EMAIL = os.environ.get('SENDGRID_FROM_EMAIL') or 'laesquinita.antojitos.mx@gmail.com'
 sg_client = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
 
