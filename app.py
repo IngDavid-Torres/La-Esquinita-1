@@ -296,7 +296,7 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-print(f"🚀 Iniciando La Esquinita en modo: {app.config['ENV']}")
+print(f"🚀 Iniciando La Esquinita en modo: {app.config.get('ENV', 'production')}")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL or 'sqlite:///laesquinita.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
