@@ -1210,11 +1210,16 @@ def pago_exitoso():
         return redirect(url_for('inicio'))
     pedido_data = session['pedido_temp']
     usuario_id = session['usuario_id']
+    import time
     try:
+        start_time = time.time()
+        print(f"[TIMING] Inicio pago_exitoso: {start_time}")
         print(f"DEBUG: Procesando pago exitoso para usuario {usuario_id}")
         print(f"DEBUG: Datos del pedido: {pedido_data}")
         carrito_antes = Carrito.query.filter_by(usuario_id=usuario_id).all()
         print(f"🧪DEBUG: Items en carrito ANTES: {len(carrito_antes)}")
+        t1 = time.time()
+        print(f"[TIMING] Antes de crear pedido: {t1} (+{t1-start_time:.2f}s)")
         nuevo_pedido = Pedido(
             usuario_id=usuario_id,
             estado='Confirmado',
@@ -1224,6 +1229,8 @@ def pago_exitoso():
         )
         db.session.add(nuevo_pedido)
         db.session.flush()
+        t2 = time.time()
+        print(f"[TIMING] Pedido creado y guardado en DB: {t2} (+{t2-start_time:.2f}s)")
         print(f"DEBUG: Pedido creado con ID: {nuevo_pedido.id}")
         for producto_info in pedido_data['productos']:
             pedido_item = PedidoItem(
@@ -1233,20 +1240,32 @@ def pago_exitoso():
             )
             db.session.add(pedido_item)
             print(f"DEBUG: Agregado item: Producto {producto_info['id']}, Cantidad {producto_info['cantidad']}")
+        t3 = time.time()
+        print(f"[TIMING] Items agregados al pedido: {t3} (+{t3-start_time:.2f}s)")
         print(f"DEBUG: Limpiando carrito para usuario {usuario_id}")
         items_eliminados = Carrito.query.filter_by(usuario_id=usuario_id).delete()
         db.session.commit()
+        t4 = time.time()
+        print(f"[TIMING] Carrito limpiado y commit: {t4} (+{t4-start_time:.2f}s)")
         print(f"DEBUG: Items eliminados del carrito: {items_eliminados}")
         db.session.commit()
+        t5 = time.time()
+        print(f"[TIMING] Segundo commit realizado: {t5} (+{t5-start_time:.2f}s)")
         print(f"DEBUG: Transacción confirmada en base de datos")
         carrito_despues = Carrito.query.filter_by(usuario_id=usuario_id).all()
         print(f"DEBUG: Items en carrito DESPUÉS: {len(carrito_despues)}")
+        t6 = time.time()
+        print(f"[TIMING] Carrito después de limpiar: {t6} (+{t6-start_time:.2f}s)")
         try:
             enviar_confirmacion_pago(pedido_data['correo'], nuevo_pedido, 'MercadoPago')
         except Exception as email_error:
             print(f"❌ Error enviando email de confirmación: {email_error}")
+        t7 = time.time()
+        print(f"[TIMING] Correo lanzado (thread): {t7} (+{t7-start_time:.2f}s)")
         session.pop('pedido_temp', None)
         print(f"DEBUG: Datos temporales limpiados")
+        end_time = time.time()
+        print(f"[TIMING] Fin pago_exitoso: {end_time} (+{end_time-start_time:.2f}s)")
         flash('¡Pago procesado exitosamente!', 'success')
         return render_template('pago_exitoso.html', pedido=nuevo_pedido)
     except Exception as e:
