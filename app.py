@@ -144,8 +144,11 @@ def pago_paypal():
         flash('Error al crear el pago con PayPal.', 'error')
         return redirect(url_for('carrito'))
 
-# --- Configuración de SQLAlchemy según el motor ---
+db = SQLAlchemy(app)
 DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL or 'sqlite:///laesquinita.db'
 if DATABASE_URL and 'postgresql://' in DATABASE_URL:
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_pre_ping': True,
@@ -167,8 +170,6 @@ else:
     }
     print("📁 Configuración SQLite para desarrollo local")
 app.secret_key = os.environ.get('SECRET_KEY') or 'clave_secreta_super_segura'
-
-
 db = SQLAlchemy(app)
 print("✅ SQLAlchemy inicializado correctamente")
 UPLOAD_FOLDER = 'static/images'
