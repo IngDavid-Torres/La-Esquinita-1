@@ -1,5 +1,6 @@
 ﻿from flask_sqlalchemy import SQLAlchemy
 from mercadopago_config import create_preference
+import paypalrestsdk
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
 from datetime import datetime
 import os
@@ -50,7 +51,71 @@ def add_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     return response
 
+
+
+PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID')
+PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_CLIENT_SECRET')
+paypalrestsdk.configure({
+    "mode": "sandbox",  
+    "client_id": PAYPAL_CLIENT_ID,
+    "client_secret": PAYPAL_CLIENT_SECRET
+})
+
 app = Flask(__name__)
+
+
+
+@app.route('/pago_paypal', methods=['GET'])
+def pago_paypal():
+    if 'usuario_id' not in session:
+        return redirect(url_for('login'))
+
+    usuario_id = session['usuario_id']
+    carrito_items = Carrito.query.filter_by(usuario_id=usuario_id).all()
+    if not carrito_items:
+        flash('No hay productos en el carrito.', 'error')
+        return redirect(url_for('carrito'))
+
+    total = sum(item.producto.precio * item.cantidad for item in carrito_items)
+    items_paypal = []
+    for item in carrito_items:
+        items_paypal.append({
+            "name": item.producto.nombre,
+            "sku": str(item.producto.id),
+            "price": str(item.producto.precio),
+            "currency": "MXN",
+            "quantity": item.cantidad
+        })
+
+    payment = paypalrestsdk.Payment({
+        "intent": "sale",
+        "payer": {
+            "payment_method": "paypal"
+        },
+        "redirect_urls": {
+            "return_url": url_for('pago_exitoso', _external=True),
+            "cancel_url": url_for('pago_fallido', _external=True)
+        },
+        "transactions": [{
+            "item_list": {"items": items_paypal},
+            "amount": {
+                "total": str(total),
+                "currency": "MXN"
+            },
+            "description": "Compra en La Esquinita"
+        }]
+    })
+
+    if payment.create():
+        for link in payment.links:
+            if link.rel == "approval_url":
+                approval_url = str(link.href)
+                return redirect(approval_url)
+        flash('No se encontró el enlace de aprobación de PayPal.', 'error')
+        return redirect(url_for('carrito'))
+    else:
+        flash('Error al crear el pago con PayPal.', 'error')
+        return redirect(url_for('carrito'))
 
 
 app.config['ENV'] = os.environ.get('FLASK_ENV', 'production')
@@ -63,7 +128,7 @@ app.config['PREFERRED_URL_SCHEME'] = 'https'
 app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hora
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600  
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
@@ -104,7 +169,7 @@ try:
     print("✅ SQLAlchemy inicializado correctamente")
 except Exception as db_init_error:
     print(f"❌ Error inicializando SQLAlchemy: {str(db_init_error)}")
-    # Fallback a configuración básica
+   
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fallback.db'
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
     db = SQLAlchemy(app)
@@ -114,7 +179,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 MP_ACCESS_TOKEN = os.environ.get('MP_ACCESS_TOKEN') or "TEST-8747729118528796-112018-075ce20a669c331564f0a0f830d574b1-536559101"
 MP_PUBLIC_KEY = os.environ.get('MP_PUBLIC_KEY') or "TEST-b701319e-69c2-4b01-9acf-619bb56428d5"
-# Usa credenciales de prueba para sandbox
+
 sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
 
 
@@ -1621,6 +1686,7 @@ def actualizar_producto_admin(producto_id):
         producto.descripcion = request.form['descripcion']
         producto.precio = float(request.form['precio'])
         imagen = request.files['imagen']
+       
         if imagen and allowed_file(imagen.filename):
             filename = secure_filename(imagen.filename)
             imagen.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -2256,7 +2322,7 @@ def send_test_email(email):
                 <p>Este es un correo de prueba.</p>
                 <p><strong>Pedido #:</strong> {pedido_data['id']}</p>
                 <p><strong>Nombre:</strong> {pedido_data['nombre']}</p>
-                <p><strong>Total:</strong> ${pedido_data['total']:.2f} MXN</p>
+                <p><strong>Total:</strong> ${pedido_data['total']:.2f}</p>
                 <p><strong>Fecha:</strong> {pedido_data['fecha']}</p>
                 <p>Si recibes este correo, la configuración está correcta ✅</p>
             </div>
