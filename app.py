@@ -87,6 +87,16 @@ def pago_paypal():
             "quantity": item.cantidad
         })
 
+   
+    session['pedido_temp'] = {
+        'nombre': session.get('usuario_nombre', ''),
+        'correo': session.get('usuario_email', ''),
+        'direccion': '',  # Si tienes dirección en sesión o formulario, ponla aquí
+        'total': total,
+        'productos': [{'id': item.producto.id, 'cantidad': item.cantidad} for item in carrito_items],
+        'metodo_pago': 'PayPal'
+    }
+
     payment = paypalrestsdk.Payment({
         "intent": "sale",
         "payer": {
