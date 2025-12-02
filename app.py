@@ -1228,7 +1228,11 @@ def pago_exitoso():
             estado='Confirmado',
             total=pedido_data['total'],
             fecha=datetime.now(),
-            direccion=pedido_data['direccion']
+            direccion=pedido_data['direccion'],
+            correo=pedido_data.get('correo'),
+            nombre=pedido_data.get('nombre'),
+            metodo_pago=pedido_data.get('metodo_pago', 'MercadoPago'),
+            payment_id=pedido_data.get('payment_id')
         )
         db.session.add(nuevo_pedido)
         db.session.flush()
