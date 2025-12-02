@@ -8,8 +8,8 @@ if not MP_ACCESS_TOKEN or not MP_PUBLIC_KEY:
     print("⚠️ ADVERTENCIA: Credenciales de Mercado Pago no configuradas")
     print("📋 Configure MP_ACCESS_TOKEN y MP_PUBLIC_KEY en el archivo .env")
     print("🔗 Guía: Consulte MERCADOPAGO_PRODUCCION.md para más información")
-    MP_ACCESS_TOKEN = "TEST-8747729118528796-112018-075ce20a669c331564f0a0f830d574b1-536559101"
-    MP_PUBLIC_KEY = "TEST-b701319e-69c2-4b01-9acf-619bb56428d5"
+    MP_ACCESS_TOKEN = "APP_USR-8747729118528796-112018-e70d6542822d005f2998dbdb31bc6af1-5365591011"
+    MP_PUBLIC_KEY = "APP_USR-1f514871-1003-49d6-b5cb-bb575e919c95"
 sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
 ENVIRONMENT = 'test' if MP_ACCESS_TOKEN.startswith('TEST-') else 'production'
 if ENVIRONMENT == 'production':
