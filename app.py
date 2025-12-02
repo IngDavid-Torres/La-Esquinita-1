@@ -314,57 +314,64 @@ def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
         print(f"📧 SMTP Port: {app.config.get('MAIL_PORT')}")
         print(f"📧 SMTP User: {app.config.get('MAIL_USERNAME')}")
         print(f"📧 SMTP Password configurado: {'Sí' if app.config.get('MAIL_PASSWORD') else 'No'}")
-        
+        print(f"📧 Contexto pedido: id={pedido.id}, nombre={pedido.nombre}, correo={pedido.correo}, método={metodo_pago}")
+        print(f"📧 Estado pedido: {pedido.estado}, total={pedido.total}, fecha={pedido.fecha}")
         subject = f"Confirmación de Pedido #{pedido.id} - La Esquinita"
         html_body = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf7; padding: 20px; border-radius: 10px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #2e7d32; margin-bottom: 10px;">🌽 La Esquinita</h1>
-                <h2 style="color: #ff5722;">¡Pago Confirmado!</h2>
+        <div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf7; padding: 20px; border-radius: 10px;\">
+            <div style=\"text-align: center; margin-bottom: 30px;\">
+                <h1 style=\"color: #2e7d32; margin-bottom: 10px;\">🌽 La Esquinita</h1>
+                <h2 style=\"color: #ff5722;\">¡Pago Confirmado!</h2>
             </div>
-            <div style="background: #f1f8e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h3 style="color: #2e7d32; margin-top: 0;">📋 Detalles del Pedido</h3>
+            <div style=\"background: #f1f8e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;\">
+                <h3 style=\"color: #2e7d32; margin-top: 0;\">📋 Detalles del Pedido</h3>
                 <p><strong>Pedido #:</strong> {pedido.id}</p>
                 <p><strong>Nombre:</strong> {pedido.nombre}</p>
                 <p><strong>Correo:</strong> {pedido.correo}</p>
                 <p><strong>Dirección:</strong> {pedido.direccion}</p>
                 <p><strong>Total:</strong> ${pedido.total:.2f} MXN</p>
                 <p><strong>Método de Pago:</strong> {metodo_pago}</p>
-                <p><strong>Estado:</strong> <span style="color: #4caf50; font-weight: bold;">{pedido.estado}</span></p>
+                <p><strong>Estado:</strong> <span style=\"color: #4caf50; font-weight: bold;\">{pedido.estado}</span></p>
                 <p><strong>Fecha:</strong> {pedido.fecha.strftime('%d/%m/%Y %H:%M')}</p>
             </div>
-            <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <h4 style="color: #ff5722; margin-top: 0;">🚀 ¿Qué sigue?</h4>
+            <div style=\"background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px;\">
+                <h4 style=\"color: #ff5722; margin-top: 0;\">🚀 ¿Qué sigue?</h4>
                 <p>✅ Tu pedido está siendo preparado con amor</p>
                 <p>⏱️ Tiempo estimado de entrega: 30-45 minutos</p>
                 <p>📞 Te contactaremos si necesitamos algo adicional</p>
             </div>
-            <div style="text-align: center; margin-top: 30px;">
-                <p style="color: #666;">¡Gracias por elegir La Esquinita! 🌽</p>
-                <p style="color: #2e7d32; font-weight: bold;">El auténtico sabor mexicano</p>
+            <div style=\"text-align: center; margin-top: 30px;\">
+                <p style=\"color: #666;\">¡Gracias por elegir La Esquinita! 🌽</p>
+                <p style=\"color: #2e7d32; font-weight: bold;\">El auténtico sabor mexicano</p>
             </div>
         </div>
         """
-        
         msg = Message(
             subject=subject,
             recipients=[correo_destino],
             html=html_body,
             sender=app.config['MAIL_USERNAME']
         )
-        
         print(f"📤 Enviando mensaje...")
         mail.send(msg)
         print(f"✅ Correo enviado exitosamente a {correo_destino}")
         return True
-        
     except Exception as e:
+        import smtplib
         print(f"❌ ERROR ENVIANDO CORREO:")
         print(f"❌ Destinatario: {correo_destino}")
         print(f"❌ Error: {str(e)}")
         print(f"❌ Tipo: {type(e).__name__}")
-        import traceback
+        if isinstance(e, smtplib.SMTPAuthenticationError):
+            print(f"❌ SMTPAuthenticationError: Verifica usuario y contraseña de Gmail, y que usas una contraseña de aplicación si tienes 2FA.")
+        elif isinstance(e, smtplib.SMTPConnectError):
+            print(f"❌ SMTPConnectError: No se pudo conectar al servidor SMTP. Revisa la red y configuración de Railway.")
+        elif isinstance(e, smtplib.SMTPRecipientsRefused):
+            print(f"❌ SMTPRecipientsRefused: El destinatario fue rechazado. Revisa el correo destino.")
+        elif isinstance(e, smtplib.SMTPException):
+            print(f"❌ SMTPException: Error general de SMTP.")
         print(f"❌ Traceback completo:")
+        import traceback
         traceback.print_exc()
         return False
 
