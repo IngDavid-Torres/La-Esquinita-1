@@ -169,16 +169,8 @@ else:
 app.secret_key = os.environ.get('SECRET_KEY') or 'clave_secreta_super_segura'
 
 
-try:
-    db = SQLAlchemy(app)
-    print("✅ SQLAlchemy inicializado correctamente")
-except Exception as db_init_error:
-    print(f"❌ Error inicializando SQLAlchemy: {str(db_init_error)}")
-   
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fallback.db'
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
-    db = SQLAlchemy(app)
-    print("🔄 Fallback a SQLite activado")
+db = SQLAlchemy(app)
+print("✅ SQLAlchemy inicializado correctamente")
 UPLOAD_FOLDER = 'static/images'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
