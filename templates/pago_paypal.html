@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pago con PayPal | La Esquinita</title>
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: #f8f9fa; }
+    .container { max-width: 500px; margin: 60px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+    h2 { color: #2e7d32; margin-bottom: 20px; }
+    label { font-weight: bold; margin-top: 15px; display: block; }
+    input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; }
+    .boton-pago { background: #0070ba; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1.1em; margin-top: 25px; cursor: pointer; width: 100%; }
+    .boton-pago:hover { background: #005c99; }
+    .total { font-size: 1.2em; color: #2e7d32; margin-top: 20px; text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Pago con PayPal</h2>
+    <form method="POST" action="{{ url_for('pago_paypal') }}">
+      <label for="nombre">Nombre completo</label>
+      <input type="text" name="nombre" id="nombre" required minlength="3" value="{{ nombre or '' }}">
+      <label for="correo">Correo electrónico</label>
+      <input type="email" name="correo" id="correo" required value="{{ correo or '' }}">
+      <label for="direccion">Dirección de envío</label>
+      <input type="text" name="direccion" id="direccion" required minlength="10" value="{{ direccion or '' }}">
+      <div class="total">Total a pagar: ${{ '%.2f'|format(total) }}</div>
+      <button type="submit" class="boton-pago">Pagar con PayPal</button>
+    </form>
+  </div>
+</body>
+</html>
