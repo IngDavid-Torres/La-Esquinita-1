@@ -12,7 +12,8 @@ from werkzeug.utils import secure_filename
 import re
 import io
 from flask import send_file
-from flask_mail import Mail, Message
+import sendgrid
+from sendgrid.helpers.mail import Mail as SGMail, Email, To, Content
 from sqlalchemy.sql import exists
 from sqlalchemy import and_, not_, exists, cast, String, or_, func
 from sqlalchemy.orm import aliased
@@ -287,13 +288,9 @@ def mantener_sesion_activa():
         session.permanent = True
         session.modified = True
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') or 'laesquinita.antojitos.mx@gmail.com'
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD') or 'pnyy wnaj yisq wtgv'
-mail = Mail(app)
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY') or 'TU_API_KEY_AQUI'
+SENDGRID_FROM_EMAIL = os.environ.get('SENDGRID_FROM_EMAIL') or 'laesquinita.antojitos.mx@gmail.com'
+sg_client = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
@@ -310,10 +307,7 @@ def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
     """Envía correo de confirmación de forma directa y robusta"""
     try:
         print(f"📧 INICIO envío correo a {correo_destino}")
-        print(f"📧 SMTP Server: {app.config.get('MAIL_SERVER')}")
-        print(f"📧 SMTP Port: {app.config.get('MAIL_PORT')}")
-        print(f"📧 SMTP User: {app.config.get('MAIL_USERNAME')}")
-        print(f"📧 SMTP Password configurado: {'Sí' if app.config.get('MAIL_PASSWORD') else 'No'}")
+        print(f"📧 Usando SendGrid API")
         print(f"📧 Contexto pedido: id={pedido.id}, nombre={pedido.nombre}, correo={pedido.correo}, método={metodo_pago}")
         print(f"📧 Estado pedido: {pedido.estado}, total={pedido.total}, fecha={pedido.fecha}")
         subject = f"Confirmación de Pedido #{pedido.id} - La Esquinita"
@@ -346,32 +340,23 @@ def enviar_confirmacion_pago(correo_destino, pedido, metodo_pago):
             </div>
         </div>
         """
-        msg = Message(
+        message = SGMail(
+            from_email=Email(SENDGRID_FROM_EMAIL, "La Esquinita"),
+            to_emails=To(correo_destino),
             subject=subject,
-            recipients=[correo_destino],
-            html=html_body,
-            sender=app.config['MAIL_USERNAME']
+            html_content=Content("text/html", html_body)
         )
-        print(f"📤 Enviando mensaje...")
-        mail.send(msg)
-        print(f"✅ Correo enviado exitosamente a {correo_destino}")
+        print(f"📤 Enviando mensaje con SendGrid...")
+        response = sg_client.send(message)
+        print(f"✅ Correo enviado exitosamente a {correo_destino}. Status: {response.status_code}")
         return True
     except Exception as e:
-        import smtplib
-        print(f"❌ ERROR ENVIANDO CORREO:")
+        print(f"❌ ERROR ENVIANDO CORREO (SendGrid):")
         print(f"❌ Destinatario: {correo_destino}")
         print(f"❌ Error: {str(e)}")
         print(f"❌ Tipo: {type(e).__name__}")
-        if isinstance(e, smtplib.SMTPAuthenticationError):
-            print(f"❌ SMTPAuthenticationError: Verifica usuario y contraseña de Gmail, y que usas una contraseña de aplicación si tienes 2FA.")
-        elif isinstance(e, smtplib.SMTPConnectError):
-            print(f"❌ SMTPConnectError: No se pudo conectar al servidor SMTP. Revisa la red y configuración de Railway.")
-        elif isinstance(e, smtplib.SMTPRecipientsRefused):
-            print(f"❌ SMTPRecipientsRefused: El destinatario fue rechazado. Revisa el correo destino.")
-        elif isinstance(e, smtplib.SMTPException):
-            print(f"❌ SMTPException: Error general de SMTP.")
-        print(f"❌ Traceback completo:")
         import traceback
+        print(f"❌ Traceback completo:")
         traceback.print_exc()
         return False
 
@@ -1311,21 +1296,17 @@ def pago_pendiente():
                          total=pedido_data.get('total', 0))
 def send_confirmation_email(email, nombre, pedido):
     try:
-        msg = Message(
-            'Confirmación de Pedido - La Esquinita',
-            sender=app.config['MAIL_USERNAME'],
-            recipients=[email]
-        )
-        msg.html = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: #00a650; color: white; padding: 20px; text-align: center;">
+        subject = "Confirmación de Pedido - La Esquinita"
+        html_body = f"""
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+            <div style='background: #00a650; color: white; padding: 20px; text-align: center;'>
                 <h1> La Esquinita</h1>
                 <h2>¡Pedido Confirmado!</h2>
             </div>
-            <div style="padding: 20px;">
+            <div style='padding: 20px;'>
                 <p>Hola <strong>{nombre}</strong>,</p>
                 <p>¡Gracias por tu compra! Tu pedido ha sido confirmado y pronto comenzaremos a prepararlo.</p>
-                <div style="background: #f8f9fa; padding: 15px; margin: 20px 0; border-radius: 8px;">
+                <div style='background: #f8f9fa; padding: 15px; margin: 20px 0; border-radius: 8px;'>
                     <h3>📋 Detalles del pedido</h3>
                     <p><strong>Número de pedido:</strong> #{pedido.id}</p>
                     <p><strong>Fecha:</strong> {pedido.fecha.strftime('%d/%m/%Y %H:%M')}</p>
@@ -1334,16 +1315,23 @@ def send_confirmation_email(email, nombre, pedido):
                 </div>
                 <p>Te mantendremos informado sobre el estado de tu pedido.</p>
                 <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
-                <div style="text-align: center; margin-top: 30px;">
+                <div style='text-align: center; margin-top: 30px;'>
                     <p>¡Gracias por elegir La Esquinita!</p>
                 </div>
             </div>
         </div>
         """
-        mail.send(msg)
+        message = SGMail(
+            from_email=Email(SENDGRID_FROM_EMAIL, "La Esquinita"),
+            to_emails=To(email),
+            subject=subject,
+            html_content=Content("text/html", html_body)
+        )
+        response = sg_client.send(message)
+        print(f"✅ Correo enviado exitosamente a {email}. Status: {response.status_code}")
         return True
     except Exception as e:
-        print(f"Error enviando email: {e}")
+        print(f"Error enviando email (SendGrid): {e}")
         return False
 @app.route('/pago', methods=['GET', 'POST'])
 def pago():
@@ -2367,19 +2355,20 @@ def send_test_email(email):
             </div>
             """
             
-            msg = Message(
+            message = SGMail(
+                from_email=Email(SENDGRID_FROM_EMAIL, "La Esquinita"),
+                to_emails=To(email),
                 subject=subject,
-                recipients=[email],
-                html=html_body,
-                sender=app.config['MAIL_USERNAME']
+                html_content=Content("text/html", html_body)
             )
+            response = sg_client.send(message)
+            print(f"✅ Correo de prueba enviado exitosamente a {email}. Status: {response.status_code}")
             
             print(f"📧 Configuración SMTP:")
             print(f"   Server: {app.config['MAIL_SERVER']}:{app.config['MAIL_PORT']}")
             print(f"   Username: {app.config['MAIL_USERNAME']}")
             print(f"   TLS: {app.config['MAIL_USE_TLS']}")
             
-            mail.send(msg)
             print(f"✅ Correo de prueba enviado exitosamente a {email}")
             
             return jsonify({
