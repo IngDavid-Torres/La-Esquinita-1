@@ -1257,9 +1257,10 @@ def pago_exitoso():
         t6 = time.time()
         print(f"[TIMING] Carrito después de limpiar: {t6} (+{t6-start_time:.2f}s)")
         try:
-            enviar_confirmacion_pago(pedido_data['correo'], nuevo_pedido, 'MercadoPago')
+            
+            email_executor.submit(enviar_confirmacion_pago, pedido_data['correo'], nuevo_pedido, 'MercadoPago')
         except Exception as email_error:
-            print(f"❌ Error enviando email de confirmación: {email_error}")
+            print(f"❌ Error lanzando thread de email: {email_error}")
         t7 = time.time()
         print(f"[TIMING] Correo lanzado (thread): {t7} (+{t7-start_time:.2f}s)")
         session.pop('pedido_temp', None)
