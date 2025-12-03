@@ -406,20 +406,105 @@
 
     @media(max-width:600px){
       .accesibilidad-bar {
-        left: 6px; 
-        bottom: 6px; 
-        padding: 7px 4px 4px 4px; 
-        min-width: 36px; 
+        left: 6px;
+        bottom: 6px;
+        padding: 7px 4px 4px 4px;
+        min-width: 36px;
         min-height: 36px;
       }
-      .accesibilidad-bar button, 
+      .accesibilidad-bar button,
       .accesibilidad-bar select {
-        width: 30px; 
-        height: 30px; 
+        width: 30px;
+        height: 30px;
         font-size: 1em;
       }
       .accesibilidad-bar input[type="range"]#contrasteRange {
         width: 30px;
+      }
+      header {
+        padding: 10px 4vw 10px 4vw;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .logo img {
+        height: 38px;
+        max-width: 80px;
+      }
+      nav {
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+      }
+      nav a {
+        font-size: 0.97em;
+        gap: 3px;
+      }
+      nav a img {
+        width: 22px;
+        height: 22px;
+      }
+      .hero {
+        margin-top: 70px;
+        height: 28vh;
+        min-height: 120px;
+      }
+      .hero-content h1 {
+        font-size: 1.1em;
+        margin-bottom: 8px;
+      }
+      .hero-content p {
+        font-size: 0.95em;
+      }
+      .container {
+        max-width: 98vw;
+        padding: 0 2vw;
+        font-size: 0.97em;
+        margin: 20px 0 10px 0;
+      }
+      .container h2 {
+        font-size: 1.1em;
+        margin-bottom: 18px;
+      }
+      .container h3 {
+        font-size: 1em;
+        margin-top: 12px;
+      }
+      .filtro-categorias {
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 18px;
+      }
+      .filtro-categorias label {
+        font-size: 0.95em;
+      }
+      #filtro-categoria {
+        font-size: 0.95em;
+        padding: 6px 10px;
+      }
+      .productos-lista {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 10px;
+      }
+      .producto-item {
+        padding: 10px;
+        font-size: 0.97em;
+      }
+      .producto-item img {
+        height: 90px;
+      }
+      .boton-carrito {
+        font-size: 0.97em;
+        padding: 8px 12px;
+        border-radius: 16px;
+      }
+      .alert-container {
+        font-size: 0.97em;
+      }
+      footer {
+        font-size: 0.95em;
+        padding: 12px 4vw 14px 4vw;
       }
     }
   </style>
