@@ -85,6 +85,32 @@
             .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
             .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
         }
+        @media(max-width:1024px){
+            nav { padding: 10px; }
+            .nav-container { max-width: 900px; }
+            .nav-left, .nav-right { gap: 12px; }
+            .container { margin-top: 80px; padding: 18px; }
+        }
+        @media(max-width:768px){
+            nav { flex-direction: column; align-items: flex-start; padding: 6px; }
+            .nav-container { flex-direction: column; gap: 8px; }
+            .nav-left, .nav-right { gap: 8px; }
+            .container { margin-top: 54px; padding: 10px; max-width: 98vw; }
+            input, select { width: 98%; padding: 10px; font-size: 0.98em; }
+            button { padding: 10px; font-size: 1em; }
+            h2 { font-size: 1.3em; }
+            .accesibilidad-bar { left: 8px; bottom: 8px; }
+        }
+        @media(max-width:480px){
+            nav { flex-direction: column; align-items: flex-start; padding: 4px; }
+            .nav-container { flex-direction: column; gap: 6px; }
+            .nav-left, .nav-right { gap: 6px; }
+            .container { margin-top: 38px; padding: 6px; max-width: 99vw; }
+            input, select { width: 99%; padding: 8px; font-size: 0.95em; }
+            button { padding: 8px; font-size: 0.98em; }
+            h2 { font-size: 1.1em; }
+            .accesibilidad-bar { left: 4px; bottom: 80px; }
+        }
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

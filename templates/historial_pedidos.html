@@ -265,6 +265,69 @@ footer .social a:hover {
     .pedido { padding: 15px; }
 }
 
+@media(max-width:600px){
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 4vw;
+    }
+    .logo img {
+        height: 44px;
+        margin-bottom: 8px;
+    }
+    nav {
+        gap: 6px;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: flex-start;
+    }
+    nav a {
+        font-size: 0.85em;
+        padding: 6px 7px;
+        gap: 4px;
+    }
+    nav a img {
+        width: 24px;
+        height: 24px;
+    }
+    .container {
+        margin: 90px 2vw 12px 2vw;
+        padding: 10px 4vw;
+        border-radius: 10px;
+        font-size: 0.98em;
+    }
+    h2 {
+        font-size: 1.15em;
+        margin-bottom: 16px;
+    }
+    .pedidos-scroll {
+        max-height: 260px;
+        padding: 7px 2vw;
+        font-size: 0.97em;
+        border-radius: 7px;
+        margin-bottom: 12px;
+    }
+    .pedido {
+        padding: 9px 6px;
+        margin-bottom: 8px;
+        border-radius: 6px;
+        font-size: 0.97em;
+    }
+    .pedido p {
+        margin: 3px 0;
+        font-size: 0.97em;
+        word-break: break-word;
+    }
+    footer {
+        padding: 10px 2vw 10px 2vw;
+        font-size: 0.92em;
+        margin-top: 18px;
+    }
+    .social {
+        gap: 10px;
+    }
+}
+
 
 .accesibilidad-bar {
     z-index: 3000 !important;

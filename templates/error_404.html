@@ -245,7 +245,47 @@
                 max-width: 250px;
                 justify-content: center;
             }
+                .restaurant-info, .suggestions {
+                    padding: 12px;
+                    border-radius: 10px;
+                    margin: 12px 0;
+                    font-size: 0.98em;
+                }
+                .error-message {
+                    font-size: 1em;
+                    margin-bottom: 18px;
+                }
+                .food-icons {
+                    font-size: 28px;
+                    top: -10px;
+                    right: -10px;
+                }
+                .error-icon {
+                    font-size: 70px;
+                    margin-bottom: 10px;
+                }
+                .decorative-elements::before,
+                .decorative-elements::after {
+                    width: 120px;
+                    height: 120px;
+                }
         }
+            @media (max-width: 400px) {
+                .error-container {
+                    margin: 8px;
+                    padding: 16px 4px;
+                }
+                .error-code {
+                    font-size: 38px;
+                }
+                .error-title {
+                    font-size: 16px;
+                }
+                .btn {
+                    font-size: 0.95em;
+                    padding: 8px 0;
+                }
+            }
 
         .decorative-elements {
             position: fixed;

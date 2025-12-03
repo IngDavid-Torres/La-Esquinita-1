@@ -547,6 +547,20 @@
     @media (max-width: 600px) {
       .main-content { padding: 10px 2vw 10px 2vw; }
       .dashboard-header h1 { font-size: 1.1em; }
+        .sidebar { flex-direction: column; align-items: stretch; padding: 8px 0; }
+        .sidebar nav { flex-direction: column; gap: 6px; }
+        .sidebar .logo img { width: 40px; }
+        .sidebar .cliente-nombre { font-size: 0.95em; }
+        .sidebar .logout { font-size: 0.95em; padding: 8px 10px; }
+        .section-box { min-width: 90vw; max-width: 98vw; padding: 16px 8px; font-size: 0.98em; }
+        .dashboard-header { flex-direction: column; gap: 8px; }
+        .dashboard-sections { gap: 12px; margin-bottom: 18px; }
+        .footer-fixed { font-size: 0.95em; padding: 12px 0 8px 0; }
+        .modal-logout-box { min-width: 90vw; padding: 18px 8px 14px 8px; }
+        .modal-logout-msg { font-size: 1em; }
+        .modal-btn-cancelar, .modal-btn-salir { font-size: 0.95em; padding: 6px 10px; }
+        .accesibilidad-bar { right: 2px; bottom: 60px; padding: 2px 1px; min-width: 18px; min-height: 18px; }
+        .accesibilidad-bar button, .accesibilidad-bar select { width: 14px; height: 14px; font-size: 0.7em; }
     }
   </style>
   <script>
@@ -761,15 +775,15 @@
       <div class="dashboard-sections">
         <div class="section-box">
           <h2>Mis Pedidos y Bandeja de Mensajes</h2>
-          <button class="btn" onclick="window.location.href='{{ url_for('pedidos_cliente') }}'">Mis Pedidos</button>
-          <button class="btn" onclick="window.location.href='{{ url_for('bandeja_mensajes_cliente') }}'">Bandeja de Mensajes</button>
+            <button class="btn" onclick="window.location.href='{{ url_for('pedidos_cliente') }}'">Mis Pedidos</button>
+            <button class="btn" onclick="window.location.href='{{ url_for('bandeja_mensajes_cliente') }}'">Bandeja de Mensajes</button>
         </div>
         <div class="section-box">
           <h2>Mi Carrito</h2>
           <div class="carrito-info">
             <span>Productos en carrito: <strong>{{ cantidad_carrito or 0 }}</strong></span>
           </div>
-          <button class="btn" onclick="window.location.href='{{ url_for('carrito') }}'">Ver Carrito</button>
+            <button class="btn" onclick="window.location.href='{{ url_for('carrito') }}'">Ver Carrito</button>
         </div>
     </div>
   </div>

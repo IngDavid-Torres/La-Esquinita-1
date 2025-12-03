@@ -154,6 +154,62 @@
         font-size: 0.95em;
       }
     }
+  
+  @media (max-width: 600px) {
+    nav {
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+    nav a {
+      font-size: 0.98em;
+      padding: 6px 8px;
+      min-width: 80px;
+      flex-shrink: 0;
+    }
+    .container {
+      padding: 10px 2vw 10px 2vw;
+      margin: 80px 2vw 16px 2vw;
+      max-width: 99vw;
+    }
+    h2 {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+    .pedido-info p {
+      font-size: 0.98em;
+      margin-bottom: 6px;
+    }
+    .volver {
+      width: 100%;
+      font-size: 1em;
+      padding: 10px 0;
+      border-radius: 18px;
+      margin-top: 10px;
+    }
+    table, th, td {
+      font-size: 0.93em;
+      padding: 8px 4px;
+    }
+    footer {
+      font-size: 0.92em;
+      padding: 10px 4px 8px 4px;
+    }
+  }
+  @media (max-width: 400px) {
+    .container {
+      margin: 60px 1vw 10px 1vw;
+      padding: 6px 1vw 6px 1vw;
+    }
+    h2 {
+      font-size: 0.98em;
+    }
+    .volver {
+      font-size: 0.95em;
+    }
+  }
   </style>
 </head>
 <body>

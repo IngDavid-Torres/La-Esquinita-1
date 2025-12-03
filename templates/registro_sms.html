@@ -43,19 +43,24 @@
         }
         
         .logo img {
-            max-width: 120px;
-            height: auto;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        
-        h2 {
-            color: var(--secondary);
-            font-size: 1.8em;
-            margin-bottom: 20px;
-        }
-        
         .step-indicator {
+                    .logo img {
+                        max-width: 70px;
+                        margin-bottom: 6px;
+                    }
+                    h2 { font-size: 1.1em; margin-bottom: 10px; }
+                    .step-indicator { margin-bottom: 18px; }
+                    .step { width: 28px; height: 28px; font-size: 1em; margin: 0 4px; }
+                    form { gap: 8px; }
+                    input, select { padding: 10px; font-size: 0.95em; border-radius: 8px; }
+                    button, .resend-code { padding: 10px; font-size: 0.95em; border-radius: 8px; }
+                    .verification-info { padding: 10px; font-size: 0.95em; border-radius: 8px; }
+                    .verification-code-input { font-size: 1.1em; letter-spacing: 3px; }
+                    .alert { font-size: 0.95em; padding: 8px; margin-bottom: 10px; }
+                    .back-link { margin-top: 10px; font-size: 0.95em; }
             display: flex;
             justify-content: center;
             margin-bottom: 30px;
@@ -234,14 +239,31 @@
             .container {
                 padding: 30px 20px;
                 margin: 10px;
+                max-width: 98vw;
+                font-size: 0.97em;
             }
-            
+            .logo img {
+                max-width: 70px;
+                margin-bottom: 6px;
+            }
+            h2 { font-size: 1.1em; margin-bottom: 10px; }
+            .step-indicator { margin-bottom: 18px; }
+            .step { width: 28px; height: 28px; font-size: 1em; margin: 0 4px; }
+            form { gap: 8px; }
+            input, select { padding: 10px; font-size: 0.95em; border-radius: 8px; }
+            button, .resend-code { padding: 10px; font-size: 0.95em; border-radius: 8px; }
+            .verification-info { padding: 10px; font-size: 0.95em; border-radius: 8px; }
+            .verification-code-input { font-size: 1.1em; letter-spacing: 3px; }
+            .alert { font-size: 0.95em; padding: 8px; margin-bottom: 10px; }
+            .back-link { margin-top: 10px; font-size: 0.95em; }
             .phone-input-group {
                 flex-direction: column;
+                gap: 4px;
             }
-            
             .country-code {
                 width: 100%;
+                padding: 10px;
+                font-size: 0.95em;
             }
         }
     </style>
