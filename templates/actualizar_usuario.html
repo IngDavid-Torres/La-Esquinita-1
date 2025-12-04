@@ -461,10 +461,6 @@
             <input type="text" name="nombre" placeholder="Nombre" value="{{ usuario.nombre }}" required>
             <input type="email" name="email" placeholder="Correo electrónico" value="{{ usuario.email }}" required>
             <input type="password" name="password" placeholder="Contraseña" value="{{ usuario.password }}" required>
-            <select name="tipo_usuario">
-                <option value="Cliente" {% if usuario.tipo_usuario == "Cliente" %}selected{% endif %}>Cliente</option>
-                <option value="Productor" {% if usuario.tipo_usuario == "Productor" %}selected{% endif %}>Productor</option>
-            </select>
             <button type="submit">✅ Actualizar Usuario</button>
         </form>
     </div>
