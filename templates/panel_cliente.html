@@ -253,7 +253,7 @@
     .accesibilidad-bar {
       position: fixed;
       right: 32px;
-      bottom: 70px;
+      bottom: 120px;
       z-index: 3000;
       background: rgba(34,34,34,0.92);
       color: #fff;
@@ -298,7 +298,7 @@
     @media (max-width: 600px) {
       .accesibilidad-bar {
         right: 8px;
-        bottom: 16px;
+        bottom: 80px;
         padding: 6px 6px;
         min-width: 32px;
         min-height: 32px;
@@ -368,6 +368,8 @@
   </script>
 </head>
 <body>
+  <!-- Botón flotante para mostrar/ocultar la sidebar en móviles -->
+  <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Mostrar menú" title="Mostrar menú">☰</button>
   <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
     <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
     <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
@@ -522,7 +524,7 @@
       }
     };
   </script>
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <div class="logo">
       <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
     </div>
@@ -607,6 +609,21 @@
     function confirmarEliminacion() {
       return confirm("⚠️ ¿Seguro que deseas eliminar esta tarjeta?");
     }
+      // Mostrar/ocultar sidebar en móviles
+      const sidebar = document.getElementById('sidebar');
+      const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+      function toggleSidebar() {
+        sidebar.classList.toggle('sidebar-visible');
+      }
+      sidebarToggleBtn.onclick = toggleSidebar;
+      // Ocultar sidebar al hacer clic fuera de ella en móviles
+      document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 600) {
+          if (!sidebar.contains(e.target) && !sidebarToggleBtn.contains(e.target)) {
+            sidebar.classList.remove('sidebar-visible');
+          }
+        }
+      });
   </script>
   <style>
     .modal-logout-bg {
