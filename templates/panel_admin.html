@@ -1054,7 +1054,7 @@
                         {% elif filtro == "pedidos" or (not filtro and r.__class__.__name__ == "Pedido") %}
                             <li>📦 Pedido #{{ r.id }} - Usuario: {{ r.usuario_id }} - Estado: {{ r.estado }} - Fecha: {{ r.fecha.strftime('%d/%m/%Y %H:%M') }}</li>
                         {% elif filtro == "productos" or (not filtro and r.__class__.__name__ == "Producto") %}
-                            <li>🛒 <b>{{ r.nombre }}</b> - Precio: ${{ r.precio }} - Productor: {{ r.productor_id }}</li>
+                            <li>🛒 <b>{{ r.nombre }}</b> - Precio: ${{ r.precio }} - Administrador: {{ r.admin_id }}</li>
                         {% endif %}
                     {% endfor %}
                 </ul>
