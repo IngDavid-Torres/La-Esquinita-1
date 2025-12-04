@@ -1,117 +1,269 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <style>
-        .accesibilidad-bar {
-            position: fixed;
-            left: 24px;
-            bottom: 24px;
-            z-index: 2000;
-            background: #222;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: center;
-            padding: 14px 10px 10px 10px;
-            border-radius: 18px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-            opacity: 0.93;
-            min-width: 48px;
-            min-height: 48px;
-            transition: box-shadow 0.2s, opacity 0.2s;
-        }
-        .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
-            opacity: 1;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.22);
-        }
-        .accesibilidad-bar button, .accesibilidad-bar select {
-            background: #fff;
-            color: #222;
-            border: none;
-            border-radius: 50%;
-            width: 38px;
-            height: 38px;
-            margin: 0;
-            font-size: 1.2em;
-            cursor: pointer;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
-            transition: background 0.2s, color 0.2s, transform 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2px;
-        }
-        .accesibilidad-bar button.active {
-            background: #ffb300;
-            color: #222;
-            transform: scale(1.08);
-        }
-        .accesibilidad-bar label {
-            display: none;
-        }
-        .accesibilidad-bar select {
-            border-radius: 8px;
-            width: 38px;
-            height: 38px;
-            font-size: 0.95em;
-            padding: 0;
-            margin-bottom: 2px;
-        }
-        .accesibilidad-bar option {
-            font-size: 1em;
-        }
-        .accesibilidad-bar .icono {
-            font-size: 1.2em;
-        }
-        body.night-mode {
-            background: #181818 !important;
-            color: #fff !important;
-        }
-        .container.night-mode {
-            background: #232323 !important;
-            color: #fff !important;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-        }
-        footer.night-mode {
-            background: #181818 !important;
-            color: #fff !important;
-        }
-        .accesibilidad-bar.night-mode {
-            background: #232323 !important;
-            color: #fff !important;
-        }
-        @media(max-width:600px){
-            .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
-            .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
-        }
-        @media(max-width:1024px){
-            nav { padding: 10px; }
-            .nav-container { max-width: 900px; }
-            .nav-left, .nav-right { gap: 12px; }
-            .container { margin-top: 80px; padding: 18px; }
-        }
-        @media(max-width:768px){
-            nav { flex-direction: column; align-items: flex-start; padding: 6px; }
-            .nav-container { flex-direction: column; gap: 8px; }
-            .nav-left, .nav-right { gap: 8px; }
-            .container { margin-top: 54px; padding: 10px; max-width: 98vw; }
-            input, select { width: 98%; padding: 10px; font-size: 0.98em; }
-            button { padding: 10px; font-size: 1em; }
-            h2 { font-size: 1.3em; }
-            .accesibilidad-bar { left: 8px; bottom: 8px; }
-        }
-        @media(max-width:480px){
-            nav { flex-direction: column; align-items: flex-start; padding: 4px; }
-            .nav-container { flex-direction: column; gap: 6px; }
-            .nav-left, .nav-right { gap: 6px; }
-            .container { margin-top: 38px; padding: 6px; max-width: 99vw; }
-            input, select { width: 99%; padding: 8px; font-size: 0.95em; }
-            button { padding: 8px; font-size: 0.98em; }
-            h2 { font-size: 1.1em; }
-            .accesibilidad-bar { left: 4px; bottom: 80px; }
-        }
-    </style>
+        <style>
+            :root {
+                --primary: #ffb300;
+                --secondary: #2e7d32;
+                --accent: #ff5722;
+                --light: #fffdf7;
+                --dark: #1c1c1c;
+                --sidebar: #fffbe7;
+            }
+            body {
+                font-family: 'Poppins', Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: url('{{ url_for("static", filename="images/verduras.jpg") }}') no-repeat center center fixed, linear-gradient(120deg, #f8fafc 0%, #e0e7ef 50%, #f7e7d7 100%);
+                background-size: cover;
+                min-height: 100vh;
+                color: var(--dark);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            nav {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                background: var(--secondary);
+                padding: 15px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                box-shadow: 0px 4px 12px rgba(44,44,44,0.18);
+                z-index: 1000;
+            }
+            .nav-container {
+                width: 100%;
+                max-width: 2000px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .nav-left, .nav-right {
+                display: flex;
+                align-items: center;
+                gap: 25px;
+            }
+            nav a {
+                color: #fff;
+                text-decoration: none;
+                font-weight: bold;
+                padding: 12px 18px;
+                border-radius: 10px;
+                transition: background 0.2s, color 0.2s;
+                font-size: 1em;
+                display: flex;
+                align-items: center;
+            }
+            nav a img {
+                height: 32px;
+                width: 32px;
+                vertical-align: middle;
+                margin-right: 8px;
+            }
+            nav a:hover {
+                background: var(--primary);
+                color: var(--secondary);
+            }
+            .container {
+                background: rgba(255,255,255,0.93);
+                padding: 36px 28px 28px 28px;
+                border-radius: 22px;
+                box-shadow: 0 8px 32px rgba(44,44,44,0.13);
+                text-align: center;
+                max-width: 420px;
+                width: 100%;
+                margin-top: 120px;
+                margin-bottom: 32px;
+                position: relative;
+            }
+            h2 {
+                color: var(--secondary);
+                font-size: 2em;
+                margin-bottom: 22px;
+                font-weight: bold;
+                text-shadow: 1px 1px 0 #fffbe7;
+            }
+            form {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            input, select {
+                width: 94%;
+                padding: 14px;
+                margin-bottom: 14px;
+                border: 1.5px solid #e0e0e0;
+                border-radius: 12px;
+                font-size: 1.08em;
+                text-align: center;
+                background: #fffbe7;
+                color: var(--dark);
+                box-shadow: 0 1px 4px rgba(255,179,0,0.08);
+                transition: border 0.2s;
+            }
+            input:focus, select:focus {
+                border: 1.5px solid var(--primary);
+                outline: none;
+            }
+            button[type="submit"] {
+                width: 100%;
+                padding: 14px;
+                border: none;
+                border-radius: 14px;
+                background: linear-gradient(90deg, var(--primary) 60%, var(--accent) 100%);
+                color: #fff;
+                font-weight: bold;
+                font-size: 1.15em;
+                cursor: pointer;
+                box-shadow: 0 2px 8px rgba(255,179,0,0.08);
+                letter-spacing: 0.5px;
+                margin-top: 8px;
+                transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            }
+            button[type="submit"]:hover {
+                filter: brightness(1.08);
+                box-shadow: 0 4px 16px rgba(44,44,44,0.13);
+                transform: translateY(-2px) scale(1.03);
+            }
+            .alerta {
+                display: none;
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--primary);
+                color: var(--secondary);
+                padding: 15px 28px;
+                border-radius: 12px;
+                font-size: 1.08em;
+                font-weight: bold;
+                box-shadow: 0 2px 8px rgba(255,179,0,0.12);
+                z-index: 3000;
+            }
+            .accesibilidad-bar {
+                position: fixed;
+                left: 24px;
+                bottom: 24px;
+                z-index: 2000;
+                background: rgba(34,34,34,0.92);
+                color: #fff;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+                padding: 14px 10px 10px 10px;
+                border-radius: 18px;
+                box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+                opacity: 0.97;
+                min-width: 48px;
+                min-height: 48px;
+                transition: box-shadow 0.2s, opacity 0.2s;
+                backdrop-filter: blur(6px);
+            }
+            .accesibilidad-bar button, .accesibilidad-bar select {
+                background: #fff;
+                color: #222;
+                border: none;
+                border-radius: 50%;
+                width: 38px;
+                height: 38px;
+                margin: 0;
+                font-size: 1.2em;
+                cursor: pointer;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+                transition: background 0.2s, color 0.2s, transform 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 2px;
+            }
+            .accesibilidad-bar button.active {
+                background: var(--primary);
+                color: #222;
+                transform: scale(1.08);
+            }
+            .accesibilidad-bar label {
+                display: none;
+            }
+            .accesibilidad-bar select {
+                border-radius: 8px;
+                width: 38px;
+                height: 38px;
+                font-size: 0.95em;
+                padding: 0;
+                margin-bottom: 2px;
+            }
+            .accesibilidad-bar option {
+                font-size: 1em;
+            }
+            .accesibilidad-bar .icono {
+                font-size: 1.2em;
+            }
+            body.night-mode {
+                background: #181818 !important;
+                color: #fff !important;
+            }
+            .container.night-mode {
+                background: #232323 !important;
+                color: #fff !important;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            }
+            footer.night-mode {
+                background: #181818 !important;
+                color: #fff !important;
+            }
+            .accesibilidad-bar.night-mode {
+                background: #232323 !important;
+                color: #fff !important;
+            }
+            @media(max-width:600px){
+                .container { margin-top: 70px; padding: 12px; max-width: 99vw; }
+                .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
+                .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+            }
+            @media(max-width:1024px){
+                nav { padding: 10px; }
+                .nav-container { max-width: 900px; }
+                .nav-left, .nav-right { gap: 12px; }
+                .container { margin-top: 80px; padding: 18px; }
+            }
+            @media(max-width:768px){
+                nav { flex-direction: column; align-items: flex-start; padding: 6px; }
+                .nav-container { flex-direction: column; gap: 8px; }
+                .nav-left, .nav-right { gap: 8px; }
+                .container { margin-top: 54px; padding: 10px; max-width: 98vw; }
+                input, select { width: 98%; padding: 10px; font-size: 0.98em; }
+                button { padding: 10px; font-size: 1em; }
+                h2 { font-size: 1.3em; }
+                .accesibilidad-bar { left: 8px; bottom: 8px; }
+            }
+            @media(max-width:480px){
+                nav { flex-direction: column; align-items: flex-start; padding: 4px; }
+                .nav-container { flex-direction: column; gap: 6px; }
+                .nav-left, .nav-right { gap: 6px; }
+                .container { margin-top: 38px; padding: 6px; max-width: 99vw; }
+                input, select { width: 99%; padding: 8px; font-size: 0.95em; }
+                button { padding: 8px; font-size: 0.98em; }
+                h2 { font-size: 1.1em; }
+                .accesibilidad-bar { left: 4px; bottom: 80px; }
+            }
+            footer {
+                background: var(--secondary);
+                color: #fff;
+                text-align: center;
+                padding: 18px 0 14px 0;
+                font-size: 1em;
+                letter-spacing: 0.5px;
+                box-shadow: 0 -2px 12px rgba(44,44,44,0.12);
+                backdrop-filter: blur(4px);
+                width: 100%;
+                margin-top: auto;
+            }
+        </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actualizar Usuario | AgroConnect</title>
@@ -416,7 +568,7 @@ select {
             </div>
             <div class="nav-right">
                 <a href="{{ url_for('panel_admin') }}">
-                    <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Panel">Mi Panel
+                    <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Panel">Mi Dashboard
                 </a>
             </div>
         </div>
