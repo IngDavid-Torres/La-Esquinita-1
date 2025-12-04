@@ -14,8 +14,7 @@
                 font-family: 'Poppins', Arial, sans-serif;
                 margin: 0;
                 padding: 0;
-                background: url('{{ url_for("static", filename="images/verduras.jpg") }}') no-repeat center center fixed, linear-gradient(120deg, #f8fafc 0%, #e0e7ef 50%, #f7e7d7 100%);
-                background-size: cover;
+                background: linear-gradient(120deg, #fffbe7 0%, #f7e7d7 50%, #ffe082 100%);
                 min-height: 100vh;
                 color: var(--dark);
                 display: flex;
@@ -26,46 +25,54 @@
                 position: fixed;
                 top: 0;
                 width: 100%;
-                background: var(--secondary);
-                padding: 15px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                box-shadow: 0px 4px 12px rgba(44,44,44,0.18);
+                background: linear-gradient(90deg, var(--secondary) 60%, var(--primary) 100%);
+                padding: 0;
+                box-shadow: 0 4px 18px rgba(44,44,44,0.13);
                 z-index: 1000;
+                border-bottom: 2.5px solid var(--primary);
             }
             .nav-container {
                 width: 100%;
-                max-width: 2000px;
+                max-width: 1200px;
+                margin: 0 auto;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                padding: 0 18px;
+                min-height: 64px;
             }
             .nav-left, .nav-right {
                 display: flex;
                 align-items: center;
-                gap: 25px;
+                gap: 18px;
             }
             nav a {
-                color: #fff;
+                color: var(--light);
                 text-decoration: none;
-                font-weight: bold;
-                padding: 12px 18px;
-                border-radius: 10px;
-                transition: background 0.2s, color 0.2s;
-                font-size: 1em;
+                font-weight: 600;
+                padding: 10px 18px;
+                border-radius: 12px;
+                transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+                font-size: 1.08em;
                 display: flex;
                 align-items: center;
+                letter-spacing: 0.5px;
+                box-shadow: 0 1px 4px rgba(255,179,0,0.04);
             }
             nav a img {
-                height: 32px;
-                width: 32px;
+                height: 28px;
+                width: 28px;
                 vertical-align: middle;
-                margin-right: 8px;
+                margin-right: 7px;
+                border-radius: 6px;
+                background: #fffbe7;
+                box-shadow: 0 1px 4px rgba(255,179,0,0.08);
             }
             nav a:hover {
                 background: var(--primary);
                 color: var(--secondary);
+                box-shadow: 0 2px 10px rgba(255,179,0,0.13);
+                transform: translateY(-2px) scale(1.04);
             }
             .container {
                 background: rgba(255,255,255,0.93);
@@ -224,44 +231,69 @@
                 .container { margin-top: 70px; padding: 12px; max-width: 99vw; }
                 .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
                 .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+                nav { min-height: 48px; }
+                .nav-container { min-height: 48px; padding: 0 6px; }
+                nav a { font-size: 0.95em; padding: 7px 8px; }
+                footer { font-size: 0.93em; padding: 7px 0 6px 0; }
             }
             @media(max-width:1024px){
-                nav { padding: 10px; }
-                .nav-container { max-width: 900px; }
-                .nav-left, .nav-right { gap: 12px; }
+                nav { padding: 0; }
+                .nav-container { max-width: 900px; padding: 0 8px; }
+                .nav-left, .nav-right { gap: 10px; }
                 .container { margin-top: 80px; padding: 18px; }
             }
             @media(max-width:768px){
-                nav { flex-direction: column; align-items: flex-start; padding: 6px; }
-                .nav-container { flex-direction: column; gap: 8px; }
-                .nav-left, .nav-right { gap: 8px; }
+                nav { flex-direction: column; align-items: flex-start; padding: 0; }
+                .nav-container { flex-direction: column; gap: 8px; min-height: 48px; }
+                .nav-left, .nav-right { gap: 7px; }
                 .container { margin-top: 54px; padding: 10px; max-width: 98vw; }
                 input, select { width: 98%; padding: 10px; font-size: 0.98em; }
                 button { padding: 10px; font-size: 1em; }
                 h2 { font-size: 1.3em; }
                 .accesibilidad-bar { left: 8px; bottom: 8px; }
+                nav a { font-size: 0.97em; padding: 7px 8px; }
+                footer { font-size: 0.95em; padding: 7px 0 6px 0; }
             }
             @media(max-width:480px){
-                nav { flex-direction: column; align-items: flex-start; padding: 4px; }
-                .nav-container { flex-direction: column; gap: 6px; }
-                .nav-left, .nav-right { gap: 6px; }
+                nav { flex-direction: column; align-items: flex-start; padding: 0; }
+                .nav-container { flex-direction: column; gap: 6px; min-height: 40px; padding: 0 2px; }
+                .nav-left, .nav-right { gap: 4px; }
                 .container { margin-top: 38px; padding: 6px; max-width: 99vw; }
                 input, select { width: 99%; padding: 8px; font-size: 0.95em; }
                 button { padding: 8px; font-size: 0.98em; }
                 h2 { font-size: 1.1em; }
                 .accesibilidad-bar { left: 4px; bottom: 80px; }
+                nav a { font-size: 0.95em; padding: 6px 6px; }
+                footer { font-size: 0.92em; padding: 5px 0 4px 0; }
             }
             footer {
-                background: var(--secondary);
+                background: linear-gradient(90deg, var(--secondary) 60%, var(--primary) 100%);
                 color: #fff;
                 text-align: center;
-                padding: 18px 0 14px 0;
-                font-size: 1em;
+                padding: 10px 0 8px 0;
+                font-size: 0.98em;
                 letter-spacing: 0.5px;
                 box-shadow: 0 -2px 12px rgba(44,44,44,0.12);
-                backdrop-filter: blur(4px);
                 width: 100%;
-                margin-top: auto;
+                margin-top: 30px;
+                border-top: 2.5px solid var(--primary);
+            }
+            footer p {
+                margin: 4px 0;
+            }
+            footer .social {
+                margin-top: 7px;
+                display: flex;
+                justify-content: center;
+                gap: 14px;
+            }
+            footer .social a {
+                color: #fff;
+                font-size: 1.18em;
+                transition: color 0.2s;
+            }
+            footer .social a:hover {
+                color: var(--primary);
             }
         </style>
     <meta charset="UTF-8">
@@ -599,6 +631,11 @@ select {
 
     <footer>
         <p>© 2025 La Esquinita - Todos los derechos reservados</p>
+        <div class="social">
+            <a href="#"><i>📘</i></a>
+            <a href="#"><i>📸</i></a>
+            <a href="#"><i>🐦</i></a>
+        </div>
     </footer>
 
 </body>
