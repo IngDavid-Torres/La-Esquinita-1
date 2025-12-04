@@ -540,7 +540,7 @@ def enviar_mensaje():
     nuevo_mensaje = Contacto(usuario_id=session['usuario_id'], mensaje=mensaje)
     db.session.add(nuevo_mensaje)
     db.session.commit()
-    flash("Tu mensaje fue enviado con Ã©xito.", "success")
+    flash("Tu mensaje fue enviado con éxito.", "success")
     return redirect(url_for('contacto'))
 
 

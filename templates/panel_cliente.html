@@ -40,9 +40,10 @@
       left: 0;
       top: 0;
       height: 100vh;
-      z-index: 100;
+      z-index: 1000;
       overflow-y: auto;
       max-height: 100vh;
+      transition: left 0.3s, box-shadow 0.3s;
     }
     .sidebar .logo img {
       width: 110px;
@@ -296,6 +297,53 @@
       padding: 0;
     }
     @media (max-width: 600px) {
+      .sidebar-toggle-btn {
+        display: flex !important;
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        z-index: 2001;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        font-size: 2em;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s, color 0.2s;
+      }
+      .sidebar {
+        left: -320px;
+        box-shadow: none;
+        width: 80vw;
+        max-width: 340px;
+        min-width: 220px;
+        background: var(--sidebar);
+        z-index: 2000;
+      }
+      .sidebar.sidebar-visible {
+        left: 0;
+        box-shadow: 0 0 18px rgba(0,0,0,0.18);
+      }
+      .main-content {
+        margin-left: 0;
+      }
+      .dashboard-sections {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin-bottom: 24px;
+      }
+      .section-box {
+        max-width: 98vw;
+        min-width: 0;
+        width: 100%;
+        padding: 18px 2vw 18px 2vw;
+        box-sizing: border-box;
+      }
       .accesibilidad-bar {
         right: 8px;
         bottom: 80px;
