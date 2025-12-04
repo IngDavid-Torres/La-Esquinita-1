@@ -1038,7 +1038,7 @@ def webhook_mercadopago():
             logger.warning(f"[MercadoPago Webhook] No se encontró pedido para payment_id {payment_id} o referencia {external_reference}")
             return jsonify({'error': 'Pedido no encontrado'}), 404
 
-        # Actualizar estado del pedido según el estado del pago
+        
         if payment_status == 'approved':
             pedido.estado = 'Pagado'
         elif payment_status == 'pending':
@@ -1828,7 +1828,6 @@ def actualizar_usuario(user_id):
         usuario.nombre = request.form['nombre']
         usuario.email = request.form['email']
         usuario.password = request.form['password']
-        usuario.tipo_usuario = request.form['tipo_usuario']
         db.session.commit()
         flash('Usuario actualizado correctamente.', 'success')
         return redirect(url_for('gestion_usuarios'))
