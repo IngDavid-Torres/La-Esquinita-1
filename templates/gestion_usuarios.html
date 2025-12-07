@@ -551,6 +551,16 @@
   <div class="container">
     <h2>👥 Gestión de Usuarios</h2>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="margin-bottom:18px;">
+          {% for category, message in messages %}
+            <div class="flash-banner flash-{{ category }}">{{ message|safe }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <form method="GET" action="{{ url_for('gestion_usuarios') }}" class="search-form">
       <input type="text" name="q" placeholder="Buscar por ID, nombre o email" value="{{ request.args.get('q', '') }}">
       <button type="submit">🔍 Buscar</button>
@@ -578,6 +588,9 @@
               <button type="submit" class="btn-action btn-update">✏️ Actualizar</button>
             </form>
             <form action="{{ url_for('eliminar_usuario', user_id=usuario.id) }}" method="POST" onsubmit="return confirmarEliminacion()">
+              {% if csrf_token %}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              {% endif %}
               <button type="submit" class="btn-action btn-delete">❌ Eliminar</button>
             </form>
           </td>
@@ -593,10 +606,30 @@
 
   <script>
     function confirmarEliminacion() {
-      return confirm("⚠️ ¿Estás seguro de que deseas eliminar este usuario?");
+      return confirm("⚠️ ¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer y eliminará todos sus datos asociados.");
     }
   </script>
 
+  <style>
+    .flash-banner {
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-align: center;
+      font-size: 1em;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      animation: fadeInBanner 0.7s;
+    }
+    .flash-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #2e7d32; }
+    .flash-error, .flash-danger { background: #ffebee; color: #c62828; border: 1px solid #c62828; }
+    .flash-warning { background: #fffde7; color: #f9a825; border: 1px solid #f9a825; }
+    .flash-info { background: #e3f2fd; color: #1565c0; border: 1px solid #1565c0; }
+    @keyframes fadeInBanner {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
   <footer>
     <p>© 2025 La Esquinita - Todos los derechos reservados</p>
   </footer>
