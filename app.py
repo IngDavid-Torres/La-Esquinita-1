@@ -1727,6 +1727,8 @@ def actualizar_producto_admin(producto_id):
 @app.route('/eliminar_producto_admin/<int:producto_id>', methods=['POST'])
 def eliminar_producto_admin(producto_id):
     producto = Producto.query.get_or_404(producto_id)
+    
+    Carrito.query.filter_by(producto_id=producto_id).delete()
     PedidoItem.query.filter_by(producto_id=producto_id).delete()
     db.session.delete(producto)
     db.session.commit()
