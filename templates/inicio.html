@@ -857,6 +857,17 @@
       <a href="#"><i>🐦</i></a>
     </div>
   </footer>
+
+  <!-- Modal de inicio de sesión requerido -->
+  <div id="modal-login-required" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);justify-content:center;align-items:center;">
+    <div style="background:var(--primary);color:var(--secondary);border:2px solid var(--secondary);border-radius:14px;box-shadow:0 4px 24px rgba(44,44,44,0.18);padding:36px 32px 28px 32px;min-width:260px;max-width:90vw;text-align:center;font-size:1.18em;font-weight:bold;">
+      <span id="modal-login-required-msg">Debes iniciar sesión para continuar.</span>
+      <br>
+      <a href="{{ url_for('login') }}" style="margin-top:18px;display:inline-block;padding:10px 38px;border:none;border-radius:16px;background:var(--secondary);color:#fff;font-size:1.08em;font-weight:bold;cursor:pointer;text-decoration:none;transition:background 0.2s;">Iniciar sesión</a>
+      <br>
+      <button type="button" onclick="document.getElementById('modal-login-required').style.display='none';" style="margin-top:10px;padding:8px 28px;border:none;border-radius:14px;background:#fff;color:var(--secondary);font-size:1em;font-weight:600;cursor:pointer;transition:background 0.2s;">Cancelar</button>
+    </div>
+  </div>
   </div>
 
  
@@ -919,6 +930,36 @@
   {% endif %}
 
   <script>
+      // Modal de inicio de sesión requerido para acciones protegidas
+      document.addEventListener('DOMContentLoaded', function() {
+        const userType = document.body.getAttribute('data-user-type');
+        // Botón principal "Hacer Pedido"
+        const btnPedido = document.querySelector('.hero-content .btn-primary');
+        if (btnPedido) {
+          btnPedido.addEventListener('click', function(e) {
+            if (userType === 'guest') {
+              e.preventDefault();
+              mostrarModalLogin('Debes iniciar sesión para hacer tu pedido.');
+            }
+          });
+        }
+        // Enlace de carrito en navbar
+        const navCarrito = document.querySelector('nav a[href*="carrito"]');
+        if (navCarrito) {
+          navCarrito.addEventListener('click', function(e) {
+            if (userType === 'guest') {
+              e.preventDefault();
+              mostrarModalLogin('Debes iniciar sesión para ver tu carrito.');
+            }
+          });
+        }
+      });
+      function mostrarModalLogin(msg) {
+        const modal = document.getElementById('modal-login-required');
+        const msgSpan = document.getElementById('modal-login-required-msg');
+        msgSpan.textContent = msg;
+        modal.style.display = 'flex';
+      }
    
     class LaEsquinitaChatbot {
       constructor() {
