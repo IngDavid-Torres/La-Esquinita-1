@@ -298,16 +298,16 @@ def create_sms_routes(db, Usuario, validate_captcha_session, create_captcha_sess
                 if verification_result['success']:
                     usuario = Usuario.query.get(login_data['usuario_id'])
                     if usuario:
-                      
-                        session['usuario_id'] = usuario.id
-                        session['usuario_tipo'] = usuario.tipo_usuario
-                        session['tipo_usuario'] = usuario.tipo_usuario  # mantener compatibilidad con otras vistas
-                        session.permanent = True
-                        session.pop('login_temp', None)
-                        
-                        if usuario.tipo_usuario == 'Administrador':
-                            return redirect(url_for('admin_productos'))
-                        else:
+                            if usuario.tipo_usuario != 'Cliente':
+                                flash('Solo los clientes pueden iniciar sesión por SMS.', 'error')
+                                session.pop('login_temp', None)
+                                return redirect(url_for('login'))
+                            session['usuario_id'] = usuario.id
+                            session['usuario_nombre'] = usuario.nombre
+                            session['usuario_tipo'] = usuario.tipo_usuario
+                            session['tipo_usuario'] = usuario.tipo_usuario
+                            session.permanent = True
+                            session.pop('login_temp', None)
                             return redirect(url_for('panel_cliente'))
                     else:
                         flash('Usuario no encontrado', 'error')
