@@ -81,7 +81,7 @@
       background: var(--dark);
       color: #fff;
       text-align: center;
-      padding: 10px 10px 14px 10px;
+      padding: 4px 8px 6px 8px;
       width: 100%;
       position: fixed;
       left: 0;
@@ -89,6 +89,9 @@
       z-index: 100;
       box-sizing: border-box;
       margin: 0;
+      font-size: 0.92em;
+      min-height: 32px;
+      line-height: 1.2;
     }
   </style>
   <meta charset="UTF-8">
@@ -274,6 +277,11 @@
       .carrito-item { flex-direction: column; align-items: flex-start; }
       .carrito-item img { width: 100%; max-width: 220px; }
       .total { text-align: center; }
+      footer {
+        padding: 2px 4px 4px 4px;
+        font-size: 0.90em;
+        min-height: 24px;
+      }
     }
    
     @media (max-width: 600px) {
@@ -335,14 +343,9 @@
         margin-top: 10px !important;
       }
       footer {
-        font-size: 0.92em;
-        padding: 6px 2px 8px 2px;
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100vw;
-        z-index: 100;
-        margin: 0;
+        font-size: 0.90em;
+        padding: 2px 2px 4px 2px;
+        min-height: 18px;
       }
     }
     @media (max-width: 400px) {
@@ -366,7 +369,9 @@
         width: 100vw;
         z-index: 100;
         margin: 0;
-        padding: 4px 1px 6px 1px;
+        padding: 1px 1px 2px 1px;
+        min-height: 12px;
+        font-size: 0.88em;
       }
     }
   </style>
