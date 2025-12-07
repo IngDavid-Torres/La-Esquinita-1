@@ -1468,6 +1468,8 @@ def eliminar_usuario(user_id):
         flash("⚠️ No se encontró el usuario.", "error")
         return redirect(url_for('gestion_usuarios'))
     try:
+        
+        Contacto.query.filter_by(usuario_id=user_id).delete()
         Direccion.query.filter_by(usuario_id=user_id).delete()
         Pedido.query.filter_by(usuario_id=user_id).delete()
         Carrito.query.filter_by(usuario_id=user_id).delete()
