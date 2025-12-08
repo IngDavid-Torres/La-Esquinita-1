@@ -9,6 +9,187 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/accesibilidad.css') }}">
   <style>
+    /* Botón toggle de accesibilidad */
+    .accesibilidad-toggle {
+      position: fixed;
+      left: 20px;
+      bottom: 20px;
+      z-index: 3001;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      animation: pulse-accessibility 2s infinite;
+    }
+
+    .accesibilidad-toggle:hover,
+    .accesibilidad-toggle:active {
+      transform: scale(1.1);
+      box-shadow: 0 6px 25px rgba(255, 87, 34, 0.6);
+    }
+
+    .accesibilidad-toggle.active {
+      background: linear-gradient(135deg, var(--primary) 0%, #ffc947 100%);
+      color: var(--dark);
+    }
+
+    @keyframes pulse-accessibility {
+      0%, 100% {
+        box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+      }
+      50% {
+        box-shadow: 0 4px 30px rgba(255, 87, 34, 0.8);
+      }
+    }
+
+    /* Panel de accesibilidad */
+    .accesibilidad-bar {
+      position: fixed;
+      left: 20px;
+      bottom: 90px;
+      z-index: 3000;
+      background: #222;
+      color: #fff;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      padding: 14px 10px 10px 10px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+      opacity: 0;
+      min-width: 48px;
+      min-height: 48px;
+      transition: all 0.3s ease;
+      transform: translateY(20px);
+      pointer-events: none;
+      display: none;
+    }
+
+    .accesibilidad-bar.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+      display: flex;
+    }
+
+    .accesibilidad-bar button,
+    .accesibilidad-bar select {
+      background: #fff;
+      color: #222;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .accesibilidad-bar button.active {
+      background: #ffb300;
+      color: #222;
+      transform: scale(1.08);
+    }
+
+    .accesibilidad-bar label {
+      display: none;
+    }
+
+    .accesibilidad-bar select {
+      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      font-size: 0.95em;
+      padding: 0;
+      margin-bottom: 2px;
+    }
+
+    .accesibilidad-bar option {
+      font-size: 1em;
+    }
+
+    .accesibilidad-bar .icono {
+      font-size: 1.2em;
+    }
+
+    /* Media queries para accesibilidad */
+    @media(max-width:600px){
+      .accesibilidad-toggle {
+        left: 16px;
+        bottom: 16px;
+        width: 56px;
+        height: 56px;
+        font-size: 1.4rem;
+      }
+
+      .accesibilidad-bar {
+        left: 16px;
+        bottom: 80px;
+        padding: 10px 6px 6px 6px;
+        min-width: 44px;
+        min-height: 44px;
+        gap: 6px;
+      }
+
+      .accesibilidad-bar button,
+      .accesibilidad-bar select {
+        width: 34px;
+        height: 34px;
+        font-size: 1.1em;
+      }
+
+      .accesibilidad-bar .icono {
+        font-size: 1.1em;
+      }
+    }
+
+    @media(max-width:480px){
+      .accesibilidad-toggle {
+        left: 12px;
+        bottom: 12px;
+        width: 52px;
+        height: 52px;
+        font-size: 1.3rem;
+      }
+
+      .accesibilidad-bar {
+        left: 12px;
+        bottom: 72px;
+        padding: 8px 5px 5px 5px;
+        min-width: 40px;
+        min-height: 40px;
+        gap: 5px;
+      }
+
+      .accesibilidad-bar button,
+      .accesibilidad-bar select {
+        width: 32px;
+        height: 32px;
+        font-size: 1em;
+      }
+
+      .accesibilidad-bar .icono {
+        font-size: 1em;
+      }
+    }
+
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
     :root {
@@ -74,94 +255,6 @@
 
     .skip-link:focus {
       top: 6px;
-    }
-
-    /* Barra de accesibilidad */
-    .accesibilidad-bar {
-      position: fixed;
-      left: 24px;
-      bottom: 24px;
-      z-index: 2000;
-      background: #222;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: center;
-      padding: 14px 10px 10px 10px;
-      border-radius: 18px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-      opacity: 0.93;
-      min-width: 48px;
-      min-height: 48px;
-      transition: box-shadow 0.2s, opacity 0.2s;
-    }
-
-    .accesibilidad-bar:hover, 
-    .accesibilidad-bar:focus-within {
-      opacity: 1;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
-    }
-
-    .accesibilidad-bar button, 
-    .accesibilidad-bar select {
-      background: #fff;
-      color: #222;
-      border: none;
-      border-radius: 50%;
-      width: 38px;
-      height: 38px;
-      margin: 0;
-      font-size: 1.2em;
-      cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
-      transition: background 0.2s, color 0.2s, transform 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 2px;
-    }
-
-    .accesibilidad-bar button.active {
-      background: #ffb300;
-      color: #222;
-      transform: scale(1.08);
-    }
-
-    .accesibilidad-bar select {
-      border-radius: 8px;
-      width: 38px;
-      height: 38px;
-      font-size: 0.95em;
-      padding: 0;
-      margin-bottom: 2px;
-    }
-
-    .accesibilidad-bar .contraste-slider-container {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 2px;
-    }
-
-    .accesibilidad-bar input[type="range"]#contrasteRange {
-      width: 38px;
-      margin: 0 0 2px 0;
-      accent-color: #FFD700;
-      cursor: pointer;
-      border-radius: 8px;
-      background: #eee;
-      height: 4px;
-      padding: 0;
-      display: block;
-    }
-
-    .accesibilidad-bar button:focus,
-    .accesibilidad-bar select:focus,
-    .accesibilidad-bar input:focus {
-      outline: 3px solid #007acc;
-      outline-offset: 2px;
     }
 
     /* NAVBAR */
@@ -721,6 +814,10 @@
         font-weight: 600;
       }
       nav a img {
+        width: 32px;
+        height: 32px;
+        margin: 0;
+      }
       .hero {
         min-height: 55vh;
         margin-top: 110px;
@@ -754,14 +851,14 @@
         font-size: 0.95rem;
       }
       .boton-carrito {
+        width: 90%;
+        max-width: none;
       }
-      .productos-lista {
-        gap: 12px;
+      footer {
+        padding: 24px 12px 32px;
       }
-      .producto-item img {
-        height: 180px;
-      }
-    }   font-size: 0.9rem;
+      footer p {
+        font-size: 0.9rem;
       }
     }
 
@@ -772,16 +869,16 @@
       }
       header {
         padding: 8px 10px;
+      }
+      .logo img {
+        height: 36px;
+      }
       .hero {
         min-height: 50vh;
         margin-top: 100px;
       }
       .productos-lista {
         gap: 12px;
-      }
-      .producto-item img {
-        height: 180px;
-      } gap: 12px;
       }
       .producto-item img {
         height: 180px;
@@ -818,15 +915,15 @@
 
   <!-- Panel de accesibilidad (oculto por defecto) -->
   <div class="accesibilidad-bar" id="accesibilidadBar" aria-label="Barra de accesibilidad">
-    <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno" aria-pressed="false" tabindex="0"><span>🌙</span></button>
-    <div class="contraste-slider-container">
-      <button id="contrasteBtn" title="Contraste" aria-label="Contraste" aria-pressed="false" tabindex="0"><span>🔳</span></button>
-      <input id="contrasteRange" type="range" min="1" max="3" step="0.1" value="1" title="Nivel de contraste" aria-label="Nivel de contraste" tabindex="0">
+    <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+      <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
+      <input id="contrasteRange" type="range" min="1" max="3" step="0.1" value="1" style="width:38px;margin:0 0 2px 0;" title="Nivel de contraste" aria-label="Nivel de contraste">
     </div>
-    <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises" aria-pressed="false" tabindex="0"><span>🌑</span></button>
-    <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra" tabindex="0"><span>A+</span></button>
-    <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra" tabindex="0"><span>A-</span></button>
-    <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura" aria-pressed="false" tabindex="0"><span>📖</span></button>
+    <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
+    <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
+    <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
+    <button id="guiaLecturaBtn" title="Guía de lectura" aria-label="Guía de lectura"><span class="icono">📖</span></button>
     <select id="tipografiaSelect" aria-label="Cambiar tipografía">
       <option value="default">Aa</option>
       <option value="arial">A</option>
@@ -834,7 +931,7 @@
       <option value="comic">C</option>
       <option value="open">O</option>
     </select>
-    <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla" aria-pressed="false" tabindex="0"><span>🔊</span></button>
+    <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
   </div>
 
   <header>
