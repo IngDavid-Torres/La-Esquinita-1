@@ -263,23 +263,6 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // NO guardamos guiaLectura (es intencional que sea temporal)
     };
-  }   let contenido = document.querySelector('.dashboard-main') || document.getElementById('contenido-principal') || document.body;
-      
-      if(config.guiaLectura) {
-        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-        contenido.style.background = '#fffbe7';
-        if(contenido.scrollIntoView) {
-          contenido.scrollIntoView({behavior:'smooth', block:'center'});
-        }
-        this.classList.add('active');
-      } else {
-        contenido.style.boxShadow = '';
-        contenido.style.background = '';
-        this.classList.remove('active');
-      }
-      
-      guardarConfig();
-    };
   }
 
   // Cambiar tipografía
