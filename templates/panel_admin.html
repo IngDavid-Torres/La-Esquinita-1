@@ -652,6 +652,19 @@
             z-index: 2000;
             box-shadow: 0 -2px 12px rgba(44,44,44,0.12);
             backdrop-filter: blur(4px);
+           
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .dashboard-main {
+            flex: 1 0 auto;
         }
         /* Eliminar media queries que cambian el layout en móviles para forzar modo escritorio */
         .alert-modal {
@@ -1099,23 +1112,23 @@
                 <div class="action-box">
                     <h3>👥 Gestión de Usuarios</h3>
                     <p>Controla clientes y productores registrados en la plataforma.</p>
-                    <button onclick="window.location.href='{{ url_for('gestion_usuarios') }}';">Administrar Usuarios</button>
-                    <button onclick="window.location.href='{{ url_for('agregar_usuario') }}';" style="background:var(--secondary);color:#fff;">Agregar Usuario</button>
+                            <button onclick="window.location.href='{{ url_for('gestion_usuarios') }}';">Administrar Usuarios</button>
+                            <button onclick="window.location.href='{{ url_for('agregar_usuario') }}';" style="background:var(--secondary);color:#fff;">Agregar Usuario</button>
                 </div>
                 <div class="action-box">
                     <h3>📦 Administración de Pedidos</h3>
                     <p>Consulta y gestiona todos los pedidos activos y su historial.</p>
-                    <button onclick="window.location.href='{{ url_for('admin_pedidos') }}';" style="background:var(--secondary);color:#fff;">Ver Estatus de Pedidos</button>
+                            <button onclick="window.location.href='{{ url_for('admin_pedidos') }}';" style="background:var(--secondary);color:#fff;">Ver Estatus de Pedidos</button>
                 </div>
                 <div class="action-box">
                     <h3>🛒 Supervisión de Productos</h3>
                     <p>Revisa y administra los productos publicados.</p>
-                    <button onclick="window.location.href='{{ url_for('admin_productos') }}';">Ver Productos</button>
+                            <button onclick="window.location.href='{{ url_for('admin_productos') }}';">Ver Productos</button>
                 </div>
                 <div class="action-box">
                     <h3>✉️ Mensajes de Usuarios</h3>
                     <p>Consulta y elimina mensajes enviados por clientes y productores.</p>
-                    <button onclick="window.location.href='{{ url_for('admin_mensajes') }}';">Ver Mensajes</button>
+                            <button onclick="window.location.href='{{ url_for('admin_mensajes') }}';">Ver Mensajes</button>
                 </div>
             </div>
         </div>
