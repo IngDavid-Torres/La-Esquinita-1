@@ -193,6 +193,260 @@
             font-weight: bold;
             color: #333;
         }
+        
+        /* ========== RESPONSIVE DESIGN ========== */
+
+        /* Tablets y dispositivos medianos */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 35px;
+                max-width: 450px;
+            }
+            
+            .logo h1 {
+                font-size: 2.3em;
+            }
+            
+            .logo p {
+                font-size: 1.05em;
+            }
+        }
+
+        /* Tablets pequeñas */
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+            
+            .container {
+                padding: 32px 28px;
+                max-width: 420px;
+            }
+            
+            .logo h1 {
+                font-size: 2.2em;
+            }
+            
+            .step {
+                padding: 9px 18px;
+                font-size: 0.95em;
+            }
+        }
+
+        /* Móviles medianos (iPhone 12, 13, 14, etc.) */
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            
+            .container {
+                padding: 28px 20px;
+                max-width: 100%;
+                border-radius: 12px;
+            }
+            
+            .logo {
+                margin-bottom: 24px;
+            }
+            
+            .logo h1 {
+                font-size: 2em;
+                margin-bottom: 8px;
+            }
+            
+            .logo p {
+                font-size: 1em;
+            }
+            
+            .step-indicator {
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 24px;
+            }
+            
+            .step {
+                padding: 12px 20px;
+                font-size: 0.95em;
+                width: 100%;
+                text-align: center;
+            }
+            
+            .form-group {
+                margin-bottom: 16px;
+            }
+            
+            label {
+                font-size: 0.95em;
+            }
+            
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            input[type="tel"] {
+                padding: 13px;
+                font-size: 16px;
+            }
+            
+            .sms-code-input {
+                font-size: 22px;
+                letter-spacing: 8px;
+                padding: 14px;
+            }
+            
+            button[type="submit"] {
+                padding: 14px;
+                font-size: 1em;
+            }
+            
+            .phone-display {
+                padding: 13px;
+                font-size: 0.95em;
+            }
+            
+            .alert {
+                padding: 13px;
+                font-size: 0.95em;
+            }
+            
+            .back-link {
+                font-size: 0.9em;
+            }
+        }
+
+        /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 24px 18px;
+                border-radius: 10px;
+            }
+            
+            .logo h1 {
+                font-size: 1.8em;
+            }
+            
+            .logo p {
+                font-size: 0.95em;
+            }
+            
+            .step {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+            
+            .form-group {
+                margin-bottom: 14px;
+            }
+            
+            label {
+                font-size: 0.9em;
+                margin-bottom: 4px;
+            }
+            
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            input[type="tel"] {
+                padding: 12px;
+                font-size: 16px;
+            }
+            
+            .sms-code-input {
+                font-size: 20px;
+                letter-spacing: 6px;
+            }
+            
+            button[type="submit"] {
+                padding: 13px;
+                font-size: 0.98em;
+            }
+            
+            small {
+                font-size: 11px !important;
+            }
+        }
+
+        /* iPhone SE y dispositivos muy pequeños */
+        @media (max-width: 375px) {
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                padding: 20px 16px;
+            }
+            
+            .logo h1 {
+                font-size: 1.6em;
+            }
+            
+            .logo p {
+                font-size: 0.9em;
+            }
+            
+            .step {
+                padding: 8px 14px;
+                font-size: 0.85em;
+            }
+            
+            .sms-code-input {
+                font-size: 18px;
+                letter-spacing: 5px;
+            }
+        }
+
+        /* Landscape mode para móviles */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+                margin: 10px auto;
+            }
+            
+            .logo {
+                margin-bottom: 15px;
+            }
+            
+            .logo h1 {
+                font-size: 1.6em;
+                margin-bottom: 5px;
+            }
+            
+            .logo p {
+                font-size: 0.9em;
+            }
+            
+            .step-indicator {
+                margin-bottom: 15px;
+                gap: 10px;
+            }
+            
+            .step {
+                padding: 8px 14px;
+                font-size: 0.85em;
+            }
+            
+            .form-group {
+                margin-bottom: 12px;
+            }
+            
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            input[type="tel"] {
+                padding: 10px;
+            }
+            
+            button[type="submit"] {
+                padding: 11px;
+            }
+        }
     </style>
 </head>
 <body>

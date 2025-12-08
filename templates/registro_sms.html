@@ -235,35 +235,250 @@
             border: 1px solid #c8e6c9;
         }
         
-        @media (max-width: 600px) {
+        /* ========== RESPONSIVE DESIGN ========== */
+
+        /* Tablets y dispositivos medianos */
+        @media (max-width: 1024px) {
             .container {
-                padding: 30px 20px;
-                margin: 10px;
-                max-width: 98vw;
-                font-size: 0.97em;
+                padding: 35px 25px;
+                max-width: 420px;
             }
+            
+            h2 {
+                font-size: 1.7em;
+            }
+        }
+
+        /* Tablets pequeñas */
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+            
+            .container {
+                padding: 32px 22px;
+                max-width: 400px;
+            }
+            
             .logo img {
-                max-width: 70px;
-                margin-bottom: 6px;
+                max-width: 110px;
             }
-            h2 { font-size: 1.1em; margin-bottom: 10px; }
-            .step-indicator { margin-bottom: 18px; }
-            .step { width: 28px; height: 28px; font-size: 1em; margin: 0 4px; }
-            form { gap: 8px; }
-            input, select { padding: 10px; font-size: 0.95em; border-radius: 8px; }
-            button, .resend-code { padding: 10px; font-size: 0.95em; border-radius: 8px; }
-            .verification-info { padding: 10px; font-size: 0.95em; border-radius: 8px; }
-            .verification-code-input { font-size: 1.1em; letter-spacing: 3px; }
-            .alert { font-size: 0.95em; padding: 8px; margin-bottom: 10px; }
-            .back-link { margin-top: 10px; font-size: 0.95em; }
+            
+            h2 {
+                font-size: 1.6em;
+            }
+        }
+
+        /* Móviles medianos (iPhone 12, 13, 14, etc.) */
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            
+            .container {
+                padding: 28px 18px;
+                margin: 8px;
+                max-width: 100%;
+                border-radius: 16px;
+            }
+            
+            .logo img {
+                max-width: 100px;
+                margin-bottom: 12px;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+                margin-bottom: 16px;
+            }
+            
+            .step-indicator {
+                margin-bottom: 20px;
+            }
+            
+            .step {
+                width: 36px;
+                height: 36px;
+                margin: 0 8px;
+            }
+            
+            form {
+                gap: 12px;
+            }
+            
+            input,
+            select {
+                padding: 13px;
+                font-size: 1em;
+            }
+            
+            button,
+            .resend-code {
+                padding: 14px;
+                font-size: 1em;
+            }
+            
+            .verification-info {
+                padding: 14px;
+                font-size: 0.95em;
+            }
+            
+            .verification-code-input {
+                font-size: 1.3em;
+                letter-spacing: 4px;
+                padding: 14px;
+            }
+            
+            .alert {
+                font-size: 0.95em;
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+            
+            .back-link {
+                margin-top: 16px;
+                font-size: 0.9em;
+            }
+            
             .phone-input-group {
                 flex-direction: column;
-                gap: 4px;
+                gap: 8px;
             }
+            
             .country-code {
                 width: 100%;
+                padding: 13px;
+                font-size: 1em;
+            }
+        }
+
+        /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+        @media (max-width: 480px) {
+            body {
                 padding: 10px;
+            }
+            
+            .container {
+                padding: 24px 16px;
+                margin: 6px;
+                border-radius: 14px;
+            }
+            
+            .logo img {
+                max-width: 90px;
+                margin-bottom: 10px;
+            }
+            
+            h2 {
+                font-size: 1.4em;
+                margin-bottom: 14px;
+            }
+            
+            .step-indicator {
+                margin-bottom: 18px;
+            }
+            
+            .step {
+                width: 32px;
+                height: 32px;
+                margin: 0 6px;
                 font-size: 0.95em;
+            }
+            
+            form {
+                gap: 10px;
+            }
+            
+            input,
+            select {
+                padding: 12px;
+                font-size: 0.98em;
+            }
+            
+            button,
+            .resend-code {
+                padding: 13px;
+                font-size: 0.98em;
+            }
+            
+            .verification-info {
+                padding: 12px;
+                font-size: 0.92em;
+            }
+            
+            .verification-code-input {
+                font-size: 1.2em;
+                padding: 13px;
+            }
+            
+            .alert {
+                padding: 9px;
+            }
+        }
+
+        /* iPhone SE y dispositivos muy pequeños */
+        @media (max-width: 375px) {
+            html {
+                font-size: 14px;
+            }
+            
+            body {
+                padding: 8px;
+            }
+            
+            .container {
+                padding: 20px 14px;
+                margin: 4px;
+                border-radius: 12px;
+            }
+            
+            .logo img {
+                max-width: 80px;
+            }
+            
+            h2 {
+                font-size: 1.3em;
+            }
+            
+            .step {
+                width: 28px;
+                height: 28px;
+                margin: 0 5px;
+            }
+        }
+
+        /* Landscape mode para móviles */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+                margin: 8px auto;
+            }
+            
+            .logo img {
+                max-width: 80px;
+                margin-bottom: 8px;
+            }
+            
+            h2 {
+                font-size: 1.3em;
+                margin-bottom: 12px;
+            }
+            
+            .step-indicator {
+                margin-bottom: 15px;
+            }
+            
+            form {
+                gap: 8px;
+            }
+            
+            .verification-info {
+                padding: 10px;
+                font-size: 0.9em;
             }
         }
     </style>
