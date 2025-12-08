@@ -457,14 +457,196 @@
     .notificacion.night-mode { background: #ffb300 !important; color: #232323 !important; }
     .footer-fixed.night-mode { background: #181818 !important; color: #fff !important; }
     .accesibilidad-bar.night-mode { background: #232323 !important; color: #fff !important; }
+    
+    /* ========== RESPONSIVE DESIGN COMPLETO ========== */
+
+    /* Tablets y dispositivos medianos */
+    @media(max-width:1024px){
+      .sidebar {
+        width: 260px;
+      }
+      .sidebar .logo img {
+        width: 95px;
+      }
+      .sidebar .cliente-nombre {
+        font-size: 1.1em;
+      }
+      .sidebar nav {
+        gap: 14px;
+      }
+      .sidebar nav button, .sidebar nav a {
+        font-size: 1em;
+        padding: 10px 14px;
+      }
+      .main-content {
+        margin-left: 260px;
+        padding: 40px 36px 36px 36px;
+      }
+      .dashboard-header h1 {
+        font-size: 1.9em;
+      }
+      .dashboard-sections {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 28px;
+      }
+      .section-box {
+        padding: 26px 20px 20px 20px;
+      }
+    }
+
+    /* Tablets pequeñas y móviles grandes */
+    @media(max-width:768px){
+      .sidebar {
+        width: 240px;
+      }
+      .sidebar .logo img {
+        width: 85px;
+      }
+      .sidebar .cliente-nombre {
+        font-size: 1em;
+        margin-bottom: 24px;
+      }
+      .sidebar nav {
+        gap: 12px;
+      }
+      .sidebar nav button, .sidebar nav a {
+        font-size: 0.95em;
+        padding: 10px 12px;
+        width: 90%;
+      }
+      .main-content {
+        margin-left: 240px;
+        padding: 32px 24px 28px 24px;
+      }
+      .dashboard-header h1 {
+        font-size: 1.7em;
+      }
+      .dashboard-sections {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .section-box {
+        max-width: 100%;
+        padding: 24px 18px 18px 18px;
+      }
+      .footer-fixed {
+        padding: 18px 0 12px 0;
+        font-size: 0.95em;
+      }
+    }
+
+    /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+    @media(max-width:480px){
+      .sidebar-toggle-btn {
+        width: 44px !important;
+        height: 44px !important;
+        left: 14px !important;
+        bottom: 28px !important;
+        font-size: 1.3em !important;
+      }
+      .sidebar {
+        width: 85vw;
+        max-width: 300px;
+      }
+      .main-content {
+        padding: 16px 12px 80px 12px;
+      }
+      .dashboard-header h1 {
+        font-size: 1.3em;
+      }
+      .dashboard-sections {
+        gap: 16px;
+      }
+      .section-box {
+        padding: 18px 14px 14px 14px;
+      }
+      .section-box h2 {
+        font-size: 1.15em;
+        margin-bottom: 12px;
+      }
+      .section-box li {
+        font-size: 0.9em;
+        margin-bottom: 8px;
+      }
+      .section-box .btn, .section-box .btn-red {
+        padding: 10px 0;
+        font-size: 0.95em;
+      }
+      .accesibilidad-toggle {
+        width: 52px;
+        height: 52px;
+        left: 12px;
+        bottom: 95px;
+      }
+      .accesibilidad-bar {
+        left: 12px;
+        bottom: 160px;
+        padding: 8px 5px 5px 5px;
+        min-width: 40px;
+        min-height: 40px;
+        gap: 5px;
+      }
+      .accesibilidad-bar button, .accesibilidad-bar select {
+        width: 32px;
+        height: 32px;
+        font-size: 1em;
+      }
+      .footer-fixed {
+        padding: 14px 0 8px 0;
+        font-size: 0.85em;
+      }
+    }
+
+    /* iPhone SE y dispositivos muy pequeños */
+    @media(max-width:375px){
+      html {
+        font-size: 14px;
+      }
+      .sidebar {
+        width: 90vw;
+      }
+      .main-content {
+        padding: 14px 10px 80px 10px;
+      }
+      .dashboard-header h1 {
+        font-size: 1.2em;
+      }
+      .section-box {
+        padding: 16px 12px 12px 12px;
+      }
+      .footer-fixed {
+        font-size: 0.8em;
+      }
+    }
+
+    /* Landscape mode para móviles */
+    @media(max-height:500px) and (orientation: landscape){
+      .sidebar {
+        overflow-y: auto;
+        max-height: 100vh;
+      }
+      .main-content {
+        padding: 12px 16px 60px 16px;
+      }
+      .dashboard-header h1 {
+        font-size: 1.3em;
+      }
+      .dashboard-sections {
+        gap: 14px;
+      }
+      .section-box {
+        padding: 16px 14px 14px 14px;
+      }
+    }
+    
     /* --- Responsive: solo ajuste de padding para evitar desbordes --- */
     @media (max-width: 600px) {
       .main-content {
-        padding: 12px 2vw 12px 2vw;
+        padding: 20px 16px 80px 16px;
       }
       .section-box {
-        padding: 18px 2vw 18px 2vw;
-        max-width: 98vw;
+        padding: 20px 16px 16px 16px;
+        max-width: 100%;
       }
     }
   </style>
