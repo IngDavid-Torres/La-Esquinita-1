@@ -6,6 +6,22 @@ window.addEventListener('load', function() {
   const accesBar = document.querySelector('.accesibilidad-bar');
   
   if(toggleBtn && accesBar) {
+    // CRÍTICO: Evitar que clicks dentro del panel lo cierren
+    accesBar.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+    accesBar.addEventListener('mousedown', function(e) {
+      e.stopPropagation();
+    });
+    accesBar.addEventListener('touchstart', function(e) {
+      e.stopPropagation();
+    });
+    
+    // Prevenir scroll cuando se interactúa con el panel
+    accesBar.addEventListener('wheel', function(e) {
+      e.stopPropagation();
+    });
+    
     // Cargar estado del panel
     const panelVisible = localStorage.getItem('acc_panelVisible') === 'true';
     if(panelVisible) {
@@ -13,7 +29,8 @@ window.addEventListener('load', function() {
       toggleBtn.classList.add('active');
     }
     
-    toggleBtn.addEventListener('click', function() {
+    toggleBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
       const isVisible = accesBar.classList.toggle('show');
       this.classList.toggle('active');
       localStorage.setItem('acc_panelVisible', isVisible);
@@ -196,32 +213,11 @@ document.addEventListener('DOMContentLoaded', function() {
       guardarConfig();
     };
   }
-  // Contraste alto con range (MEJORADO con stopPropagation)
+  // Contraste alto con range
   const btnContraste = document.getElementById('contrasteBtn');
   const contrasteRange = document.getElementById('contrasteRange');
   
   if(btnContraste && contrasteRange) {
-    // FIX: Evitar que el range cierre el panel
-    contrasteRange.addEventListener('click', function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-    });
-    contrasteRange.addEventListener('mousedown', function(e) {
-      e.stopPropagation();
-    });
-    contrasteRange.addEventListener('mousemove', function(e) {
-      e.stopPropagation();
-    });
-    contrasteRange.addEventListener('touchstart', function(e) {
-      e.stopPropagation();
-    });
-    contrasteRange.addEventListener('touchmove', function(e) {
-      e.stopPropagation();
-    });
-    contrasteRange.addEventListener('input', function(e) {
-      e.stopPropagation();
-    });
-    
     btnContraste.onclick = function(e) {
       e.stopPropagation();
       config.contraste = !config.contraste;
@@ -239,12 +235,21 @@ document.addEventListener('DOMContentLoaded', function() {
       guardarConfig();
     };
     
-    contrasteRange.oninput = function() {
+    contrasteRange.oninput = function(e) {
+      e.stopPropagation();
       config.contrasteValor = parseFloat(this.value);
       if(config.contraste) {
         actualizarFiltros();
         guardarConfig();
       }
+    };
+    
+    contrasteRange.onmousedown = function(e) {
+      e.stopPropagation();
+    };
+    
+    contrasteRange.ontouchstart = function(e) {
+      e.stopPropagation();
     };
     
     // Restaurar estado del contraste
