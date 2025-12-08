@@ -973,9 +973,9 @@
       <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
     </div>
     <nav role="navigation" aria-label="Navegación principal">
-      <a href="{{ url_for('inicio') }}" aria-label="Ir a la página de inicio">
-        <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">
-        Inicio
+      <a href="{{ url_for('productos') }}" aria-label="Ir a la tienda de productos">
+        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">
+        Tienda
       </a>
       <a href="{{ url_for('contacto') }}" aria-label="Ir a la página de contacto">
         <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">
@@ -985,7 +985,7 @@
         <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
         Carrito{% if cantidad_carrito and cantidad_carrito > 0 %} ({{ cantidad_carrito }}){% endif %}
       </a>
-      {% if session.get('usuario_id') %}
+      {% if session.get('usuario_nombre') %}
         <a href="{{ url_for('panel_cliente') }}" aria-label="Ir al panel de cliente">
           <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">
           Mi Dashboard

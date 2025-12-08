@@ -1217,26 +1217,6 @@
       }
     }
 
-    /* Estilos adicionales para navegación móvil */
-    nav a.destruccion-total {
-      display: inline-flex;
-    }
-
-    @media(max-width: 600px) {
-      nav a.destruccion-total {
-        flex: 1 1 100%;
-        width: 100%;
-        justify-content: center;
-        margin-top: 8px !important;
-      }
-    }
-
-    @media(max-width: 480px) {
-      nav a.destruccion-total {
-        font-size: 0.65rem;
-      }
-    }
-
     /* Modal responsivo */
     #modal-login-required {
       padding: 20px;
@@ -1301,27 +1281,23 @@
       <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
     </div>
     <nav>
-      <a href="{{ url_for('productos') }}" title="Tienda">
-        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">
-        <span>Tienda</span>
+      <a href="{{ url_for('productos') }}">
+        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">Tienda
       </a>
-      <a href="{{ url_for('contacto') }}" title="Contacto">
-        <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">
-        <span>Contacto</span>
+      <a href="{{ url_for('contacto') }}">
+        <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
       </a>
-      <a href="{{ url_for('carrito') }}" title="Carrito">
+      <a href="{{ url_for('carrito') }}">
         <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
-        <span>Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}</span>
+        Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}
       </a>
       {% if session['usuario_nombre'] %}
-        <a href="{{ url_for('panel_cliente') }}" title="Mi Dashboard">
-          <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">
-          <span>Mi Dashboard</span>
+        <a href="{{ url_for('panel_cliente') }}">
+          <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">Mi Dashboard
         </a>
       {% else %}
-        <a href="{{ url_for('login') }}" title="Ingresar">
-          <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">
-          <span>Ingresar</span>
+        <a href="{{ url_for('login') }}">
+          <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">Ingresar
         </a>
       {% endif %}
     </nav>
