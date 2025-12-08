@@ -524,24 +524,99 @@
 
   <div id="contenido-principal">
   <script>
+    // ============================================
+    // SISTEMA DE ACCESIBILIDAD CON PERSISTENCIA
+    // ============================================
+    
     const root = document.documentElement;
     const body = document.body;
-    let fontSize = 1;
-    let modoNocturno = false;
-    let contraste = false;
-    let contrasteValor = 1;
-    let grises = false;
-    let guiaLectura = false;
-    let lectorActivo = false;
-    let tipografia = 'default';
+    
+    // Cargar configuración guardada de localStorage
+    let fontSize = parseFloat(localStorage.getItem('accesibilidad_fontSize')) || 1;
+    let modoNocturno = localStorage.getItem('accesibilidad_modoNocturno') === 'true';
+    let contraste = localStorage.getItem('accesibilidad_contraste') === 'true';
+    let contrasteValor = parseFloat(localStorage.getItem('accesibilidad_contrasteValor')) || 1;
+    let grises = localStorage.getItem('accesibilidad_grises') === 'true';
+    let guiaLectura = false; // No persistir guía de lectura
+    let lectorActivo = false; // No persistir lector
+    let tipografia = localStorage.getItem('accesibilidad_tipografia') || 'default';
 
+    // Función para actualizar filtros combinados
+    function actualizarFiltros() {
+      let filtros = [];
+      if(contraste) filtros.push(`contrast(${contrasteValor})`);
+      if(grises) filtros.push('grayscale(1)');
+      body.style.filter = filtros.join(' ');
+    }
+
+    // Función para guardar configuración
+    function guardarConfig() {
+      localStorage.setItem('accesibilidad_fontSize', fontSize);
+      localStorage.setItem('accesibilidad_modoNocturno', modoNocturno);
+      localStorage.setItem('accesibilidad_contraste', contraste);
+      localStorage.setItem('accesibilidad_contrasteValor', contrasteValor);
+      localStorage.setItem('accesibilidad_grises', grises);
+      localStorage.setItem('accesibilidad_tipografia', tipografia);
+    }
+
+    // Aplicar configuración guardada al cargar la página
+    function aplicarConfiguracionInicial() {
+      // Tamaño de fuente
+      root.style.fontSize = (fontSize * 16) + 'px';
+      
+      // Modo nocturno
+      if(modoNocturno) {
+        body.style.background = '#181818';
+        body.style.color = '#fff';
+        document.getElementById('modoNocturnoBtn').classList.add('active');
+      }
+      
+      // Contraste
+      if(contraste) {
+        document.getElementById('contrasteBtn').classList.add('active');
+        document.getElementById('contrasteRange').disabled = false;
+        document.getElementById('contrasteRange').value = contrasteValor;
+      } else {
+        document.getElementById('contrasteRange').disabled = true;
+      }
+      
+      // Escala de grises
+      if(grises) {
+        document.getElementById('grisesBtn').classList.add('active');
+      }
+      
+      // Aplicar filtros
+      actualizarFiltros();
+      
+      // Tipografía
+      if(tipografia !== 'default') {
+        document.getElementById('tipografiaSelect').value = tipografia;
+        switch(tipografia) {
+          case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
+          case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
+          case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
+          case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
+        }
+      }
+    }
+
+    // Aplicar configuración al cargar
+    aplicarConfiguracionInicial();
+
+    // ============================================
+    // CONTROLES DE ACCESIBILIDAD
+    // ============================================
+
+    // Tamaño de fuente
     function setFontSize(mult) {
       fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
       root.style.fontSize = (fontSize * 16) + 'px';
+      guardarConfig();
     }
     document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
     document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
 
+    // Modo nocturno
     document.getElementById('modoNocturnoBtn').onclick = function() {
       modoNocturno = !modoNocturno;
       if(modoNocturno) {
@@ -553,42 +628,56 @@
         body.style.color = '';
         this.classList.remove('active');
       }
+      guardarConfig();
     };
 
+    // Contraste
     const contrasteRange = document.getElementById('contrasteRange');
     const contrasteBtn = document.getElementById('contrasteBtn');
+    
+    // IMPORTANTE: Evitar que el range cierre el panel
+    contrasteRange.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+    contrasteRange.addEventListener('mousedown', function(e) {
+      e.stopPropagation();
+    });
+    
     contrasteBtn.onclick = function() {
       contraste = !contraste;
       if(contraste) {
         contrasteValor = parseFloat(contrasteRange.value);
-        body.style.filter = `contrast(${contrasteValor})`;
         contrasteRange.disabled = false;
         this.classList.add('active');
       } else {
-        body.style.filter = '';
         contrasteRange.disabled = true;
         this.classList.remove('active');
       }
+      actualizarFiltros();
+      guardarConfig();
     };
+    
     contrasteRange.oninput = function() {
       contrasteValor = parseFloat(this.value);
       if(contraste) {
-        body.style.filter = `contrast(${contrasteValor})`;
+        actualizarFiltros();
+        guardarConfig();
       }
     };
-    contrasteRange.disabled = true;
 
+    // Escala de grises
     document.getElementById('grisesBtn').onclick = function() {
       grises = !grises;
       if(grises) {
-        body.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
         this.classList.add('active');
       } else {
-        body.style.filter = contraste ? `contrast(${contrasteValor})` : '';
         this.classList.remove('active');
       }
+      actualizarFiltros();
+      guardarConfig();
     };
 
+    // Guía de lectura (NO se persiste)
     document.getElementById('guiaLecturaBtn').onclick = function() {
       guiaLectura = !guiaLectura;
       let contenido = document.getElementById('contenido-principal');
@@ -603,6 +692,7 @@
       }
     };
 
+    // Tipografía
     document.getElementById('tipografiaSelect').onchange = function() {
       tipografia = this.value;
       switch(tipografia) {
@@ -612,8 +702,10 @@
         case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
         default: body.style.fontFamily = '';
       }
+      guardarConfig();
     };
 
+    // Lector de pantalla (NO se persiste)
     document.getElementById('lectorPantallaBtn').onclick = function() {
       lectorActivo = !lectorActivo;
       if(lectorActivo) {
@@ -632,12 +724,16 @@
       }
     };
 
-    // Toggle del panel de accesibilidad
+    // ============================================
+    // TOGGLE DEL PANEL
+    // ============================================
+    
     const accesibilidadToggle = document.getElementById('accesibilidadToggle');
     const accesibilidadBar = document.getElementById('accesibilidadBar');
     let accesibilidadAbierta = false;
 
-    accesibilidadToggle.addEventListener('click', function() {
+    accesibilidadToggle.addEventListener('click', function(e) {
+      e.stopPropagation();
       accesibilidadAbierta = !accesibilidadAbierta;
       if(accesibilidadAbierta) {
         accesibilidadBar.classList.add('show');

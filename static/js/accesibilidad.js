@@ -4,24 +4,26 @@ document.addEventListener('DOMContentLoaded', function() {
   const root = document.documentElement;
   const body = document.body;
 
-  // Cargar configuración guardada
+  // Cargar configuración guardada (MEJORADO con contrasteValor)
   let config = {
     fontSize: parseFloat(localStorage.getItem('acc_fontSize')) || 1,
     modoNocturno: localStorage.getItem('acc_modoNocturno') === 'true',
     contraste: localStorage.getItem('acc_contraste') === 'true',
+    contrasteValor: parseFloat(localStorage.getItem('acc_contrasteValor')) || 1,
     grises: localStorage.getItem('acc_grises') === 'true',
-    guiaLectura: localStorage.getItem('acc_guiaLectura') === 'true',
+    guiaLectura: false, // NO persistir guía de lectura
     tipografia: localStorage.getItem('acc_tipografia') || 'default'
   };
 
-  // Guardar configuración
+  // Guardar configuración (MEJORADO con contrasteValor)
   function guardarConfig() {
     localStorage.setItem('acc_fontSize', config.fontSize);
     localStorage.setItem('acc_modoNocturno', config.modoNocturno);
     localStorage.setItem('acc_contraste', config.contraste);
+    localStorage.setItem('acc_contrasteValor', config.contrasteValor);
     localStorage.setItem('acc_grises', config.grises);
-    localStorage.setItem('acc_guiaLectura', config.guiaLectura);
     localStorage.setItem('acc_tipografia', config.tipografia);
+    // guiaLectura NO se guarda (es temporal)
   }
 
   // Aplicar tipografía
@@ -76,7 +78,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // Aplicar configuración al cargar la página
+  // Función para actualizar filtros combinados (MEJORADO)
+  function actualizarFiltros() {
+    let filtros = [];
+    if(config.contraste) filtros.push(`contrast(${config.contrasteValor})`);
+    if(config.grises) filtros.push('grayscale(1)');
+    body.style.filter = filtros.join(' ');
+  }
+
+  // Aplicar configuración al cargar la página (MEJORADO)
   function aplicarConfiguracion() {
     // Tamaño de letra
     body.style.fontSize = config.fontSize + 'em';
@@ -88,34 +98,27 @@ document.addEventListener('DOMContentLoaded', function() {
       if(btnNocturno) btnNocturno.classList.add('active');
     }
     
-    // Contraste
-    let filtros = [];
+    // Contraste (MEJORADO con range value)
     if(config.contraste) {
-      filtros.push('contrast(1.7)');
       const btnContraste = document.getElementById('contrasteBtn');
+      const contrasteRange = document.getElementById('contrasteRange');
       if(btnContraste) btnContraste.classList.add('active');
+      if(contrasteRange) {
+        contrasteRange.disabled = false;
+        contrasteRange.value = config.contrasteValor;
+      }
     }
     
     // Escala de grises
     if(config.grises) {
-      filtros.push('grayscale(1)');
       const btnGrises = document.getElementById('grisesBtn');
       if(btnGrises) btnGrises.classList.add('active');
     }
     
-    // Aplicar filtros
-    if(filtros.length > 0) {
-      body.style.filter = filtros.join(' ');
-    }
+    // Aplicar filtros combinados
+    actualizarFiltros();
     
-    // Guía de lectura
-    if(config.guiaLectura) {
-      let contenido = document.querySelector('.dashboard-main') || document.getElementById('contenido-principal') || document.body;
-      contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-      contenido.style.background = '#fffbe7';
-      const btnGuia = document.getElementById('guiaLecturaBtn');
-      if(btnGuia) btnGuia.classList.add('active');
-    }
+    // Guía de lectura (NO se carga porque no se persiste)
     
     // Tipografía
     aplicarTipografia(config.tipografia);
@@ -161,55 +164,71 @@ document.addEventListener('DOMContentLoaded', function() {
       guardarConfig();
     };
   }
-
-  // Contraste alto
+  // Contraste alto con range (MEJORADO con stopPropagation)
   const btnContraste = document.getElementById('contrasteBtn');
-  if(btnContraste) {
+  const contrasteRange = document.getElementById('contrasteRange');
+  
+  if(btnContraste && contrasteRange) {
+    // FIX: Evitar que el range cierre el panel
+    contrasteRange.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+    contrasteRange.addEventListener('mousedown', function(e) {
+      e.stopPropagation();
+    });
+    contrasteRange.addEventListener('touchstart', function(e) {
+      e.stopPropagation();
+    });
+    
     btnContraste.onclick = function() {
       config.contraste = !config.contraste;
       
-      let filtros = [];
-      if(config.contraste) filtros.push('contrast(1.7)');
-      if(config.grises) filtros.push('grayscale(1)');
-      body.style.filter = filtros.join(' ');
-      
       if(config.contraste) {
+        config.contrasteValor = parseFloat(contrasteRange.value);
+        contrasteRange.disabled = false;
         this.classList.add('active');
       } else {
+        contrasteRange.disabled = true;
         this.classList.remove('active');
       }
       
+      actualizarFiltros();
       guardarConfig();
     };
-  }
-
-  // Escala de grises
-  const btnGrises = document.getElementById('grisesBtn');
-  if(btnGrises) {
-    btnGrises.onclick = function() {
-      config.grises = !config.grises;
-      
-      let filtros = [];
-      if(config.contraste) filtros.push('contrast(1.7)');
-      if(config.grises) filtros.push('grayscale(1)');
-      body.style.filter = filtros.join(' ');
-      
-      if(config.grises) {
-        this.classList.add('active');
-      } else {
-        this.classList.remove('active');
+    
+    contrasteRange.oninput = function() {
+      config.contrasteValor = parseFloat(this.value);
+      if(config.contraste) {
+        actualizarFiltros();
+        guardarConfig();
       }
-      
-      guardarConfig();
     };
   }
 
-  // Guía de lectura
+  // Escala de grises (MEJORADO con actualizarFiltros)
+  // Guía de lectura (NO se persiste, es temporal por sesión)
   const btnGuia = document.getElementById('guiaLecturaBtn');
   if(btnGuia) {
     btnGuia.onclick = function() {
       config.guiaLectura = !config.guiaLectura;
       let contenido = document.querySelector('.dashboard-main') || document.getElementById('contenido-principal') || document.body;
+      
+      if(config.guiaLectura) {
+        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+        contenido.style.background = '#fffbe7';
+        if(contenido.scrollIntoView) {
+          contenido.scrollIntoView({behavior:'smooth', block:'center'});
+        }
+        this.classList.add('active');
+      } else {
+        contenido.style.boxShadow = '';
+        contenido.style.background = '';
+        this.classList.remove('active');
+      }
+      
+      // NO guardamos guiaLectura (es intencional que sea temporal)
+    };
+  }   let contenido = document.querySelector('.dashboard-main') || document.getElementById('contenido-principal') || document.body;
       
       if(config.guiaLectura) {
         contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
