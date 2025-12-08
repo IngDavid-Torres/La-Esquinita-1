@@ -1,7 +1,11 @@
 // --- ACCESIBILIDAD GLOBAL CON PERSISTENCIA ---
 
-// --- MANEJO DEL BOTÓN TOGGLE ---
+// Esperar a que TODO esté listo (incluidos scripts inline)
 window.addEventListener('load', function() {
+  const root = document.documentElement;
+  const body = document.body;
+  
+  // --- MANEJO DEL BOTÓN TOGGLE ---
   const toggleBtn = document.getElementById('accesibilidadToggle');
   const accesBar = document.querySelector('.accesibilidad-bar');
   
@@ -48,12 +52,6 @@ window.addEventListener('load', function() {
       localStorage.setItem('acc_panelVisible', isVisible);
     });
   }
-});
-
-// Esperar a que TODO esté listo (incluidos scripts inline)
-window.addEventListener('load', function() {
-  const root = document.documentElement;
-  const body = document.body;
 
   // Cargar configuración guardada (MEJORADO con contrasteValor)
   let config = {
@@ -149,8 +147,8 @@ window.addEventListener('load', function() {
 
   // Aplicar configuración al cargar la página (MEJORADO)
   function aplicarConfiguracion() {
-    // Tamaño de letra
-    body.style.fontSize = config.fontSize + 'em';
+    // Tamaño de letra - APLICAR AL ROOT (html) para afectar TODO
+    root.style.setProperty('font-size', (config.fontSize * 16) + 'px', 'important');
     
     // Modo nocturno
     if(config.modoNocturno) {
@@ -196,7 +194,7 @@ window.addEventListener('load', function() {
       e.stopPropagation();
       e.preventDefault();
       config.fontSize = Math.max(0.7, Math.min(2.2, config.fontSize * 1.15));
-      body.style.fontSize = config.fontSize + 'em';
+      root.style.setProperty('font-size', (config.fontSize * 16) + 'px', 'important');
       guardarConfig();
     };
   }
@@ -208,7 +206,7 @@ window.addEventListener('load', function() {
       e.stopPropagation();
       e.preventDefault();
       config.fontSize = Math.max(0.7, Math.min(2.2, config.fontSize * 0.87));
-      body.style.fontSize = config.fontSize + 'em';
+      root.style.setProperty('font-size', (config.fontSize * 16) + 'px', 'important');
       guardarConfig();
     };
   }
