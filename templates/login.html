@@ -852,7 +852,25 @@
             </select>
             <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
         </div>
-        <div id="contenido-principal">
+        
+    <div id="contenido-principal">
+        <header>
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
+            </div>
+            <nav>
+                <a href="{{ url_for('inicio') }}">
+                    <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">Inicio
+                </a>
+                <a href="{{ url_for('productos') }}">
+                    <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">Tienda
+                </a>
+                <a href="{{ url_for('contacto') }}">
+                    <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
+                </a>
+            </nav>
+        </header>
+        
         <script>
             const root = document.documentElement;
             const body = document.body;
@@ -1006,27 +1024,12 @@
                 }
             });
         </script>
-    <header>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
-        </div>
-        <nav>
-        <a href="{{ url_for('inicio') }}">
-            <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">Inicio
-        </a>
-        <a href="{{ url_for('productos') }}">
-            <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">Tienda
-        </a>
         
-        <a href="{{ url_for('contacto') }}">
-            <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
-        </a>
-    </nav>
-    <div class="container">
-        <h2>🔐 Iniciar Sesión en La Esquinita</h2>
-        <form id="loginForm" action="{{ url_for('login') }}" method="POST">
-            <input type="email" id="emailInput" name="email" placeholder="Correo electrónico" required>
-            <input type="password" name="password" placeholder="Contraseña" required>
+        <div class="container">
+            <h2>🔐 Iniciar Sesión en La Esquinita</h2>
+            <form id="loginForm" action="{{ url_for('login') }}" method="POST">
+                <input type="email" id="emailInput" name="email" placeholder="Correo electrónico" required>
+                <input type="password" name="password" placeholder="Contraseña" required>
             
             <div class="captcha-container" id="captchaContainer">
                 <div class="captcha-display" id="captchaDisplay">
@@ -1055,6 +1058,7 @@
             </p>
         </div>
     </div>
+    
     <footer>
         <p>© 2025 La Esquinita - Todos los derechos reservados</p>
         <p>Hecho con 🌽 y ❤️ en México</p>
@@ -1064,6 +1068,7 @@
             <a href="#"><i>🐦</i></a>
         </div>
     </footer>
+</div>
 
 <div id="alerta-cargando" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(44,44,44,0.18);justify-content:center;align-items:center;">
   <div style="background:var(--primary);color:var(--secondary);border:2px solid var(--secondary);border-radius:18px;box-shadow:0 4px 24px rgba(44,44,44,0.18);padding:38px 32px 28px 32px;min-width:260px;max-width:90vw;text-align:center;font-size:1.18em;font-weight:bold;display:flex;flex-direction:column;align-items:center;">
