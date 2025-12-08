@@ -201,6 +201,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Iniciar Sesión | La Esquinita</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/accesibilidad.css') }}">
     <style>
         :root {
             --primary: #ffb300;
@@ -539,57 +541,72 @@
         /* Tablets y dispositivos medianos */
         @media(max-width:1024px){
             header {
-                padding: 14px 16px;
+                padding: 14px 20px;
             }
             .logo img {
-                height: 50px;
+                height: 54px;
             }
             nav {
-                gap: 14px;
+                gap: 16px;
             }
             nav a {
-                font-size: 0.9rem;
-                gap: 4px;
-            }
-            nav a img {
-                width: 22px;
-                height: 22px;
+                font-size: 0.95rem;
+                padding: 8px 12px;
             }
             .container {
-                margin: 120px auto 60px;
+                margin: 110px auto 60px;
+                padding: 32px 26px;
+                max-width: 480px;
             }
         }
 
         /* Tablets pequeñas y móviles grandes */
         @media(max-width:768px){
             header {
-                padding: 12px 16px;
-                flex-wrap: wrap;
+                padding: 14px 18px;
+                flex-direction: column;
+                gap: 12px;
             }
             .logo {
-                flex: 0 0 auto;
+                width: 100%;
+                justify-content: center;
             }
             .logo img {
-                height: 46px;
+                height: 52px;
             }
             nav {
-                gap: 10px;
-                flex: 1 1 100%;
+                width: 100%;
+                gap: 12px;
                 justify-content: space-around;
-                margin-top: 8px;
+                flex-wrap: wrap;
             }
             nav a {
-                font-size: 0.85rem;
-                gap: 4px;
-                padding: 6px 8px;
+                font-size: 0.9rem;
+                padding: 10px 14px;
+                flex: 0 1 auto;
+                min-width: 80px;
+                justify-content: center;
             }
             nav a img {
-                width: 20px;
-                height: 20px;
+                width: 24px;
+                height: 24px;
             }
             .container {
-                margin: 110px auto 50px;
-                padding: 28px 24px;
+                margin: 140px auto 50px;
+                padding: 30px 24px;
+                max-width: 90%;
+                width: 90%;
+            }
+            h2 {
+                font-size: 1.7em;
+            }
+            input {
+                padding: 14px;
+                font-size: 1.05em;
+            }
+            button {
+                padding: 14px;
+                font-size: 1.1em;
             }
             footer {
                 padding: 28px 16px 36px;
@@ -599,9 +616,80 @@
         /* Móviles medianos (iPhone 12, 13, 14, etc.) */
         @media(max-width:600px){
             header {
-                padding: 12px 14px;
+                padding: 12px 16px;
                 flex-direction: column;
                 gap: 10px;
+            }
+            .logo {
+                width: 100%;
+                justify-content: center;
+            }
+            .logo img {
+                height: 50px;
+            }
+            nav {
+                width: 100%;
+                gap: 10px;
+                justify-content: space-around;
+                padding: 0 4px;
+            }
+            nav a {
+                font-size: 0.85rem;
+                padding: 10px 8px;
+                flex-direction: column;
+                gap: 5px;
+                min-width: 70px;
+                text-align: center;
+            }
+            nav a img {
+                width: 30px;
+                height: 30px;
+            }
+            .container {
+                margin: 150px auto 40px;
+                padding: 26px 20px;
+                max-width: 95%;
+                width: 95%;
+            }
+            h2 {
+                font-size: 1.6em;
+            }
+            input {
+                padding: 14px 12px;
+                font-size: 1.05em;
+            }
+            button {
+                padding: 14px;
+                font-size: 1.05em;
+            }
+            .captcha-container {
+                flex-direction: column;
+                gap: 14px;
+                padding: 14px;
+            }
+            .captcha-input {
+                max-width: 100%;
+                width: 92%;
+                font-size: 1.35em;
+                padding: 15px 12px;
+            }
+            .captcha-display {
+                min-width: 92%;
+                max-width: 92%;
+            }
+            .captcha-refresh {
+                width: 46px;
+                height: 46px;
+                font-size: 1.3em;
+            }
+        }
+
+        /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+        @media(max-width:480px){
+            header {
+                padding: 12px 14px;
+                gap: 10px;
+                flex-direction: column;
             }
             .logo {
                 width: 100%;
@@ -612,93 +700,56 @@
             }
             nav {
                 width: 100%;
-                gap: 10px;
+                gap: 8px;
+                flex-wrap: wrap;
                 justify-content: space-around;
             }
             nav a {
                 font-size: 0.8rem;
-                padding: 6px 10px;
+                padding: 10px 6px;
+                flex: 0 1 calc(33.333% - 8px);
                 flex-direction: column;
                 gap: 4px;
                 min-width: 65px;
+                font-weight: 600;
             }
             nav a img {
                 width: 28px;
                 height: 28px;
             }
             .container {
-                margin: 130px auto 40px;
-                padding: 24px 16px;
-                max-width: 95%;
+                margin: 140px auto 30px;
+                padding: 24px 18px;
+                max-width: 96%;
+                width: 96%;
             }
             h2 {
-                font-size: 1.5em;
+                font-size: 1.45em;
+            }
+            input {
+                padding: 13px 10px;
+                font-size: 1em;
+            }
+            button {
+                font-size: 1em;
+                padding: 13px;
             }
             .captcha-container {
-                flex-direction: column;
                 gap: 12px;
                 padding: 12px;
             }
             .captcha-input {
-                max-width: 100%;
-                width: 90%;
+                width: 94%;
                 font-size: 1.3em;
                 padding: 14px 10px;
             }
             .captcha-display {
-                min-width: 90%;
-                max-width: 90%;
+                min-width: 94%;
+                max-width: 94%;
             }
             .captcha-refresh {
-                width: 42px;
-                height: 42px;
-            }
-        }
-
-        /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
-        @media(max-width:480px){
-            header {
-                padding: 12px 16px;
-                gap: 12px;
-                flex-direction: column;
-            }
-            .logo {
-                width: 100%;
-                justify-content: center;
-            }
-            .logo img {
-                height: 50px;
-            }
-            nav {
-                width: 100%;
-                gap: 12px;
-                flex-wrap: wrap;
-                justify-content: space-around;
-            }
-            nav a {
-                font-size: 0.85rem;
-                padding: 8px 12px;
-                flex: 0 1 auto;
-                flex-direction: column;
-                gap: 6px;
-                min-width: 70px;
-                font-weight: 600;
-            }
-            nav a img {
-                width: 32px;
-                height: 32px;
-                margin: 0;
-            }
-            .container {
-                margin: 110px auto 30px;
-                padding: 20px 14px;
-            }
-            h2 {
-                font-size: 1.3em;
-            }
-            button {
-                font-size: 0.95em;
-                padding: 10px;
+                width: 44px;
+                height: 44px;
             }
             footer {
                 padding: 24px 12px 32px;
@@ -711,29 +762,68 @@
         /* iPhone SE y dispositivos muy pequeños */
         @media(max-width:375px){
             html {
-                font-size: 14px;
+                font-size: 15px;
             }
             header {
-                padding: 8px 10px;
+                padding: 10px 12px;
             }
             .logo img {
-                height: 36px;
+                height: 44px;
+            }
+            nav a {
+                font-size: 0.75rem;
+                padding: 8px 5px;
+                min-width: 60px;
+            }
+            nav a img {
+                width: 26px;
+                height: 26px;
             }
             .container {
-                margin: 100px auto 20px;
+                margin: 130px auto 25px;
+                padding: 20px 16px;
+                max-width: 98%;
+                width: 98%;
+            }
+            h2 {
+                font-size: 1.35em;
+            }
+            button {
+                padding: 12px;
+                font-size: 0.95em;
             }
         }
 
         /* Landscape mode para móviles */
         @media(max-height:500px) and (orientation: landscape){
             .container {
-                margin: 60px auto 30px;
+                margin: 80px auto 30px;
+                padding: 20px 24px;
             }
             header {
-                padding: 8px 12px;
+                padding: 8px 16px;
             }
             .logo img {
-                height: 35px;
+                height: 38px;
+            }
+            nav {
+                gap: 8px;
+            }
+            nav a {
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+            h2 {
+                font-size: 1.3em;
+                margin-bottom: 8px;
+            }
+            input {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            button {
+                padding: 10px;
+                margin-top: 8px;
             }
         }
     </style>

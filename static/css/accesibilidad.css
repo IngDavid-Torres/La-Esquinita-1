@@ -240,10 +240,33 @@
     pointer-events: none;
 }
 
+/* ========================================================
+   RESPONSIVE - TABLETS
+   ======================================================== */
+
+@media (max-width: 1024px) {
+    .accesibilidad-panel {
+        width: calc(100vw - 50px);
+        max-height: 75vh;
+    }
+    
+    .control-btn {
+        min-width: 42px;
+        height: 42px;
+    }
+}
+
+/* ========================================================
+   RESPONSIVE - TABLETS PEQUEÑAS
+   ======================================================== */
+
 @media (max-width: 768px) {
     .accesibilidad-panel {
         width: calc(100vw - 40px);
+        max-width: 400px;
         right: -100vw;
+        bottom: 90px;
+        max-height: 70vh;
     }
 
     .accesibilidad-panel.show {
@@ -251,11 +274,11 @@
     }
 
     .accesibilidad-toggle {
-        width: 50px;
-        height: 50px;
-        font-size: 1.5em;
+        width: 52px;
+        height: 52px;
+        font-size: 1.6em;
         right: 15px;
-        bottom: 80px;
+        bottom: 20px;
     }
 
     .control-btn {
@@ -266,30 +289,222 @@
 
     .panel-header {
         font-size: 1em;
-        padding: 15px;
+        padding: 16px;
     }
 
     .control-group {
         padding: 12px;
-        margin-bottom: 15px;
+        margin-bottom: 14px;
+    }
+    
+    .panel-content {
+        padding: 16px;
+        max-height: calc(70vh - 80px);
     }
 }
 
-@media (max-width: 480px) {
-    .accesibilidad-toggle {
-        width: 45px;
-        height: 45px;
-        font-size: 1.3em;
-        right: 10px;
-        bottom: 75px;
+/* ========================================================
+   RESPONSIVE - MÓVILES GRANDES
+   ======================================================== */
+
+@media (max-width: 600px) {
+    .accesibilidad-panel {
+        width: calc(100vw - 30px);
+        max-width: none;
+        right: -100vw;
+        bottom: 80px;
+        max-height: 65vh;
+        border-radius: 20px;
     }
 
+    .accesibilidad-panel.show {
+        right: 15px;
+    }
+
+    .accesibilidad-toggle {
+        width: 56px;
+        height: 56px;
+        font-size: 1.7em;
+        right: 15px;
+        bottom: 15px;
+        box-shadow: 0 6px 25px rgba(113, 234, 102, 0.5);
+    }
+
+    .control-btn {
+        min-width: 44px;
+        height: 44px;
+        font-size: 1.2em;
+    }
+
+    .control-select {
+        padding: 14px;
+        font-size: 1.05em;
+    }
+
+    .panel-header {
+        font-size: 1.1em;
+        padding: 18px;
+    }
+
+    .control-group {
+        padding: 14px;
+        margin-bottom: 16px;
+    }
+    
+    .control-group h3 {
+        font-size: 1em;
+        margin-bottom: 14px;
+    }
+    
+    .panel-content {
+        padding: 18px;
+        max-height: calc(65vh - 90px);
+    }
+}
+
+/* ========================================================
+   RESPONSIVE - MÓVILES MEDIANOS
+   ======================================================== */
+
+@media (max-width: 480px) {
     .accesibilidad-panel {
         width: calc(100vw - 20px);
-        bottom: 70px;
+        bottom: 75px;
+        max-height: 60vh;
+        border-radius: 18px;
     }
 
     .accesibilidad-panel.show {
         right: 10px;
+    }
+
+    .accesibilidad-toggle {
+        width: 54px;
+        height: 54px;
+        font-size: 1.6em;
+        right: 10px;
+        bottom: 10px;
+    }
+
+    .control-btn {
+        min-width: 46px;
+        height: 46px;
+        font-size: 1.25em;
+    }
+    
+    .control-btn.special {
+        padding: 14px;
+        font-size: 1.05em;
+    }
+
+    .control-select {
+        padding: 15px;
+        font-size: 1.1em;
+    }
+
+    .panel-header {
+        font-size: 1.05em;
+        padding: 16px;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .control-group {
+        padding: 12px;
+        margin-bottom: 14px;
+    }
+    
+    .control-row {
+        gap: 12px;
+    }
+    
+    .panel-content {
+        padding: 16px;
+        max-height: calc(60vh - 85px);
+    }
+}
+
+/* ========================================================
+   RESPONSIVE - MÓVILES PEQUEÑOS
+   ======================================================== */
+
+@media (max-width: 375px) {
+    .accesibilidad-panel {
+        width: calc(100vw - 15px);
+        bottom: 70px;
+        max-height: 55vh;
+    }
+
+    .accesibilidad-panel.show {
+        right: 7.5px;
+    }
+
+    .accesibilidad-toggle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+        right: 7.5px;
+        bottom: 7.5px;
+    }
+
+    .control-btn {
+        min-width: 42px;
+        height: 42px;
+        font-size: 1.15em;
+    }
+
+    .panel-header {
+        font-size: 1em;
+        padding: 14px;
+    }
+
+    .control-group {
+        padding: 10px;
+        margin-bottom: 12px;
+    }
+    
+    .panel-content {
+        padding: 14px;
+    }
+}
+
+/* ========================================================
+   RESPONSIVE - LANDSCAPE MODE
+   ======================================================== */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .accesibilidad-panel {
+        max-height: 80vh;
+        bottom: 60px;
+    }
+
+    .accesibilidad-toggle {
+        width: 45px;
+        height: 45px;
+        bottom: 10px;
+    }
+    
+    .panel-content {
+        max-height: calc(80vh - 70px);
+    }
+}
+
+/* ========================================================
+   TOUCH OPTIMIZATIONS
+   ======================================================== */
+
+@media (hover: none) and (pointer: coarse) {
+    /* Optimizar para dispositivos táctiles */
+    .control-btn,
+    .accesibilidad-toggle {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .control-btn:active {
+        transform: scale(0.95);
+    }
+    
+    .accesibilidad-toggle:active {
+        transform: scale(1.05);
     }
 }

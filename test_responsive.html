@@ -1,0 +1,227 @@
+/* 
+ * VERIFICACIÓN RÁPIDA DE RESPONSIVIDAD
+ * Abre este archivo en tu navegador y redimensiona la ventana
+ * O usa las herramientas de desarrollador (F12 → Modo Responsive)
+ */
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Test de Responsividad - La Esquinita</title>
+    <link rel="stylesheet" href="static/css/responsive.css">
+    <link rel="stylesheet" href="static/css/accesibilidad.css">
+    <style>
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #fffdf7 0%, #f5f5f5 100%);
+        }
+        
+        .test-card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .device-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #ffb300;
+            color: #1c1c1c;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 9999;
+        }
+        
+        .grid-test {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .grid-item {
+            background: linear-gradient(135deg, #ffb300, #2e7d32);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .button-test {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            min-height: 44px;
+        }
+        
+        .responsive-image {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="device-indicator" id="deviceIndicator">
+        Desktop
+    </div>
+    
+    <div class="container">
+        <h1>🎯 Test de Responsividad - La Esquinita</h1>
+        <p>Redimensiona la ventana del navegador o usa el modo responsive (F12 → Ctrl+Shift+M)</p>
+        
+        <div class="test-card">
+            <h2>📱 Detección de Dispositivo</h2>
+            <p><strong>Ancho actual:</strong> <span id="widthDisplay">-</span>px</p>
+            <p><strong>Alto actual:</strong> <span id="heightDisplay">-</span>px</p>
+            <p><strong>Dispositivo:</strong> <span id="deviceType">-</span></p>
+            <p><strong>Orientación:</strong> <span id="orientation">-</span></p>
+        </div>
+        
+        <div class="test-card">
+            <h2>🎨 Clases de Utilidad Responsive</h2>
+            <div class="show-mobile" style="color: green; font-weight: bold;">
+                ✅ Visible en MÓVILES (< 768px)
+            </div>
+            <div class="hide-mobile" style="color: blue; font-weight: bold;">
+                ✅ Visible en TABLETS y DESKTOP (> 768px)
+            </div>
+            <div class="show-tablet" style="color: orange; font-weight: bold;">
+                ✅ Visible solo en TABLETS (769px - 1024px)
+            </div>
+            <div class="show-desktop" style="color: purple; font-weight: bold;">
+                ✅ Visible solo en DESKTOP (> 1025px)
+            </div>
+        </div>
+        
+        <div class="test-card">
+            <h2>🔘 Botones Táctiles (Mínimo 44×44px)</h2>
+            <div class="button-test">
+                <button class="btn">Botón 1</button>
+                <button class="btn">Botón 2</button>
+                <button class="btn">Botón 3</button>
+                <button class="btn">Botón 4</button>
+            </div>
+        </div>
+        
+        <div class="test-card">
+            <h2>📊 Grid Adaptativo</h2>
+            <div class="grid-responsive">
+                <div class="grid-item">Item 1</div>
+                <div class="grid-item">Item 2</div>
+                <div class="grid-item">Item 3</div>
+                <div class="grid-item">Item 4</div>
+            </div>
+        </div>
+        
+        <div class="test-card">
+            <h2>🖼️ Imagen Responsive</h2>
+            <div style="background: #f0f0f0; padding: 20px; border-radius: 8px; text-align: center;">
+                <p style="color: #666;">La imagen se adaptará automáticamente al ancho del contenedor</p>
+                <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #ffb300, #2e7d32); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5em;">
+                    Imagen Responsive
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-card">
+            <h2>📝 Formulario Responsive</h2>
+            <form class="flex-responsive">
+                <input type="text" placeholder="Nombre" style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;">
+                <input type="email" placeholder="Email" style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;">
+                <button type="submit" class="btn">Enviar</button>
+            </form>
+        </div>
+        
+        <div class="test-card">
+            <h2>✅ Breakpoints Activos</h2>
+            <div id="breakpointsList"></div>
+        </div>
+    </div>
+    
+    <script>
+        function updateDeviceInfo() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const isPortrait = height > width;
+            
+            let deviceType = '';
+            let deviceIndicator = '';
+            
+            if (width < 320) {
+                deviceType = '📱 Móvil Muy Pequeño';
+                deviceIndicator = 'Móvil XS';
+            } else if (width < 375) {
+                deviceType = '📱 Móvil Pequeño';
+                deviceIndicator = 'Móvil S';
+            } else if (width < 480) {
+                deviceType = '📱 Móvil Mediano';
+                deviceIndicator = 'Móvil M';
+            } else if (width < 600) {
+                deviceType = '📱 Móvil Grande';
+                deviceIndicator = 'Móvil L';
+            } else if (width < 768) {
+                deviceType = '📱 Tablet Pequeña';
+                deviceIndicator = 'Tablet S';
+            } else if (width < 1024) {
+                deviceType = '💻 Tablet';
+                deviceIndicator = 'Tablet';
+            } else if (width < 1280) {
+                deviceType = '🖥️ Desktop';
+                deviceIndicator = 'Desktop';
+            } else {
+                deviceType = '🖥️ Desktop Grande';
+                deviceIndicator = 'Desktop XL';
+            }
+            
+            document.getElementById('widthDisplay').textContent = width;
+            document.getElementById('heightDisplay').textContent = height;
+            document.getElementById('deviceType').textContent = deviceType;
+            document.getElementById('orientation').textContent = isPortrait ? '📱 Vertical (Portrait)' : '🔄 Horizontal (Landscape)';
+            document.getElementById('deviceIndicator').textContent = deviceIndicator;
+            
+            // Mostrar breakpoints activos
+            const breakpoints = [];
+            if (width <= 320) breakpoints.push('320px (Móvil XS)');
+            if (width <= 375) breakpoints.push('375px (Móvil S)');
+            if (width <= 480) breakpoints.push('480px (Móvil M)');
+            if (width <= 600) breakpoints.push('600px (Móvil L)');
+            if (width <= 768) breakpoints.push('768px (Tablet S)');
+            if (width <= 1024) breakpoints.push('1024px (Tablet/Desktop)');
+            if (width <= 1280) breakpoints.push('1280px (Desktop)');
+            if (width > 1280) breakpoints.push('> 1280px (Desktop XL)');
+            
+            document.getElementById('breakpointsList').innerHTML = breakpoints
+                .map(bp => `<div style="padding: 8px; margin: 4px 0; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">✓ ${bp}</div>`)
+                .join('');
+        }
+        
+        // Actualizar al cargar y al redimensionar
+        updateDeviceInfo();
+        window.addEventListener('resize', updateDeviceInfo);
+        window.addEventListener('orientationchange', updateDeviceInfo);
+        
+        console.log('🎯 Sistema de Responsividad de La Esquinita activado');
+        console.log('📱 Breakpoints disponibles: 320px, 375px, 480px, 600px, 768px, 1024px, 1280px');
+    </script>
+</body>
+</html>
