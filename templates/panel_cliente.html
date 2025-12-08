@@ -14,7 +14,7 @@
         left: 20px;
         bottom: 20px;
         z-index: 3001;
-        background: linear-gradient(135deg, #ff5722 0%, #2e7d32 100%);
+        background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
         color: white;
         border: none;
         border-radius: 50%;
@@ -27,19 +27,25 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        -webkit-tap-highlight-color: transparent;
         animation: pulse-accessibility 2s infinite;
     }
-    .accesibilidad-toggle:hover {
+    .accesibilidad-toggle:hover,
+    .accesibilidad-toggle:active {
         transform: scale(1.1);
         box-shadow: 0 6px 25px rgba(255, 87, 34, 0.6);
     }
     .accesibilidad-toggle.active {
-        background: linear-gradient(135deg, #ffb300 0%, #ffc947 100%);
-        color: #222;
+        background: linear-gradient(135deg, var(--primary) 0%, #ffc947 100%);
+        color: var(--dark);
     }
     @keyframes pulse-accessibility {
-        0%, 100% { box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4); }
-        50% { box-shadow: 0 4px 30px rgba(255, 87, 34, 0.8); }
+        0%, 100% {
+            box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+        }
+        50% {
+            box-shadow: 0 4px 30px rgba(255, 87, 34, 0.8);
+        }
     }
     :root {
       --primary: #ffb300;
@@ -402,6 +408,9 @@
       }
       .main-content {
         margin-left: 0;
+        margin: 0 auto;
+        max-width: 100%;
+        width: 100%;
       }
       .dashboard-sections {
         grid-template-columns: 1fr;
@@ -483,8 +492,11 @@
         padding: 10px 14px;
       }
       .main-content {
-        margin-left: 260px;
+        margin-left: 0;
+        margin: 0 auto;
         padding: 40px 36px 36px 36px;
+        max-width: 100%;
+        width: 100%;
       }
       .dashboard-header h1 {
         font-size: 1.9em;
@@ -519,8 +531,11 @@
         width: 90%;
       }
       .main-content {
-        margin-left: 240px;
+        margin-left: 0;
+        margin: 0 auto;
         padding: 32px 24px 50px 24px;
+        max-width: 100%;
+        width: 100%;
       }
       .dashboard-header h1 {
         font-size: 1.7em;
@@ -536,6 +551,33 @@
       .footer-fixed {
         padding: 18px 0 12px 0;
         font-size: 0.95em;
+      }
+    }
+
+    /* Móviles medianos (iPhone 12, 13, 14, etc.) */
+    @media(max-width:600px){
+      .accesibilidad-toggle {
+        left: 16px;
+        bottom: 16px;
+        width: 56px;
+        height: 56px;
+        font-size: 1.4rem;
+      }
+
+      .accesibilidad-bar {
+        left: 16px;
+        bottom: 82px;
+        padding: 10px 8px;
+        min-width: 44px;
+        min-height: 44px;
+        gap: 8px;
+      }
+      
+      .accesibilidad-bar button,
+      .accesibilidad-bar select {
+        width: 38px;
+        height: 38px;
+        font-size: 1.2em;
       }
     }
 
@@ -555,6 +597,9 @@
       }
       .main-content {
         padding: 80px 12px 60px 12px;
+        margin: 0 auto;
+        max-width: 100%;
+        width: 100%;
       }
       .dashboard-header h1 {
         font-size: 1.3em;
@@ -582,6 +627,7 @@
         height: 52px;
         left: 12px;
         bottom: 12px;
+        font-size: 1.3rem;
       }
       .accesibilidad-bar {
         left: 12px;
@@ -618,6 +664,9 @@
       }
       .main-content {
         padding: 70px 10px 60px 10px;
+        margin: 0 auto;
+        max-width: 100%;
+        width: 100%;
       }
       .dashboard-header h1 {
         font-size: 1.2em;
@@ -648,6 +697,9 @@
       }
       .main-content {
         padding: 60px 16px 40px 16px;
+        margin: 0 auto;
+        max-width: 100%;
+        width: 100%;
       }
       .dashboard-header h1 {
         font-size: 1.3em;
@@ -664,6 +716,9 @@
     @media (max-width: 600px) {
       .main-content {
         padding: 80px 16px 70px 16px;
+        margin: 0 auto;
+        max-width: 100%;
+        width: 100%;
       }
       .section-box {
         padding: 20px 16px 16px 16px;
