@@ -108,13 +108,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const filtroFinal = filtros.join(' ');
     
-    // Aplicar al body
-    body.style.filter = filtroFinal;
-    
-    // También aplicar a elementos principales para mejor compatibilidad
-    const mainContent = document.querySelector('.dashboard-main, .main-content, .container');
-    if(mainContent) {
-      mainContent.style.filter = filtroFinal;
+    // Aplicar al html y body con !important
+    if(filtroFinal) {
+      document.documentElement.style.setProperty('filter', filtroFinal, 'important');
+      body.style.setProperty('filter', filtroFinal, 'important');
+    } else {
+      document.documentElement.style.removeProperty('filter');
+      body.style.removeProperty('filter');
     }
   }
 
@@ -204,15 +204,26 @@ document.addEventListener('DOMContentLoaded', function() {
     // FIX: Evitar que el range cierre el panel
     contrasteRange.addEventListener('click', function(e) {
       e.stopPropagation();
+      e.preventDefault();
     });
     contrasteRange.addEventListener('mousedown', function(e) {
+      e.stopPropagation();
+    });
+    contrasteRange.addEventListener('mousemove', function(e) {
       e.stopPropagation();
     });
     contrasteRange.addEventListener('touchstart', function(e) {
       e.stopPropagation();
     });
+    contrasteRange.addEventListener('touchmove', function(e) {
+      e.stopPropagation();
+    });
+    contrasteRange.addEventListener('input', function(e) {
+      e.stopPropagation();
+    });
     
-    btnContraste.onclick = function() {
+    btnContraste.onclick = function(e) {
+      e.stopPropagation();
       config.contraste = !config.contraste;
       
       if(config.contraste) {
