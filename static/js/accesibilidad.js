@@ -1,6 +1,36 @@
 // --- ACCESIBILIDAD GLOBAL CON PERSISTENCIA ---
+console.log('🚀 Archivo accesibilidad.js cargado - INICIO');
+
+// --- MANEJO DEL BOTÓN TOGGLE (ANTES DE DOMContentLoaded) ---
+window.addEventListener('load', function() {
+  console.log('✅ Window load ejecutado');
+  
+  const toggleBtn = document.getElementById('accesibilidadToggle');
+  const accesBar = document.querySelector('.accesibilidad-bar');
+  
+  console.log('🔍 Elementos encontrados:', {
+    toggleBtn: toggleBtn,
+    accesBar: accesBar
+  });
+  
+  if(toggleBtn && accesBar) {
+    console.log('✅ Botón y barra encontrados, configurando...');
+    
+    toggleBtn.addEventListener('click', function() {
+      console.log('👆 CLICK EN EL BOTÓN!');
+      accesBar.classList.toggle('show');
+      this.classList.toggle('active');
+    });
+    
+    console.log('✅ Event listener agregado al botón');
+  } else {
+    console.error('❌ No se encontró el botón o la barra');
+  }
+});
+
 // Esperar a que el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('✅ DOMContentLoaded ejecutado');
   const root = document.documentElement;
   const body = document.body;
 
@@ -280,39 +310,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if('speechSynthesis' in window) window.speechSynthesis.cancel();
       }
     };
-  }
-
-  // --- MANEJO DEL BOTÓN TOGGLE ---
-  const toggleBtn = document.getElementById('accesibilidadToggle');
-  const accesBar = document.querySelector('.accesibilidad-bar');
-  
-  console.log('🔍 Toggle Debug:', {
-    toggleBtn: toggleBtn,
-    accesBar: accesBar,
-    toggleBtnExists: !!toggleBtn,
-    accesBarExists: !!accesBar
-  });
-  
-  if(toggleBtn && accesBar) {
-    // Cargar estado del panel (mostrado u oculto)
-    const panelVisible = localStorage.getItem('acc_panelVisible') === 'true';
-    console.log('📦 Estado guardado del panel:', panelVisible);
-    
-    if(panelVisible) {
-      accesBar.classList.add('show');
-      toggleBtn.classList.add('active');
-    }
-    
-    toggleBtn.onclick = function() {
-      const isVisible = accesBar.classList.toggle('show');
-      this.classList.toggle('active');
-      localStorage.setItem('acc_panelVisible', isVisible);
-      console.log('👆 Toggle clickeado, panel visible:', isVisible);
-    };
-    
-    console.log('✅ Toggle configurado correctamente');
-  } else {
-    console.error('❌ No se encontró el botón toggle o la barra de accesibilidad');
   }
 
   // Aplicar configuración guardada al cargar
