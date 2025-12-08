@@ -714,9 +714,9 @@
       {{ usuario.nombre }}
     </div>
     <nav>
-      <a href="{{ url_for('inicio') }}"><span>🏠</span>Inicio</a>
-      <a href="{{ url_for('productos') }}"><span>🛒</span>Hacer Pedido</a>
+      <a href="{{ url_for('productos') }}"><span>🛒</span>Tienda</a>
       <a href="{{ url_for('contacto') }}"><span>📞</span>Contacto</a>
+      <a href="{{ url_for('carrito') }}"><span>🛍️</span>Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}</a>
       <a href="{{ url_for('perfil_cliente') }}"><span>✏️</span>Editar mi perfil</a>
       <a href="{{ url_for('historial_pedidos') }}"><span>📦</span>Mi Historial de Pedidos</a>
     </nav>

@@ -373,9 +373,25 @@
       <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="AgroConnect">
     </div>
     <nav>
-      <a href="{{ url_for('inicio') }}">🏠 Inicio</a>
-      <a href="{{ url_for('productos') }}">🛒 Tienda</a>
-      <a href="{{ url_for('carrito') }}">🛍️ Carrito</a>
+      <a href="{{ url_for('productos') }}">
+        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">Tienda
+      </a>
+      <a href="{{ url_for('contacto') }}">
+        <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
+      </a>
+      <a href="{{ url_for('carrito') }}">
+        <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
+        Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}
+      </a>
+      {% if session['usuario_nombre'] %}
+        <a href="{{ url_for('panel_cliente') }}">
+          <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">Mi Dashboard
+        </a>
+      {% else %}
+        <a href="{{ url_for('login') }}">
+          <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">Ingresar
+        </a>
+      {% endif %}
     </nav>
   </header>
 

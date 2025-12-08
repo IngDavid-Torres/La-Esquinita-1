@@ -552,25 +552,26 @@ footer .social a:hover {
 
 <header>
     <div class="logo">
-        <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="AgroConnect">
+        <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
     </div>
     <nav>
-        <a href="{{ url_for('inicio') }}">
-            <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">Inicio
-        </a>
         <a href="{{ url_for('productos') }}">
-            <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Mercado">Tienda
+            <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">Tienda
         </a>
         <a href="{{ url_for('contacto') }}">
             <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
         </a>
-        {% if session['usuario_id'] %}
+        <a href="{{ url_for('carrito') }}">
+            <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
+            Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}
+        </a>
+        {% if session['usuario_nombre'] %}
             <a href="{{ url_for('panel_cliente') }}">
-                <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Cuenta">Mi Dashboard
+                <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">Mi Dashboard
             </a>
         {% else %}
             <a href="{{ url_for('login') }}">
-                <img src="{{ url_for('static', filename='images/iniciarsesion.png') }}" alt="Iniciar Sesión">Iniciar Sesión
+                <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">Ingresar
             </a>
         {% endif %}
     </nav>
