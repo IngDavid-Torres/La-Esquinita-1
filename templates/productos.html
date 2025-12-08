@@ -4,195 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/accesibilidad.css') }}">
-  <style>
-    /* Botón toggle de accesibilidad */
-    .accesibilidad-toggle {
-      position: fixed;
-      left: 20px;
-      bottom: 20px;
-      z-index: 3001;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 1.5rem;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      -webkit-tap-highlight-color: transparent;
-      animation: pulse-accessibility 2s infinite;
-    }
-
-    .accesibilidad-toggle:hover,
-    .accesibilidad-toggle:active {
-      transform: scale(1.1);
-      box-shadow: 0 6px 25px rgba(255, 87, 34, 0.6);
-    }
-
-    .accesibilidad-toggle.active {
-      background: linear-gradient(135deg, var(--primary) 0%, #ffc947 100%);
-      color: var(--dark);
-    }
-
-    @keyframes pulse-accessibility {
-      0%, 100% {
-        box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
-      }
-      50% {
-        box-shadow: 0 4px 30px rgba(255, 87, 34, 0.8);
-      }
-    }
-
-    /* Panel de accesibilidad */
-    .accesibilidad-bar {
-      position: fixed;
-      left: 20px;
-      bottom: 90px;
-      z-index: 3000;
-      background: #222;
-      color: #fff;
-      flex-direction: column;
-      gap: 8px;
-      align-items: center;
-      padding: 14px 10px 10px 10px;
-      border-radius: 18px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-      opacity: 0;
-      min-width: 48px;
-      min-height: 48px;
-      transition: all 0.3s ease;
-      transform: translateY(20px);
-      pointer-events: none;
-      display: none;
-    }
-
-    .accesibilidad-bar.show {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: all;
-      display: flex;
-    }
-
-    .accesibilidad-bar button,
-    .accesibilidad-bar select {
-      background: #fff;
-      color: #222;
-      border: none;
-      border-radius: 50%;
-      width: 38px;
-      height: 38px;
-      margin: 0;
-      font-size: 1.2em;
-      cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
-      transition: background 0.2s, color 0.2s, transform 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 2px;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .accesibilidad-bar button.active {
-      background: #ffb300;
-      color: #222;
-      transform: scale(1.08);
-    }
-
-    .accesibilidad-bar label {
-      display: none;
-    }
-
-    .accesibilidad-bar select {
-      border-radius: 8px;
-      width: 38px;
-      height: 38px;
-      font-size: 0.95em;
-      padding: 0;
-      margin-bottom: 2px;
-    }
-
-    .accesibilidad-bar option {
-      font-size: 1em;
-    }
-
-    .accesibilidad-bar .icono {
-      font-size: 1.2em;
-    }
-
-    /* Media queries para accesibilidad */
-    @media(max-width:600px){
-      .accesibilidad-toggle {
-        left: 16px;
-        bottom: 16px;
-        width: 56px;
-        height: 56px;
-        font-size: 1.4rem;
-      }
-
-      .accesibilidad-bar {
-        left: 16px;
-        bottom: 80px;
-        padding: 10px 6px 6px 6px;
-        min-width: 44px;
-        min-height: 44px;
-        gap: 6px;
-      }
-
-      .accesibilidad-bar button,
-      .accesibilidad-bar select {
-        width: 34px;
-        height: 34px;
-        font-size: 1.1em;
-      }
-
-      .accesibilidad-bar .icono {
-        font-size: 1.1em;
-      }
-    }
-
-    @media(max-width:480px){
-      .accesibilidad-toggle {
-        left: 12px;
-        bottom: 12px;
-        width: 52px;
-        height: 52px;
-        font-size: 1.3rem;
-      }
-
-      .accesibilidad-bar {
-        left: 12px;
-        bottom: 72px;
-        padding: 8px 5px 5px 5px;
-        min-width: 40px;
-        min-height: 40px;
-        gap: 5px;
-      }
-
-      .accesibilidad-bar button,
-      .accesibilidad-bar select {
-        width: 32px;
-        height: 32px;
-        font-size: 1em;
-      }
-
-      .accesibilidad-bar .icono {
-        font-size: 1em;
-      }
-    }
-  </style>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>La Esquinita - Productos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/accesibilidad.css') }}">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
@@ -468,7 +283,22 @@
 
     .container h3 {
       margin-top: 40px;
+      margin-bottom: 20px;
       color: var(--accent);
+      font-size: clamp(1.5rem, 3.5vw, 2rem);
+      text-align: left;
+      padding: 0 10px;
+    }
+
+    .titulo-categoria {
+      margin-top: 40px;
+      margin-bottom: 20px;
+      color: var(--accent);
+      font-size: clamp(1.5rem, 3.5vw, 2rem);
+      text-align: left;
+      padding: 0 10px;
+    }
+
     .filtro-categorias {
       display: flex;
       justify-content: center;
@@ -494,8 +324,6 @@
       color: var(--dark);
       transition: border-color 0.3s;
       outline: none;
-      box-shadow: 0 2px 8px rgba(255,179,0,0.08);
-    } outline: none;
       box-shadow: 0 2px 8px rgba(255,179,0,0.08);
     }
 
@@ -534,6 +362,35 @@
 
     .producto-item img {
       width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+
+    .producto-item h4 {
+      margin: 16px 12px 8px;
+      color: var(--secondary);
+      min-height: 1.5em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+      padding: 0 8px;
+    }
+
+    .producto-item p {
+      color: #555;
+      margin: 0 12px 16px;
+      min-height: 3em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      line-height: 1.5;
+      padding: 0 8px;
+    }
+
     .boton-carrito {
       background: var(--primary);
       color: var(--secondary);
@@ -562,11 +419,22 @@
       background: var(--accent);
       color: #fff;
       transform: scale(1.05);
-    }producto-item p {
-      color: #555;
-      margin: 0 12px 16px;
-      min-height: 3em;
-      display: flex;
+    }
+
+    /* Alertas */
+    .alert-container {
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .alert.success {
+      background: var(--secondary);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
     /* Footer */
     footer {
       background: var(--dark);
@@ -607,9 +475,9 @@
     footer .social a:active {
       color: var(--primary);
       transform: scale(1.2);
-    } border-radius: 8px;
-      display: inline-block;
     }
+
+    /* ========== RESPONSIVE DESIGN ========== */
 
     /* Footer */
     footer {
@@ -750,6 +618,20 @@
       }
       nav {
         width: 100%;
+        gap: 10px;
+        justify-content: space-around;
+      }
+      nav a {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 65px;
+      }
+      nav a img {
+        width: 28px;
+        height: 28px;
+      }
       .hero {
         min-height: 60vh;
         margin-top: 130px;
@@ -872,18 +754,14 @@
         font-size: 0.95rem;
       }
       .boton-carrito {
-        width: 90%;
-        max-width: none;
       }
-      footer {
-        padding: 24px 12px 32px;
+      .productos-lista {
+        gap: 12px;
       }
-      footer p {
-        font-size: 0.9rem;
-      } padding: 24px 12px 32px;
+      .producto-item img {
+        height: 180px;
       }
-      footer p {
-        font-size: 0.9rem;
+    }   font-size: 0.9rem;
       }
     }
 
