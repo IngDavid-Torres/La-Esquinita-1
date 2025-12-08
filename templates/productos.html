@@ -992,10 +992,6 @@
           <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">
           Mi Dashboard
         </a>
-        <a href="{{ url_for('logout') }}" onclick="return mostrarAlertaCerrarSesion(event)" aria-label="Cerrar sesión de usuario">
-          <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">
-          Cerrar Sesión
-        </a>
       {% else %}
         <a href="{{ url_for('login') }}" aria-label="Iniciar sesión en tu cuenta">
           <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">

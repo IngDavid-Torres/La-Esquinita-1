@@ -1320,13 +1320,6 @@
           <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">
           <span>Mi Dashboard</span>
         </a>
-        <a href="#" data-logout-type="{{ 'admin' if session.get('tipo_usuario') == 'Administrador' else 'cliente' }}" onclick="event.preventDefault(); destructiveLogout('{{ 'admin' if session.get('tipo_usuario') == 'Administrador' else 'cliente' }}');" title="Cerrar Sesión">
-          <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">
-          <span>🔐 Cerrar Sesión</span>
-        </a>
-        <a href="#" onclick="event.preventDefault(); destructiveLogout('force');" style="font-size: 0.8em; color: #ff5722; margin-top: 5px;" title="Destrucción Total" class="destruccion-total">
-          <span>💥 Destrucción Total</span>
-        </a>
       {% else %}
         <a href="{{ url_for('login') }}" title="Ingresar">
           <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">

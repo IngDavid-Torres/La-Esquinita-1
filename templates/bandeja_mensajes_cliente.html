@@ -639,10 +639,6 @@ footer .social a:hover {
                     <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Cuenta">
                     Mi Dashboard
                 </a>
-                <a href="{{ url_for('logout') }}">
-                    <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">
-                    Cerrar Sesión
-                </a>
             {% else %}
                 <a href="{{ url_for('login') }}">
                     <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">
