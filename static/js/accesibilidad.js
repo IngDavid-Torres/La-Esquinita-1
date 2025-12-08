@@ -22,6 +22,15 @@ window.addEventListener('load', function() {
       e.stopPropagation();
     });
     
+    // CRÍTICO: Prevenir scroll automático del navegador en todos los inputs del panel
+    const allInputs = accesBar.querySelectorAll('input, select, button');
+    allInputs.forEach(input => {
+      input.addEventListener('focus', function(e) {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+      }, true);
+    });
+    
     // Cargar estado del panel
     const panelVisible = localStorage.getItem('acc_panelVisible') === 'true';
     if(panelVisible) {
@@ -180,7 +189,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Aumentar letra
   const btnAumentar = document.getElementById('aumentarLetraBtn');
   if(btnAumentar) {
-    btnAumentar.onclick = () => {
+    btnAumentar.onclick = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
       config.fontSize = Math.max(0.7, Math.min(2.2, config.fontSize * 1.15));
       body.style.fontSize = config.fontSize + 'em';
       guardarConfig();
@@ -190,7 +201,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Disminuir letra
   const btnDisminuir = document.getElementById('disminuirLetraBtn');
   if(btnDisminuir) {
-    btnDisminuir.onclick = () => {
+    btnDisminuir.onclick = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
       config.fontSize = Math.max(0.7, Math.min(2.2, config.fontSize * 0.87));
       body.style.fontSize = config.fontSize + 'em';
       guardarConfig();
@@ -200,7 +213,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Modo nocturno
   const btnNocturno = document.getElementById('modoNocturnoBtn');
   if(btnNocturno) {
-    btnNocturno.onclick = function() {
+    btnNocturno.onclick = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
       config.modoNocturno = !config.modoNocturno;
       aplicarModoNocturno(config.modoNocturno);
       
@@ -218,6 +233,12 @@ document.addEventListener('DOMContentLoaded', function() {
   const contrasteRange = document.getElementById('contrasteRange');
   
   if(btnContraste && contrasteRange) {
+    // Prevenir scroll automático del navegador
+    contrasteRange.addEventListener('focus', function(e) {
+      e.preventDefault();
+      this.blur();
+    }, true);
+    
     btnContraste.onclick = function(e) {
       e.stopPropagation();
       config.contraste = !config.contraste;
@@ -237,6 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     contrasteRange.oninput = function(e) {
       e.stopPropagation();
+      e.preventDefault();
       config.contrasteValor = parseFloat(this.value);
       if(config.contraste) {
         actualizarFiltros();
@@ -252,6 +274,15 @@ document.addEventListener('DOMContentLoaded', function() {
       e.stopPropagation();
     };
     
+    contrasteRange.onfocus = function(e) {
+      e.preventDefault();
+    };
+    
+    contrasteRange.onchange = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+    };
+    
     // Restaurar estado del contraste
     if(config.contraste) {
       contrasteRange.disabled = false;
@@ -265,7 +296,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Escala de grises
   const btnGrises = document.getElementById('grisesBtn');
   if(btnGrises) {
-    btnGrises.onclick = function() {
+    btnGrises.onclick = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
       config.grises = !config.grises;
       this.classList.toggle('active', config.grises);
       actualizarFiltros();
@@ -281,7 +314,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Guía de lectura (NO se persiste, es temporal por sesión)
   const btnGuia = document.getElementById('guiaLecturaBtn');
   if(btnGuia) {
-    btnGuia.onclick = function() {
+    btnGuia.onclick = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
       config.guiaLectura = !config.guiaLectura;
       let contenido = document.querySelector('.dashboard-main') || document.getElementById('contenido-principal') || document.body;
       
@@ -305,7 +340,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Cambiar tipografía
   const selectTipo = document.getElementById('tipografiaSelect');
   if(selectTipo) {
-    selectTipo.onchange = function() {
+    selectTipo.onchange = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
       config.tipografia = this.value;
       aplicarTipografia(config.tipografia);
       guardarConfig();
@@ -315,7 +352,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Lector de pantalla (no se guarda porque es temporal)
   const btnLector = document.getElementById('lectorPantallaBtn');
   if(btnLector) {
-    btnLector.onclick = function() {
+    btnLector.onclick = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
       let lectorActivo = this.classList.contains('active');
       lectorActivo = !lectorActivo;
       let contenido = document.querySelector('.dashboard-main') || document.getElementById('contenido-principal') || document.body;
