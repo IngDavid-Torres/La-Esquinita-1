@@ -1,41 +1,28 @@
 // --- ACCESIBILIDAD GLOBAL CON PERSISTENCIA ---
-console.log('🚀 Archivo accesibilidad.js cargado - INICIO');
-alert('Script accesibilidad.js se está cargando');
 
-// --- MANEJO DEL BOTÓN TOGGLE (ANTES DE DOMContentLoaded) ---
+// --- MANEJO DEL BOTÓN TOGGLE ---
 window.addEventListener('load', function() {
-  console.log('✅ Window load ejecutado');
-  alert('Window load ejecutado');
-  
   const toggleBtn = document.getElementById('accesibilidadToggle');
   const accesBar = document.querySelector('.accesibilidad-bar');
   
-  console.log('🔍 Elementos encontrados:', {
-    toggleBtn: toggleBtn,
-    accesBar: accesBar
-  });
-  
   if(toggleBtn && accesBar) {
-    console.log('✅ Botón y barra encontrados, configurando...');
-    alert('Botón y barra encontrados!');
+    // Cargar estado del panel
+    const panelVisible = localStorage.getItem('acc_panelVisible') === 'true';
+    if(panelVisible) {
+      accesBar.classList.add('show');
+      toggleBtn.classList.add('active');
+    }
     
     toggleBtn.addEventListener('click', function() {
-      console.log('👆 CLICK EN EL BOTÓN!');
-      alert('CLICK detectado!');
-      accesBar.classList.toggle('show');
+      const isVisible = accesBar.classList.toggle('show');
       this.classList.toggle('active');
+      localStorage.setItem('acc_panelVisible', isVisible);
     });
-    
-    console.log('✅ Event listener agregado al botón');
-  } else {
-    console.error('❌ No se encontró el botón o la barra');
-    alert('ERROR: No se encontró el botón o la barra');
   }
 });
 
 // Esperar a que el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('✅ DOMContentLoaded ejecutado');
   const root = document.documentElement;
   const body = document.body;
 
@@ -118,7 +105,17 @@ document.addEventListener('DOMContentLoaded', function() {
     let filtros = [];
     if(config.contraste) filtros.push(`contrast(${config.contrasteValor})`);
     if(config.grises) filtros.push('grayscale(1)');
-    body.style.filter = filtros.join(' ');
+    
+    const filtroFinal = filtros.join(' ');
+    
+    // Aplicar al body
+    body.style.filter = filtroFinal;
+    
+    // También aplicar a elementos principales para mejor compatibilidad
+    const mainContent = document.querySelector('.dashboard-main, .main-content, .container');
+    if(mainContent) {
+      mainContent.style.filter = filtroFinal;
+    }
   }
 
   // Aplicar configuración al cargar la página (MEJORADO)
@@ -238,9 +235,33 @@ document.addEventListener('DOMContentLoaded', function() {
         guardarConfig();
       }
     };
+    
+    // Restaurar estado del contraste
+    if(config.contraste) {
+      contrasteRange.disabled = false;
+      btnContraste.classList.add('active');
+      contrasteRange.value = config.contrasteValor;
+    } else {
+      contrasteRange.disabled = true;
+    }
   }
 
-  // Escala de grises (MEJORADO con actualizarFiltros)
+  // Escala de grises
+  const btnGrises = document.getElementById('grisesBtn');
+  if(btnGrises) {
+    btnGrises.onclick = function() {
+      config.grises = !config.grises;
+      this.classList.toggle('active', config.grises);
+      actualizarFiltros();
+      guardarConfig();
+    };
+    
+    // Restaurar estado
+    if(config.grises) {
+      btnGrises.classList.add('active');
+    }
+  }
+
   // Guía de lectura (NO se persiste, es temporal por sesión)
   const btnGuia = document.getElementById('guiaLecturaBtn');
   if(btnGuia) {
