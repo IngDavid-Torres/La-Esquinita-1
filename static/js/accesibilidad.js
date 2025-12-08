@@ -26,8 +26,11 @@ window.addEventListener('load', function() {
     const allInputs = accesBar.querySelectorAll('input, select, button');
     allInputs.forEach(input => {
       input.addEventListener('focus', function(e) {
-        e.preventDefault();
-        window.scrollTo(0, 0);
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+        setTimeout(() => {
+          window.scrollTo(scrollX, scrollY);
+        }, 0);
       }, true);
     });
     
@@ -233,10 +236,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const contrasteRange = document.getElementById('contrasteRange');
   
   if(btnContraste && contrasteRange) {
-    // Prevenir scroll automático del navegador
+    // Prevenir scroll automático del navegador - CRÍTICO
     contrasteRange.addEventListener('focus', function(e) {
-      e.preventDefault();
-      this.blur();
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      setTimeout(() => {
+        window.scrollTo(scrollX, scrollY);
+      }, 0);
     }, true);
     
     btnContraste.onclick = function(e) {
@@ -258,7 +264,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     contrasteRange.oninput = function(e) {
       e.stopPropagation();
-      e.preventDefault();
       config.contrasteValor = parseFloat(this.value);
       if(config.contraste) {
         actualizarFiltros();
@@ -268,19 +273,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     contrasteRange.onmousedown = function(e) {
       e.stopPropagation();
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      setTimeout(() => {
+        window.scrollTo(scrollX, scrollY);
+      }, 0);
     };
     
     contrasteRange.ontouchstart = function(e) {
       e.stopPropagation();
     };
     
-    contrasteRange.onfocus = function(e) {
-      e.preventDefault();
-    };
-    
     contrasteRange.onchange = function(e) {
       e.stopPropagation();
-      e.preventDefault();
     };
     
     // Restaurar estado del contraste
@@ -298,11 +303,17 @@ document.addEventListener('DOMContentLoaded', function() {
   if(btnGrises) {
     btnGrises.onclick = function(e) {
       e.stopPropagation();
-      e.preventDefault();
       config.grises = !config.grises;
       this.classList.toggle('active', config.grises);
       actualizarFiltros();
       guardarConfig();
+      
+      // Mantener posición de scroll
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      setTimeout(() => {
+        window.scrollTo(scrollX, scrollY);
+      }, 0);
     };
     
     // Restaurar estado
