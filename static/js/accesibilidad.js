@@ -1,9 +1,11 @@
 // --- ACCESIBILIDAD GLOBAL CON PERSISTENCIA ---
 console.log('🚀 Archivo accesibilidad.js cargado - INICIO');
+alert('Script accesibilidad.js se está cargando');
 
 // --- MANEJO DEL BOTÓN TOGGLE (ANTES DE DOMContentLoaded) ---
 window.addEventListener('load', function() {
   console.log('✅ Window load ejecutado');
+  alert('Window load ejecutado');
   
   const toggleBtn = document.getElementById('accesibilidadToggle');
   const accesBar = document.querySelector('.accesibilidad-bar');
@@ -15,9 +17,11 @@ window.addEventListener('load', function() {
   
   if(toggleBtn && accesBar) {
     console.log('✅ Botón y barra encontrados, configurando...');
+    alert('Botón y barra encontrados!');
     
     toggleBtn.addEventListener('click', function() {
       console.log('👆 CLICK EN EL BOTÓN!');
+      alert('CLICK detectado!');
       accesBar.classList.toggle('show');
       this.classList.toggle('active');
     });
@@ -25,6 +29,7 @@ window.addEventListener('load', function() {
     console.log('✅ Event listener agregado al botón');
   } else {
     console.error('❌ No se encontró el botón o la barra');
+    alert('ERROR: No se encontró el botón o la barra');
   }
 });
 
