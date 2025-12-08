@@ -23,41 +23,57 @@
       align-items: center;
     }
     header {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 20px 40px;
+      padding: 18px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255,255,255,0.97);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
     }
     .logo img {
       height: 60px;
+      width: auto;
       border-radius: 8px;
+      max-width: 100%;
+      object-fit: contain;
     }
     nav {
       display: flex;
-      gap: 30px;
-      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: nowrap;
+      justify-content: flex-end;
     }
     nav a {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       text-decoration: none;
       color: var(--dark);
       font-weight: 600;
-      transition: color 0.3s, background 0.3s;
-      padding: 8px 12px;
-      border-radius: 6px;
+      transition: color 0.3s;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+      font-size: 1rem;
     }
-    nav a:hover {
-      color: var(--accent);
-      background: rgba(255,87,34,0.1);
+    nav a img {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
     }
+    nav a:hover, nav a:active { color: var(--accent); }
     .container {
       max-width: 480px;
       margin: 40px auto;
@@ -178,7 +194,6 @@
       nav a {
         font-size: 0.9rem;
         gap: 4px;
-        padding: 6px 10px;
       }
       nav a img {
         width: 22px;
@@ -196,15 +211,21 @@
         padding: 12px 16px;
         flex-wrap: wrap;
       }
+      .logo {
+        flex: 0 0 auto;
+      }
       .logo img {
         height: 46px;
       }
       nav {
         gap: 10px;
-        justify-content: center;
+        flex: 1 1 100%;
+        justify-content: space-around;
+        margin-top: 8px;
       }
       nav a {
         font-size: 0.85rem;
+        gap: 4px;
         padding: 6px 8px;
       }
       nav a img {
@@ -212,7 +233,7 @@
         height: 20px;
       }
       .container {
-        margin: 160px 16px 50px;
+        margin: 180px auto 50px;
         padding: 24px 18px;
         max-width: calc(100% - 32px);
       }
@@ -235,24 +256,21 @@
       nav {
         width: 100%;
         gap: 8px;
-        flex-wrap: wrap;
         justify-content: space-around;
       }
       nav a {
         font-size: 0.8rem;
-        padding: 8px 6px;
-        flex: 0 1 calc(33.333% - 8px);
+        padding: 6px 10px;
         flex-direction: column;
         gap: 4px;
         min-width: 65px;
-        font-weight: 600;
       }
       nav a img {
         width: 28px;
         height: 28px;
       }
       .container {
-        margin: 160px 12px 40px;
+        margin: 180px auto 40px;
         padding: 20px 16px;
         max-width: calc(100% - 24px);
       }
@@ -263,31 +281,46 @@
       header {
         padding: 12px 16px;
         gap: 12px;
+        flex-direction: column;
+      }
+      .logo {
+        width: 100%;
+        justify-content: center;
       }
       .logo img {
         height: 50px;
       }
+      nav {
+        width: 100%;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
       nav a {
         font-size: 0.85rem;
         padding: 8px 12px;
+        flex: 0 1 auto;
+        flex-direction: column;
+        gap: 6px;
         min-width: 70px;
+        font-weight: 600;
       }
       nav a img {
         width: 32px;
         height: 32px;
+        margin: 0;
       }
       .container {
-        margin: 210px 10px 30px;
+        margin: 230px auto 30px;
         padding: 18px 14px;
         max-width: calc(100% - 20px);
-        font-size: 0.97em;
       }
       .header-pago h2 {
-        font-size: 1.1em;
+        font-size: 1.6em;
       }
       .mercadopago-logo {
-        font-size: 0.97em;
-        padding: 6px 12px;
+        font-size: 0.95em;
+        padding: 6px 16px;
       }
     }
 
@@ -303,7 +336,7 @@
         height: 36px;
       }
       .container {
-        margin: 200px 8px 20px;
+        margin: 220px auto 20px;
         padding: 16px 12px;
       }
     }
@@ -312,6 +345,13 @@
     @media(max-height:500px) and (orientation: landscape){
       .container {
         margin: 60px auto 30px;
+      }
+      header {
+        padding: 8px 12px;
+      }
+      .logo img {
+        height: 35px;
+      }
         padding: 18px 20px;
       }
       header {

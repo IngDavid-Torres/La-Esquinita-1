@@ -366,35 +366,39 @@
       .sidebar-toggle-btn {
         display: flex !important;
         position: fixed;
-        top: auto;
-        bottom: 32px;
-        left: 18px;
+        top: 20px;
+        bottom: auto;
+        left: 20px;
         z-index: 2001;
         background: var(--primary);
         color: #fff;
         border: none;
         border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-        font-size: 1.4em;
+        width: 50px;
+        height: 50px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        font-size: 1.5em;
         cursor: pointer;
         align-items: center;
         justify-content: center;
-        transition: background 0.2s, color 0.2s;
+        transition: all 0.3s ease;
+      }
+      .sidebar-toggle-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
       }
       .sidebar {
-        left: -320px;
+        left: -100%;
         box-shadow: none;
-        width: 80vw;
-        max-width: 340px;
-        min-width: 220px;
+        width: 85vw;
+        max-width: 320px;
+        min-width: 260px;
         background: var(--sidebar);
         z-index: 2000;
       }
       .sidebar.sidebar-visible {
         left: 0;
-        box-shadow: 0 0 18px rgba(0,0,0,0.18);
+        box-shadow: 0 0 24px rgba(0,0,0,0.25);
       }
       .main-content {
         margin-left: 0;
@@ -516,7 +520,7 @@
       }
       .main-content {
         margin-left: 240px;
-        padding: 32px 24px 28px 24px;
+        padding: 32px 24px 50px 24px;
       }
       .dashboard-header h1 {
         font-size: 1.7em;
@@ -538,18 +542,19 @@
     /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
     @media(max-width:480px){
       .sidebar-toggle-btn {
-        width: 44px !important;
-        height: 44px !important;
-        left: 14px !important;
-        bottom: 28px !important;
-        font-size: 1.3em !important;
+        width: 48px !important;
+        height: 48px !important;
+        left: 16px !important;
+        top: 16px !important;
+        bottom: auto !important;
+        font-size: 1.4em !important;
       }
       .sidebar {
-        width: 85vw;
+        width: 88vw;
         max-width: 300px;
       }
       .main-content {
-        padding: 16px 12px 80px 12px;
+        padding: 80px 12px 60px 12px;
       }
       .dashboard-header h1 {
         font-size: 1.3em;
@@ -576,11 +581,11 @@
         width: 52px;
         height: 52px;
         left: 12px;
-        bottom: 95px;
+        bottom: 12px;
       }
       .accesibilidad-bar {
         left: 12px;
-        bottom: 160px;
+        bottom: 72px;
         padding: 8px 5px 5px 5px;
         min-width: 40px;
         min-height: 40px;
@@ -602,17 +607,27 @@
       html {
         font-size: 14px;
       }
+      .sidebar-toggle-btn {
+        top: 12px !important;
+        left: 12px !important;
+        width: 46px !important;
+        height: 46px !important;
+      }
       .sidebar {
         width: 90vw;
       }
       .main-content {
-        padding: 14px 10px 80px 10px;
+        padding: 70px 10px 60px 10px;
       }
       .dashboard-header h1 {
         font-size: 1.2em;
+        text-align: center;
       }
       .section-box {
         padding: 16px 12px 12px 12px;
+      }
+      .dashboard-sections {
+        gap: 12px;
       }
       .footer-fixed {
         font-size: 0.8em;
@@ -625,8 +640,14 @@
         overflow-y: auto;
         max-height: 100vh;
       }
+      .sidebar-toggle-btn {
+        top: 10px !important;
+        left: 10px !important;
+        width: 40px !important;
+        height: 40px !important;
+      }
       .main-content {
-        padding: 12px 16px 60px 16px;
+        padding: 60px 16px 40px 16px;
       }
       .dashboard-header h1 {
         font-size: 1.3em;
@@ -642,11 +663,16 @@
     /* --- Responsive: solo ajuste de padding para evitar desbordes --- */
     @media (max-width: 600px) {
       .main-content {
-        padding: 20px 16px 80px 16px;
+        padding: 80px 16px 70px 16px;
       }
       .section-box {
         padding: 20px 16px 16px 16px;
         max-width: 100%;
+        margin: 0 auto;
+      }
+      .dashboard-sections {
+        max-width: 100%;
+        justify-items: center;
       }
     }
   </style>

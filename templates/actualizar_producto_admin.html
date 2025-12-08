@@ -122,30 +122,161 @@
       .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
       .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
     }
+    /* Tablets y dispositivos medianos */
     @media(max-width:1024px){
-      nav { padding: 12px 8px; }
-      .nav-left, .nav-right { gap: 10px; }
-      .container { margin: 90px auto 30px auto; padding: 18px 8px; }
+      header {
+        padding: 14px 16px;
+      }
+      .logo img {
+        height: 50px;
+      }
+      nav {
+        gap: 14px;
+      }
+      nav a {
+        font-size: 0.9rem;
+        gap: 4px;
+      }
+      nav a img {
+        width: 22px;
+        height: 22px;
+      }
+      .container { margin: 140px auto 60px; padding: 32px 26px; }
     }
 
+    /* Tablets pequeñas y móviles grandes */
     @media(max-width:768px){
-      nav { flex-direction: column; align-items: flex-start; gap: 8px; padding: 8px 4px; }
-      .nav-left, .nav-right { gap: 8px; }
-      .container { margin: 70px auto 18px auto; padding: 12px 4px; }
+      header {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+      }
+      .logo {
+        flex: 0 0 auto;
+      }
+      .logo img {
+        height: 46px;
+      }
+      nav {
+        gap: 10px;
+        flex: 1 1 100%;
+        justify-content: space-around;
+        margin-top: 8px;
+      }
+      nav a {
+        font-size: 0.85rem;
+        gap: 4px;
+        padding: 6px 8px;
+      }
+      nav a img {
+        width: 20px;
+        height: 20px;
+      }
+      .container { margin: 160px auto 50px; padding: 30px 24px; }
       .imagen-actual img { max-width: 80px; }
       form button { padding: 10px; font-size: 0.95em; }
       .alerta-content { padding: 12px 4px; }
       .accesibilidad-bar { left: 8px; bottom: 8px; }
     }
 
+    /* Móviles medianos (iPhone 12, 13, 14, etc.) */
+    @media(max-width:600px){
+      header {
+        padding: 12px 14px;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .logo {
+        width: 100%;
+        justify-content: center;
+      }
+      .logo img {
+        height: 48px;
+      }
+      nav {
+        width: 100%;
+        gap: 8px;
+        justify-content: space-around;
+      }
+      nav a {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 65px;
+      }
+      nav a img {
+        width: 28px;
+        height: 28px;
+      }
+      .container { margin: 180px auto 40px; padding: 26px 20px; }
+    }
+
+    /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
     @media(max-width:480px){
-      nav { flex-direction: column; align-items: flex-start; gap: 6px; padding: 6px 2px; }
-      .nav-left, .nav-right { gap: 6px; }
-      .container { margin: 54px auto 8px auto; padding: 8px 2px; }
+      header {
+        padding: 12px 16px;
+        gap: 12px;
+        flex-direction: column;
+      }
+      .logo {
+        width: 100%;
+        justify-content: center;
+      }
+      .logo img {
+        height: 50px;
+      }
+      nav {
+        width: 100%;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      nav a {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        flex: 0 1 auto;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 70px;
+        font-weight: 600;
+      }
+      nav a img {
+        width: 32px;
+        height: 32px;
+        margin: 0;
+      }
+      .container { margin: 230px auto 30px; padding: 24px 18px; }
       .imagen-actual img { max-width: 60px; }
       form button { padding: 8px; font-size: 0.92em; }
       .alerta-content { padding: 8px 2px; }
       .accesibilidad-bar { left: 4px; bottom: 80px; }
+    }
+
+    /* iPhone SE y dispositivos muy pequeños */
+    @media(max-width:375px){
+      html {
+        font-size: 14px;
+      }
+      header {
+        padding: 8px 10px;
+      }
+      .logo img {
+        height: 36px;
+      }
+      .container { margin: 220px auto 25px; padding: 20px 16px; }
+    }
+
+    /* Landscape mode para móviles */
+    @media(max-height:500px) and (orientation: landscape){
+      .container {
+        margin: 60px auto 30px;
+      }
+      header {
+        padding: 8px 12px;
+      }
+      .logo img {
+        height: 35px;
+      }
     }
   </style>
   <meta charset="UTF-8">
@@ -172,40 +303,59 @@
       flex-direction: column;
     }
 
-  
-    nav {
+
+    header {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 20px 40px;
+      padding: 18px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255, 255, 255, 0.9);
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       z-index: 1000;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
-    .nav-left, .nav-right {
+    .logo {
       display: flex;
-      gap: 30px;
+      align-items: center;
+    }
+    .logo img {
+      height: 60px;
+      width: auto;
+      border-radius: 8px;
+      max-width: 100%;
+      object-fit: contain;
+    }
+    nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: nowrap;
+      justify-content: flex-end;
     }
     nav a {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       text-decoration: none;
       color: var(--dark);
       font-weight: 600;
       transition: color 0.3s;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+      font-size: 1rem;
     }
     nav a img {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
     }
-    nav a:hover {
-      color: var(--accent);
-    }
+    nav a:hover, nav a:active { color: var(--accent); }
 
     
     .container {
@@ -470,8 +620,11 @@
     };
   </script>
   
-  <nav>
-    <div class="nav-left">
+  <header>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
+    </div>
+    <nav>
       <a href="{{ url_for('admin_productos') }}">
         <img src="{{ url_for('static', filename='images/pr.png') }}" alt="Productos">
         Supervisión Productos
@@ -480,8 +633,6 @@
         <img src="{{ url_for('static', filename='images/misp.png') }}" alt="Pedidos">
         Pedidos
       </a>
-    </div>
-    <div class="nav-right">
       <a href="{{ url_for('panel_admin') }}">
         <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Panel">
         Mi Panel
@@ -490,8 +641,8 @@
         <img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">
         Cerrar Sesión
       </a>
-    </div>
-  </nav>
+    </nav>
+  </header>
 
   
   <div class="container">
