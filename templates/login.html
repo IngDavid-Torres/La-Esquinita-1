@@ -573,33 +573,29 @@
         /* Tablets pequeñas y móviles grandes */
         @media(max-width:768px){
             header {
-                padding: 14px 18px;
-                flex-direction: column;
-                gap: 12px;
-            }
-            .logo {
-                width: 100%;
-                justify-content: center;
-            }
-            .logo img {
-                height: 52px;
-            }
-            nav {
-                width: 100%;
-                gap: 12px;
-                justify-content: space-around;
+                padding: 12px 16px;
                 flex-wrap: wrap;
             }
+            .logo {
+                flex: 0 0 auto;
+            }
+            .logo img {
+                height: 46px;
+            }
+            nav {
+                gap: 10px;
+                flex: 1 1 100%;
+                justify-content: space-around;
+                margin-top: 8px;
+            }
             nav a {
-                font-size: 0.9rem;
-                padding: 10px 14px;
-                flex: 0 1 auto;
-                min-width: 80px;
-                justify-content: center;
+                font-size: 0.85rem;
+                gap: 4px;
+                padding: 6px 8px;
             }
             nav a img {
-                width: 22px;
-                height: 22px;
+                width: 20px;
+                height: 20px;
             }
             .container {
                 margin: 160px auto 50px;
@@ -626,7 +622,7 @@
         /* Móviles medianos (iPhone 12, 13, 14, etc.) */
         @media(max-width:600px){
             header {
-                padding: 12px 16px;
+                padding: 12px 14px;
                 flex-direction: column;
                 gap: 10px;
             }
@@ -635,21 +631,19 @@
                 justify-content: center;
             }
             .logo img {
-                height: 50px;
+                height: 48px;
             }
             nav {
                 width: 100%;
-                gap: 10px;
+                gap: 8px;
                 justify-content: space-around;
-                padding: 0 4px;
             }
             nav a {
-                font-size: 0.85rem;
-                padding: 10px 8px;
+                font-size: 0.8rem;
+                padding: 6px 10px;
                 flex-direction: column;
-                gap: 5px;
-                min-width: 70px;
-                text-align: center;
+                gap: 4px;
+                min-width: 65px;
             }
             nav a img {
                 width: 28px;
@@ -706,26 +700,27 @@
                 justify-content: center;
             }
             .logo img {
-                height: 48px;
+                height: 50px;
             }
             nav {
                 width: 100%;
-                gap: 8px;
+                gap: 12px;
                 flex-wrap: wrap;
                 justify-content: space-around;
             }
             nav a {
-                font-size: 0.8rem;
-                padding: 10px 6px;
-                flex: 0 1 calc(33.333% - 8px);
+                font-size: 0.85rem;
+                padding: 8px 12px;
+                flex: 0 1 auto;
                 flex-direction: column;
-                gap: 4px;
-                min-width: 65px;
+                gap: 6px;
+                min-width: 70px;
                 font-weight: 600;
             }
             nav a img {
-                width: 28px;
-                height: 28px;
+                width: 32px;
+                height: 32px;
+                margin: 0;
             }
             .container {
                 margin: 230px auto 30px;
@@ -772,27 +767,13 @@
         /* iPhone SE y dispositivos muy pequeños */
         @media(max-width:375px){
             html {
-                font-size: 15px;
+                font-size: 14px;
             }
             header {
-                padding: 10px 12px;
+                padding: 8px 10px;
             }
             .logo img {
-                height: 44px;
-            }
-            nav a {
-                font-size: 0.85rem;
-                padding: 8px 12px;
-                flex: 0 1 auto;
-                flex-direction: column;
-                gap: 6px;
-                min-width: 70px;
-                font-weight: 600;
-            }
-            nav a img {
-                width: 32px;
-                height: 32px;
-                margin: 0;
+                height: 36px;
             }
             .container {
                 margin: 220px auto 25px;
@@ -812,14 +793,14 @@
         /* Landscape mode para móviles */
         @media(max-height:500px) and (orientation: landscape){
             .container {
-                margin: 80px auto 30px;
+                margin: 60px auto 30px;
                 padding: 20px 24px;
             }
             header {
-                padding: 8px 16px;
+                padding: 8px 12px;
             }
             .logo img {
-                height: 38px;
+                height: 35px;
             }
             nav {
                 gap: 8px;
