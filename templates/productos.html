@@ -735,18 +735,20 @@
       }
       nav {
         width: 100%;
-        gap: 8px;
-        flex-wrap: wrap;
-        justify-content: space-around;
+        gap: 10px;
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-rows: auto !important;
       }
       nav a {
         font-size: 0.8rem;
-        padding: 10px 6px;
-        flex: 0 1 calc(33.333% - 8px);
+        padding: 6px 10px;
         flex-direction: column;
         gap: 4px;
         min-width: 65px;
         font-weight: 600;
+        width: 100% !important;
+        max-width: 100% !important;
       }
       nav a img {
         width: 28px;
@@ -973,6 +975,10 @@
       <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
     </div>
     <nav role="navigation" aria-label="Navegación principal">
+      <a href="{{ url_for('inicio') }}" aria-label="Ir a la página de inicio">
+        <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">
+        Inicio
+      </a>
       <a href="{{ url_for('productos') }}" aria-label="Ir a la tienda de productos">
         <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">
         Tienda

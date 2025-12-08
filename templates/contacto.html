@@ -458,7 +458,9 @@
         nav {
             width: 100%;
             gap: 10px;
-            justify-content: space-around;
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            grid-template-rows: auto !important;
         }
         nav a {
             font-size: 0.8rem;
@@ -466,6 +468,8 @@
             flex-direction: column;
             gap: 4px;
             min-width: 65px;
+            width: 100% !important;
+            max-width: 100% !important;
         }
         nav a img {
             width: 28px;
@@ -615,6 +619,10 @@
             <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
         </div>
         <nav>
+            <a href="{{ url_for('inicio') }}">
+                <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">
+                Inicio
+            </a>
             <a href="{{ url_for('productos') }}">
                 <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">
                 Tienda
