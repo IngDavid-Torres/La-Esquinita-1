@@ -282,6 +282,25 @@ document.addEventListener('DOMContentLoaded', function() {
     };
   }
 
+  // --- MANEJO DEL BOTÓN TOGGLE ---
+  const toggleBtn = document.getElementById('accesibilidadToggle');
+  const accesBar = document.querySelector('.accesibilidad-bar');
+  
+  if(toggleBtn && accesBar) {
+    // Cargar estado del panel (mostrado u oculto)
+    const panelVisible = localStorage.getItem('acc_panelVisible') === 'true';
+    if(panelVisible) {
+      accesBar.classList.add('show');
+      toggleBtn.classList.add('active');
+    }
+    
+    toggleBtn.onclick = function() {
+      const isVisible = accesBar.classList.toggle('show');
+      this.classList.toggle('active');
+      localStorage.setItem('acc_panelVisible', isVisible);
+    };
+  }
+
   // Aplicar configuración guardada al cargar
   aplicarConfiguracion();
 });
