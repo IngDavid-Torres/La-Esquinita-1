@@ -286,9 +286,18 @@ document.addEventListener('DOMContentLoaded', function() {
   const toggleBtn = document.getElementById('accesibilidadToggle');
   const accesBar = document.querySelector('.accesibilidad-bar');
   
+  console.log('🔍 Toggle Debug:', {
+    toggleBtn: toggleBtn,
+    accesBar: accesBar,
+    toggleBtnExists: !!toggleBtn,
+    accesBarExists: !!accesBar
+  });
+  
   if(toggleBtn && accesBar) {
     // Cargar estado del panel (mostrado u oculto)
     const panelVisible = localStorage.getItem('acc_panelVisible') === 'true';
+    console.log('📦 Estado guardado del panel:', panelVisible);
+    
     if(panelVisible) {
       accesBar.classList.add('show');
       toggleBtn.classList.add('active');
@@ -298,7 +307,12 @@ document.addEventListener('DOMContentLoaded', function() {
       const isVisible = accesBar.classList.toggle('show');
       this.classList.toggle('active');
       localStorage.setItem('acc_panelVisible', isVisible);
+      console.log('👆 Toggle clickeado, panel visible:', isVisible);
     };
+    
+    console.log('✅ Toggle configurado correctamente');
+  } else {
+    console.error('❌ No se encontró el botón toggle o la barra de accesibilidad');
   }
 
   // Aplicar configuración guardada al cargar
