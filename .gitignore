@@ -1,9 +1,10 @@
-
+# Entornos virtuales
+.venv/
 venv/
 env/
 ENV/
 
-
+# Cachés de Python
 __pycache__/
 *.pyc
 *.pyo
@@ -11,23 +12,25 @@ __pycache__/
 .Python
 *.so
 
-
+# Entornos / configuraciones
 .env
+
+# Editores
 .vscode/
 .idea/
 
-
+# Bases de datos
 *.db
 *.sqlite
 
-
+# Logs
 *.log
 
-
+# Archivos del sistema
 .DS_Store
 Thumbs.db
 
-
+# Imágenes (excepto gitkeep)
 static/images/*.jpg
 static/images/*.png
 static/images/*.gif

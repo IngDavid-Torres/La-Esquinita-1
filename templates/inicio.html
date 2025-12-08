@@ -1299,8 +1299,9 @@
 
       function setFontSize(mult) {
         fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-        root.style.setProperty('--font-size-multiplier', fontSize);
-        body.style.fontSize = fontSize + 'em';
+        // Cambiar el tamaño base del HTML para afectar toda la página
+        root.style.fontSize = (fontSize * 16) + 'px';
+        console.log('Nuevo tamaño de fuente:', fontSize);
       }
 
       document.getElementById('aumentarLetraBtn').onclick = function() {
