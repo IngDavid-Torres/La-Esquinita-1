@@ -9,6 +9,39 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/accesibilidad.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* Botón toggle de accesibilidad */
+        .accesibilidad-toggle {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            z-index: 3001;
+            background: linear-gradient(135deg, #ff5722 0%, #2e7d32 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse-accessibility 2s infinite;
+        }
+        .accesibilidad-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(255, 87, 34, 0.6);
+        }
+        .accesibilidad-toggle.active {
+            background: linear-gradient(135deg, #ffb300 0%, #ffc947 100%);
+            color: #222;
+        }
+        @keyframes pulse-accessibility {
+            0%, 100% { box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4); }
+            50% { box-shadow: 0 4px 30px rgba(255, 87, 34, 0.8); }
+        }
         
         #guiaLecturaOverlay {
             display: none;
@@ -369,28 +402,31 @@
         
     .accesibilidad-bar {
             position: fixed;
-            right: 32px;
-            bottom: 70px;
-            z-index: 3001;
+            left: 20px;
+            bottom: 90px;
+            z-index: 3000;
             background: rgba(34,34,34,0.92);
             color: #fff;
-            display: flex;
-            flex-direction: row;
+            flex-direction: column;
             gap: 10px;
             align-items: center;
             padding: 10px 18px 10px 18px;
             border-radius: 22px;
             box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-            opacity: 0.97;
+            opacity: 0;
             min-width: 40px;
             min-height: 40px;
-            transition: box-shadow 0.2s, opacity 0.2s, right 0.2s, bottom 0.2s, background 0.2s;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+            pointer-events: none;
+            display: none;
             backdrop-filter: blur(6px);
         }
-        .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+        .accesibilidad-bar.show {
             opacity: 1;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.22);
-            background: rgba(34,34,34,1);
+            transform: translateY(0);
+            pointer-events: all;
+            display: flex;
         }
         .accesibilidad-bar button, .accesibilidad-bar select {
             background: #fff;
@@ -765,6 +801,7 @@
   </script>
 </head>
 <body>
+    <button class="accesibilidad-toggle" id="accesibilidadToggle" aria-label="Abrir panel de accesibilidad" title="Accesibilidad">♿</button>
 
     <div id="guiaLecturaOverlay"></div>
     
@@ -1395,5 +1432,6 @@
             }
         }
     </script>
+    <script src="{{ url_for('static', filename='js/accesibilidad.js') }}"></script>
 </body>
 </html>
