@@ -1299,10 +1299,21 @@
 
       function setFontSize(mult) {
         fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
+        root.style.setProperty('--font-size-multiplier', fontSize);
         body.style.fontSize = fontSize + 'em';
       }
-      document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-      document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
+
+      document.getElementById('aumentarLetraBtn').onclick = function() {
+        setFontSize(1.15);
+        this.classList.add('active');
+        setTimeout(() => this.classList.remove('active'), 200);
+      };
+
+      document.getElementById('disminuirLetraBtn').onclick = function() {
+        setFontSize(0.87);
+        this.classList.add('active');
+        setTimeout(() => this.classList.remove('active'), 200);
+      };
 
       document.getElementById('modoNocturnoBtn').onclick = function() {
         modoNocturno = !modoNocturno;
@@ -1467,13 +1478,13 @@
   <section class="hero">
     <div class="hero-content">
       <h1>BIENVENIDO A "LA ESQUINITA"</h1>
-      <p>Elotes, esquites y patitas con el auténtico sabor mexicano.</p>
+      <p>Elotes, esquites y patitas de pollo con el auténtico sabor mexicano al alcance de tus manos.</p>
       <a href="{{ url_for('carrito') }}" class="btn-primary" style="display:inline-block;text-decoration:none;">Hacer Pedido</a>
     </div>
   </section>
 
   <section class="productos">
-    <h2>Nuestros Antojos</h2>
+    <h2>NUESTROS PRODUCTOS</h2>
     <div class="grid">
       <div class="card">
         <img src="{{ url_for('static', filename='images/elote1.jpg') }}" alt="Elotes">
