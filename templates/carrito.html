@@ -195,19 +195,18 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      font-size: 16px; /* Base para accesibilidad */
     }
     footer {
       background: var(--dark);
       color: #fff;
       text-align: center;
-      padding: 4px 8px 6px 8px;
+      padding: 30px 20px 38px 20px;
       width: 100%;
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      z-index: 100;
+      position: relative;
+      z-index: 1;
       box-sizing: border-box;
-      margin: 0;
+      margin-top: auto;
       font-size: 0.92em;
       min-height: 32px;
       line-height: 1.2;
@@ -234,58 +233,77 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      font-size: 16px; /* Base para accesibilidad */
     }
 
     
     header {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 20px 40px;
+      padding: 18px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255, 255, 255, 0.9);
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       z-index: 1000;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
+    .logo {
+      display: flex;
+      align-items: center;
+    }
     .logo img {
-      height: 70px;
+      height: 60px;
+      width: auto;
       border-radius: 8px;
+      max-width: 100%;
+      object-fit: contain;
     }
     nav {
       display: flex;
-      gap: 40px;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: nowrap;
+      justify-content: flex-end;
     }
     nav a {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       text-decoration: none;
       color: var(--dark);
       font-weight: 600;
       transition: color 0.3s;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+      font-size: 1rem;
     }
     nav a img {
-      width: 32px;
-      height: 32px;
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
     }
-    nav a:hover { color: var(--accent); }
+    nav a:hover, nav a:active { color: var(--accent); }
 
     
     .container {
-      max-width: 1000px;
-      margin: 140px auto 50px auto;
+      max-width: 1200px;
+      margin: 80px auto 50px auto;
       padding: 20px;
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      width: calc(100% - 40px);
     }
     h2 {
       text-align: center;
       margin-bottom: 30px;
-      font-size: 2em;
+      font-size: clamp(1.6rem, 4vw, 2em);
       color: var(--secondary);
     }
 
@@ -374,123 +392,338 @@
       background: var(--dark);
       color: #fff;
       text-align: center;
-      padding: 25px 20px;
+      padding: 30px 20px 38px 20px;
       margin-top: auto;
+      width: 100%;
     }
-    footer p { margin: 5px 0; }
+    footer p {
+      margin: 8px 0;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      line-height: 1.6;
+      padding: 0 10px;
+    }
     footer .social {
-      margin-top: 10px;
+      margin-top: 16px;
       display: flex;
       justify-content: center;
-      gap: 15px;
+      gap: 20px;
+      flex-wrap: wrap;
     }
     footer .social a {
       color: #fff;
-      font-size: 1.2em;
-      transition: color 0.3s;
+      font-size: 1.5em;
+      transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
-    footer .social a:hover { color: var(--primary); }
+    footer .social a:hover, footer .social a:active {
+      color: var(--primary);
+      transform: scale(1.2);
+    }
 
-    
-    @media(max-width:768px){
-      .carrito-item { flex-direction: column; align-items: flex-start; }
-      .carrito-item img { width: 100%; max-width: 220px; }
-      .total { text-align: center; }
-      footer {
-        padding: 2px 4px 4px 4px;
-        font-size: 0.90em;
-        min-height: 24px;
+    /* Alertas y mensajes flash */
+    .alert-container {
+      position: fixed;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9998;
+      width: 90%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .alert {
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-size: 1em;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: slideDown 0.3s ease-out;
+      text-align: center;
+    }
+
+    .alert.success {
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: #fff;
+      border-left: 4px solid #1b5e20;
+    }
+
+    .alert.error, .alert.danger {
+      background: linear-gradient(135deg, #f44336, #c62828);
+      color: #fff;
+      border-left: 4px solid #b71c1c;
+    }
+
+    .alert.warning {
+      background: linear-gradient(135deg, #ff9800, #f57c00);
+      color: #fff;
+      border-left: 4px solid #e65100;
+    }
+
+    .alert.info {
+      background: linear-gradient(135deg, #2196f3, #1565c0);
+      color: #fff;
+      border-left: 4px solid #0d47a1;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
-   
-    @media (max-width: 600px) {
+
+    /* ========== RESPONSIVE DESIGN ========== */
+
+    /* Tablets y dispositivos medianos */
+    @media(max-width:1024px){
+      header {
+        padding: 14px 16px;
+      }
+      .logo img {
+        height: 50px;
+      }
       nav {
-        gap: 8px;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-bottom: 4px;
-        scrollbar-width: thin;
+        gap: 14px;
       }
       nav a {
-        font-size: 0.98em;
-        padding: 6px 8px;
-        min-width: 80px;
-        flex-shrink: 0;
+        font-size: 0.9rem;
+        gap: 4px;
+      }
+      nav a img {
+        width: 22px;
+        height: 22px;
       }
       .container {
-        padding: 10px 2vw 10px 2vw;
-        margin: 80px 2vw 16px 2vw;
-        max-width: 99vw;
+        margin: 160px auto 60px;
+        padding: 18px;
+      }
+    }
+
+    /* Tablets pequeñas y móviles grandes */
+    @media(max-width:768px){
+      header {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+      }
+      .logo {
+        flex: 0 0 auto;
+      }
+      .logo img {
+        height: 46px;
+      }
+      nav {
+        gap: 10px;
+        flex: 1 1 100%;
+        justify-content: space-around;
+        margin-top: 8px;
+      }
+      nav a {
+        font-size: 0.85rem;
+        gap: 4px;
+        padding: 6px 8px;
+      }
+      nav a img {
+        width: 20px;
+        height: 20px;
+      }
+      .container {
+        margin: 200px auto 50px;
+        padding: 16px;
       }
       h2 {
-        font-size: 1.3em;
-        margin-bottom: 18px;
+        font-size: 1.6em;
       }
       .carrito-item {
-        padding: 10px 0;
-        font-size: 0.98em;
-        gap: 10px;
-        margin-bottom: 10px;
+        flex-direction: column;
+        align-items: flex-start;
       }
       .carrito-item img {
-        width: 90vw;
-        max-width: 180px;
-        min-width: 80px;
-      }
-      .carrito-detalle p {
-        font-size: 0.98em;
-      }
-      .btn-quitar {
-        padding: 8px 10px;
-        font-size: 0.98em;
-        border-radius: 16px;
+        width: 100%;
+        max-width: 220px;
       }
       .total {
-        font-size: 1.1em;
-        margin-top: 10px;
+        text-align: center;
+      }
+      footer {
+        padding: 28px 16px 36px 16px;
+      }
+    }
+
+    /* Móviles medianos (iPhone 12, 13, 14, etc.) */
+    @media(max-width:600px){
+      header {
+        padding: 12px 14px;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .logo {
+        width: 100%;
+        justify-content: center;
+      }
+      .logo img {
+        height: 48px;
+      }
+      nav {
+        width: 100%;
+        gap: 8px;
+        justify-content: space-around;
+      }
+      nav a {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 65px;
+      }
+      nav a img {
+        width: 28px;
+        height: 28px;
+      }
+      .container {
+        margin: 200px auto 40px;
+        padding: 12px;
+        max-width: calc(100% - 24px);
+      }
+      h2 {
+        font-size: 1.4em;
+        margin-bottom: 20px;
+      }
+      .carrito-lista {
+        max-height: 380px;
+      }
+      .carrito-item {
+        padding: 12px;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .carrito-item img {
+        width: 100%;
+        max-width: 180px;
+      }
+      .carrito-detalle p {
+        font-size: 0.95em;
+      }
+      .btn-quitar {
+        padding: 8px 14px;
+        font-size: 0.9em;
+      }
+      .total {
+        font-size: 1.2em;
         text-align: center;
       }
       .pagar {
         width: 100%;
-        min-width: 120px !important;
+        padding: 14px 24px;
         font-size: 1em;
-        padding: 12px 0 !important;
-        border-radius: 18px !important;
-        margin-top: 10px;
       }
       .metodos-pago-container {
-        margin-top: 10px !important;
-      }
-      footer {
-        font-size: 0.90em;
-        padding: 2px 2px 4px 2px;
-        min-height: 18px;
+        margin-top: 15px;
       }
     }
-    @media (max-width: 400px) {
+
+    /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+    @media(max-width:480px){
+      header {
+        padding: 12px 16px;
+        gap: 12px;
+        flex-direction: column;
+      }
+      .logo {
+        width: 100%;
+        justify-content: center;
+      }
+      .logo img {
+        height: 50px;
+      }
+      nav {
+        width: 100%;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      nav a {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        flex: 0 1 auto;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 70px;
+        font-weight: 600;
+      }
+      nav a img {
+        width: 32px;
+        height: 32px;
+        margin: 0;
+      }
       .container {
-        margin: 60px 1vw 10px 1vw;
-        padding: 6px 1vw 6px 1vw;
+        margin: 240px auto 30px;
+        padding: 10px;
+        max-width: calc(100% - 20px);
       }
       h2 {
-        font-size: 1.08em;
+        font-size: 1.3em;
       }
       .carrito-item {
-        font-size: 0.93em;
+        font-size: 0.9em;
+        padding: 10px;
       }
       .pagar {
         font-size: 0.95em;
+        padding: 12px 20px;
       }
       footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100vw;
-        z-index: 100;
-        margin: 0;
-        padding: 1px 1px 2px 1px;
-        min-height: 12px;
-        font-size: 0.88em;
+        padding: 24px 12px 32px 12px;
+      }
+      footer p {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* iPhone SE y dispositivos muy pequeños */
+    @media(max-width:375px){
+      html {
+        font-size: 14px;
+      }
+      header {
+        padding: 8px 10px;
+      }
+      .logo img {
+        height: 36px;
+      }
+      .container {
+        margin: 200px auto 20px;
+        padding: 8px;
+      }
+      h2 {
+        font-size: 1.2em;
+      }
+    }
+
+    /* Landscape mode para móviles */
+    @media(max-height:500px) and (orientation: landscape){
+      .container {
+        margin: 60px auto 30px;
+      }
+      header {
+        padding: 8px 12px;
+      }
+      .logo img {
+        height: 35px;
+      }
+      .carrito-lista {
+        max-height: 250px;
       }
     }
   </style>
@@ -546,9 +779,6 @@
         <a href="{{ url_for('panel_cliente') }}">
           <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">Mi Dashboard
         </a>
-        <a href="{{ url_for('logout') }}">
-          <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">Salir
-        </a>
       {% else %}
         <a href="{{ url_for('login') }}">
           <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">Ingresar
@@ -556,6 +786,17 @@
       {% endif %}
     </nav>
   </header>
+
+  <!-- Alertas Flash -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="alert-container">
+        {% for category, message in messages %}
+          <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
   <main class="container">
     <h2>🛒 Tu Carrito</h2>
@@ -608,6 +849,20 @@
     function confirmarEliminacion() {
       return confirm("⚠️ ¿Estás seguro de que quieres eliminar este producto del carrito?");
     }
+
+    // Auto-ocultar alertas después de 5 segundos
+    document.addEventListener('DOMContentLoaded', function() {
+      const alertContainer = document.querySelector('.alert-container');
+      if (alertContainer) {
+        setTimeout(function() {
+          alertContainer.style.transition = 'opacity 0.5s ease-out';
+          alertContainer.style.opacity = '0';
+          setTimeout(function() {
+            alertContainer.remove();
+          }, 500);
+        }, 5000);
+      }
+    });
   </script>
 </body>
 </html>

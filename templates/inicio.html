@@ -127,6 +127,7 @@
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
+      font-size: 16px; /* Base para accesibilidad */
     }
 
     footer {
@@ -272,7 +273,7 @@
       display: flex;
       gap: 20px;
       align-items: center;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       justify-content: flex-end;
     }
     nav a {
@@ -292,9 +293,7 @@
       height: 26px;
       flex-shrink: 0;
     }
-    nav a:hover, nav a:active {
-      color: var(--accent);
-    }
+    nav a:hover, nav a:active { color: var(--accent); }
 
 
     .hero {
@@ -588,7 +587,7 @@
       }
       .hero {
         min-height: 65vh;
-        margin-top: 120px;
+        margin-top: 140px;
       }
       .hero-content {
         padding: 16px;
@@ -629,7 +628,7 @@
       }
       nav {
         width: 100%;
-        gap: 10px;
+        gap: 8px;
         justify-content: space-around;
       }
       nav a {
@@ -645,7 +644,7 @@
       }
       .hero {
         min-height: 60vh;
-        margin-top: 150px;
+        margin-top: 180px;
         padding: 16px;
       }
       .btn-primary {
@@ -723,7 +722,7 @@
       }
       .hero {
         min-height: 55vh;
-        margin-top: 140px;
+        margin-top: 220px;
         padding: 12px;
       }
       .hero-content {
@@ -784,7 +783,7 @@
       }
       .hero {
         min-height: 50vh;
-        margin-top: 130px;
+        margin-top: 200px;
       }
       .grid {
         gap: 12px;
@@ -1219,26 +1218,6 @@
       }
     }
 
-    /* Estilos adicionales para navegación móvil */
-    nav a.destruccion-total {
-      display: inline-flex;
-    }
-
-    @media(max-width: 600px) {
-      nav a.destruccion-total {
-        flex: 1 1 100%;
-        width: 100%;
-        justify-content: center;
-        margin-top: 8px !important;
-      }
-    }
-
-    @media(max-width: 480px) {
-      nav a.destruccion-total {
-        font-size: 0.65rem;
-      }
-    }
-
     /* Modal responsivo */
     #modal-login-required {
       padding: 20px;
@@ -1303,34 +1282,23 @@
       <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
     </div>
     <nav>
-      <a href="{{ url_for('productos') }}" title="Tienda">
-        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">
-        <span>Tienda</span>
+      <a href="{{ url_for('productos') }}">
+        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">Tienda
       </a>
-      <a href="{{ url_for('contacto') }}" title="Contacto">
-        <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">
-        <span>Contacto</span>
+      <a href="{{ url_for('contacto') }}">
+        <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
       </a>
-      <a href="{{ url_for('carrito') }}" title="Carrito">
+      <a href="{{ url_for('carrito') }}">
         <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
-        <span>Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}</span>
+        Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}
       </a>
       {% if session['usuario_nombre'] %}
-        <a href="{{ url_for('panel_cliente') }}" title="Mi Dashboard">
-          <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">
-          <span>Mi Dashboard</span>
-        </a>
-        <a href="#" data-logout-type="{{ 'admin' if session.get('tipo_usuario') == 'Administrador' else 'cliente' }}" onclick="event.preventDefault(); destructiveLogout('{{ 'admin' if session.get('tipo_usuario') == 'Administrador' else 'cliente' }}');" title="Cerrar Sesión">
-          <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">
-          <span>🔐 Cerrar Sesión</span>
-        </a>
-        <a href="#" onclick="event.preventDefault(); destructiveLogout('force');" style="font-size: 0.8em; color: #ff5722; margin-top: 5px;" title="Destrucción Total" class="destruccion-total">
-          <span>💥 Destrucción Total</span>
+        <a href="{{ url_for('panel_cliente') }}">
+          <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">Mi Dashboard
         </a>
       {% else %}
-        <a href="{{ url_for('login') }}" title="Ingresar">
-          <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">
-          <span>Ingresar</span>
+        <a href="{{ url_for('login') }}">
+          <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">Ingresar
         </a>
       {% endif %}
     </nav>
@@ -1338,7 +1306,7 @@
 
   <section class="hero">
     <div class="hero-content">
-      <h1>¡BIENVIDOS A "LA ESQUINITA"!</h1>
+      <h1>¡BIENVENIDOS A "LA ESQUINITA"!</h1>
       <p>Elotes, esquites y patitas de pollo con el auténtico sabor mexicano.</p>
       <a href="{{ url_for('carrito') }}" class="btn-primary" style="display:inline-block;text-decoration:none;">Hacer Pedido</a>
     </div>
@@ -1606,3 +1574,5 @@
       new LaEsquinitaChatbot();
     });
   </script>
+</body>
+</html>

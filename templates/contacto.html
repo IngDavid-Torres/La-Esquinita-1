@@ -251,7 +251,7 @@
             display: flex;
             gap: 20px;
             align-items: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             justify-content: flex-end;
         }
         nav a {
@@ -271,9 +271,7 @@
             height: 26px;
             flex-shrink: 0;
         }
-        nav a:hover, nav a:active {
-            color: var(--accent);
-        }
+        nav a:hover, nav a:active { color: var(--accent); }
         .container {
             max-width: 500px;
             width: calc(100% - 40px);
@@ -402,7 +400,7 @@
             height: 22px;
         }
         .container {
-            margin: 120px auto 60px;
+            margin: 140px auto 60px;
         }
     }
 
@@ -435,7 +433,7 @@
         }
         .container {
             width: calc(100% - 32px);
-            margin: 140px auto 50px;
+            margin: 160px auto 50px;
             padding: 28px 20px;
         }
         footer {
@@ -459,7 +457,7 @@
         }
         nav {
             width: 100%;
-            gap: 10px;
+            gap: 8px;
             justify-content: space-around;
         }
         nav a {
@@ -530,7 +528,7 @@
         }
         .container {
             width: calc(100% - 24px);
-            margin: 170px auto 30px;
+            margin: 230px auto 30px;
             padding: 20px 12px;
         }
         h2 {
@@ -561,7 +559,7 @@
         }
         .container {
             width: calc(100% - 20px);
-            margin: 160px auto 20px;
+            margin: 220px auto 20px;
             padding: 18px 10px;
         }
     }
@@ -617,13 +615,13 @@
             <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
         </div>
         <nav>
+            <a href="{{ url_for('inicio') }}">
+                <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">
+                Inicio
+            </a>
             <a href="{{ url_for('productos') }}">
                 <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">
                 Tienda
-            </a>
-            <a href="{{ url_for('contacto') }}">
-                <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">
-                Contacto
             </a>
             <a href="{{ url_for('carrito') }}">
                 <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
@@ -633,10 +631,6 @@
                 <a href="{{ url_for('panel_cliente') }}">
                     <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Cuenta">
                     Mi Dashboard
-                </a>
-                <a href="{{ url_for('logout') }}">
-                    <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">
-                    Cerrar Sesión
                 </a>
             {% else %}
                 <a href="{{ url_for('login') }}">

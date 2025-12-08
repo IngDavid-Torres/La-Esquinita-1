@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Detalle del Pedido | La Esquinita</title>
   <style>
     /* Botón toggle de accesibilidad */
@@ -24,9 +25,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        -webkit-tap-highlight-color: transparent;
         animation: pulse-accessibility 2s infinite;
     }
-    .accesibilidad-toggle:hover {
+    .accesibilidad-toggle:hover,
+    .accesibilidad-toggle:active {
         transform: scale(1.1);
         box-shadow: 0 6px 25px rgba(255, 87, 34, 0.6);
     }
@@ -56,55 +59,67 @@
       flex-direction: column;
       min-height: 100vh;
       line-height: 1.6;
+      font-size: 16px; /* Base para accesibilidad */
     }
 
     
     header {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 20px 40px;
+      padding: 18px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 20px;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       z-index: 1000;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
+    .logo {
+      display: flex;
+      align-items: center;
+    }
     .logo img {
       height: 60px;
+      width: auto;
       border-radius: 8px;
+      max-width: 100%;
+      object-fit: contain;
     }
     nav {
       display: flex;
-      gap: 30px;
-      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: nowrap;
+      justify-content: flex-end;
     }
     nav a {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       text-decoration: none;
       color: var(--dark);
       font-weight: 600;
-      transition: color 0.3s, background 0.3s;
-      padding: 8px 12px;
-      border-radius: 6px;
+      transition: color 0.3s;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+      font-size: 1rem;
     }
     nav a img {
-      width: 32px;
-      height: 32px;
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
     }
-    nav a:hover {
-      color: var(--accent);
-      background: rgba(255,87,34,0.1);
-    }
+    nav a:hover, nav a:active { color: var(--accent); }
 
     
     .container {
       max-width: 700px;
-      margin: 120px auto 40px auto;
+      margin: 80px auto 40px auto;
       background: rgba(255,255,255,0.97);
       padding: 30px 25px;
       border-radius: 15px;
@@ -207,6 +222,7 @@
       align-items: center;
       justify-content: center;
       margin-bottom: 2px;
+      -webkit-tap-highlight-color: transparent;
     }
     .accesibilidad-bar button:hover, .accesibilidad-bar select:hover {
       background: var(--primary);
@@ -231,87 +247,276 @@
       background: var(--dark);
       color: #fff;
       text-align: center;
-      padding: 30px 20px;
+      padding: 30px 20px 38px 20px;
       margin-top: auto;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      box-sizing: border-box;
+    }
+    footer p {
+      margin: 8px 0;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      line-height: 1.6;
     }
 
-    @media(max-width:768px){
-      .container {
-        margin: 140px 10px 40px 10px;
-        padding: 20px;
+    /* ========== RESPONSIVE DESIGN ========== */
+
+    /* Media queries para accesibilidad */
+    @media(max-width:600px){
+      .accesibilidad-toggle {
+        left: 16px;
+        bottom: 16px;
+        width: 56px;
+        height: 56px;
+        font-size: 1.4rem;
+      }
+
+      .accesibilidad-bar {
+        left: 16px;
+        bottom: 80px;
+        padding: 10px 6px 6px 6px;
+        min-width: 44px;
+        min-height: 44px;
+        gap: 6px;
+      }
+
+      .accesibilidad-bar button,
+      .accesibilidad-bar select {
+        width: 34px;
+        height: 34px;
+        font-size: 1.1em;
+      }
+    }
+
+    @media(max-width:480px){
+      .accesibilidad-toggle {
+        left: 12px;
+        bottom: 12px;
+        width: 52px;
+        height: 52px;
+        font-size: 1.3rem;
+      }
+
+      .accesibilidad-bar {
+        left: 12px;
+        bottom: 72px;
+        padding: 8px 5px 5px 5px;
+        min-width: 40px;
+        min-height: 40px;
+        gap: 5px;
+      }
+
+      .accesibilidad-bar button,
+      .accesibilidad-bar select {
+        width: 32px;
+        height: 32px;
+        font-size: 1em;
+      }
+    }
+
+    /* Tablets y dispositivos medianos */
+    @media(max-width:1024px){
+      header {
+        padding: 16px 20px;
+      }
+      .logo img {
+        height: 55px;
       }
       nav {
-        gap: 10px;
+        gap: 18px;
       }
       nav a {
-        font-size: 0.9em;
+        font-size: 0.95rem;
+        gap: 6px;
+      }
+      nav a img {
+        width: 24px;
+        height: 24px;
+      }
+      .container {
+        margin: 160px auto 60px;
+        padding: 26px 22px;
+      }
+    }
+
+    /* Tablets pequeñas y móviles grandes */
+    @media(max-width:768px){
+      header {
+        padding: 14px 18px;
+      }
+      .logo img {
+        height: 50px;
+      }
+      nav {
+        gap: 16px;
+      }
+      nav a {
+        font-size: 0.9rem;
+        gap: 6px;
+      }
+      nav a img {
+        width: 22px;
+        height: 22px;
+      }
+      .container {
+        margin: 200px 16px 50px;
+        padding: 24px 18px;
+        max-width: calc(100% - 32px);
       }
       table, th, td {
         font-size: 0.95em;
       }
+      footer {
+        padding: 28px 16px 36px 16px;
+      }
     }
   
-  @media (max-width: 600px) {
-    nav {
-      gap: 8px;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      scrollbar-width: thin;
+    /* Móviles medianos (iPhone 12, 13, 14, etc.) */
+    @media(max-width:600px){
+      header {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .logo {
+        width: 100%;
+        justify-content: center;
+      }
+      .logo img {
+        height: 48px;
+      }
+      nav {
+        width: 100%;
+        gap: 10px;
+        flex-wrap: nowrap;
+        justify-content: space-around;
+        overflow-x: auto;
+      }
+      nav a {
+        font-size: 0.8rem;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 60px;
+        font-weight: 600;
+      }
+      nav a img {
+        width: 26px;
+        height: 26px;
+      }
+      .container {
+        margin: 200px 12px 40px;
+        padding: 20px 16px;
+        max-width: calc(100% - 24px);
+      }
+      h2 {
+        font-size: 1.3em;
+        margin-bottom: 14px;
+      }
+      .pedido-info p {
+        font-size: 0.98em;
+        margin-bottom: 8px;
+      }
+      .volver {
+        width: 100%;
+        font-size: 1em;
+        padding: 12px 0;
+        margin-top: 12px;
+      }
+      table, th, td {
+        font-size: 0.93em;
+        padding: 8px;
+      }
+      footer {
+        padding: 24px 12px 32px 12px;
+      }
     }
-    nav a {
-      font-size: 0.98em;
-      padding: 6px 8px;
-      min-width: 80px;
-      flex-shrink: 0;
+
+    /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+    @media(max-width:480px){
+      header {
+        padding: 10px 14px;
+        gap: 10px;
+      }
+      .logo img {
+        height: 45px;
+      }
+      nav a {
+        font-size: 0.75rem;
+        min-width: 55px;
+      }
+      nav a img {
+        width: 24px;
+        height: 24px;
+      }
+      .container {
+        margin: 240px 10px 30px;
+        padding: 18px 14px;
+        max-width: calc(100% - 20px);
+      }
+      h2 {
+        font-size: 1.2em;
+      }
+      .volver {
+        font-size: 0.95em;
+        padding: 11px 0;
+      }
+      footer {
+        padding: 20px 10px 28px 10px;
+      }
     }
-    .container {
-      padding: 10px 2vw 10px 2vw;
-      margin: 80px 2vw 16px 2vw;
-      max-width: 99vw;
+
+    /* iPhone SE y dispositivos muy pequeños */
+    @media(max-width:375px){
+      html {
+        font-size: 14px;
+      }
+      header {
+        padding: 10px 12px;
+        gap: 8px;
+      }
+      .logo img {
+        height: 40px;
+      }
+      nav {
+        gap: 8px;
+      }
+      nav a {
+        font-size: 0.7rem;
+        min-width: 50px;
+      }
+      nav a img {
+        width: 22px;
+        height: 22px;
+      }
+      .container {
+        margin: 200px 8px 20px;
+        padding: 16px 12px;
+      }
+      h2 {
+        font-size: 1.1em;
+      }
     }
-    h2 {
-      font-size: 1.1em;
-      margin-bottom: 10px;
+
+    /* Landscape mode para móviles */
+    @media(max-height:500px) and (orientation: landscape){
+      .container {
+        margin: 60px auto 30px;
+        padding: 18px 20px;
+      }
+      header {
+        padding: 8px 12px;
+      }
+      .logo img {
+        height: 35px;
+      }
     }
-    .pedido-info p {
-      font-size: 0.98em;
-      margin-bottom: 6px;
-    }
-    .volver {
-      width: 100%;
-      font-size: 1em;
-      padding: 10px 0;
-      border-radius: 18px;
-      margin-top: 10px;
-    }
-    table, th, td {
-      font-size: 0.93em;
-      padding: 8px 4px;
-    }
-    footer {
-      font-size: 0.92em;
-      padding: 10px 4px 8px 4px;
-    }
-  }
-  @media (max-width: 400px) {
-    .container {
-      margin: 60px 1vw 10px 1vw;
-      padding: 6px 1vw 6px 1vw;
-    }
-    h2 {
-      font-size: 0.98em;
-    }
-    .volver {
-      font-size: 0.95em;
-    }
-  }
   </style>
 </head>
 <body>
-  <button class="accesibilidad-toggle" id="accesibilidadToggle" aria-label="Abrir panel de accesibilidad" title="Accesibilidad">♿</button>
+  <button class="accesibilidad-toggle" id="accesibilidadToggle" aria-label="Abrir panel de accesibilidad" title="Accesibilidad">♠</button>
 
-  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+  <div class="accesibilidad-bar" id="accesibilidadBar" aria-label="Barra de accesibilidad">
     <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
     <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
       <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
@@ -331,145 +536,26 @@
     <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
   </div>
 
-  <script>
-    const root = document.documentElement;
-    const body = document.body;
-    let fontSize = 1;
-    let modoNocturno = false;
-    let contraste = false;
-    let contrasteValor = 1;
-    let grises = false;
-    let guiaLectura = false;
-    let lectorActivo = false;
-    let tipografia = 'default';
-
-    function setFontSize(mult) {
-      fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-      body.style.fontSize = fontSize + 'em';
-    }
-    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
-
-    document.getElementById('modoNocturnoBtn').onclick = function() {
-      modoNocturno = !modoNocturno;
-      if(modoNocturno) {
-        body.style.background = '#181818';
-        body.style.color = '#fff';
-        this.classList.add('active');
-      } else {
-        body.style.background = '';
-        body.style.color = '';
-        this.classList.remove('active');
-      }
-    };
-
-    const contrasteRange = document.getElementById('contrasteRange');
-    const contrasteBtn = document.getElementById('contrasteBtn');
-    contrasteBtn.onclick = function() {
-      contraste = !contraste;
-      if(contraste) {
-        contrasteValor = parseFloat(contrasteRange.value);
-        body.style.filter = `contrast(${contrasteValor})`;
-        contrasteRange.disabled = false;
-        this.classList.add('active');
-      } else {
-        body.style.filter = '';
-        contrasteRange.disabled = true;
-        this.classList.remove('active');
-      }
-    };
-    contrasteRange.oninput = function() {
-      contrasteValor = parseFloat(this.value);
-      if(contraste) {
-        body.style.filter = `contrast(${contrasteValor})`;
-      }
-    };
-    contrasteRange.disabled = true;
-
-    document.getElementById('grisesBtn').onclick = function() {
-      grises = !grises;
-      if(grises) {
-        body.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
-        this.classList.add('active');
-      } else {
-        body.style.filter = contraste ? `contrast(${contrasteValor})` : '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('guiaLecturaBtn').onclick = function() {
-      guiaLectura = !guiaLectura;
-      let contenido = document.querySelector('.container') || document.body;
-      if(guiaLectura) {
-        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-        contenido.style.background = '#fffbe7';
-        this.classList.add('active');
-      } else {
-        contenido.style.boxShadow = '';
-        contenido.style.background = '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('tipografiaSelect').onchange = function() {
-      tipografia = this.value;
-      switch(tipografia) {
-        case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-        case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-        case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-        case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-        default: body.style.fontFamily = '';
-      }
-    };
-
-    document.getElementById('lectorPantallaBtn').onclick = function() {
-      lectorActivo = !lectorActivo;
-      let contenido = document.querySelector('.container') || document.body;
-      if(lectorActivo) {
-        this.classList.add('active');
-        let texto = contenido.innerText;
-        if('speechSynthesis' in window) {
-          let utter = new SpeechSynthesisUtterance(texto);
-          utter.lang = 'es-MX';
-          window.speechSynthesis.speak(utter);
-        } else {
-          alert('Lector de pantalla no soportado en este navegador.');
-        }
-      } else {
-        this.classList.remove('active');
-        if('speechSynthesis' in window) window.speechSynthesis.cancel();
-      }
-    };
-  </script>
+  <script src="{{ url_for('static', filename='js/accesibilidad.js') }}"></script>
   
   <header>
     <div class="logo">
       <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
     </div>
     <nav>
-      <a href="{{ url_for('inicio') }}">
-        <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">Inicio
-      </a>
       <a href="{{ url_for('productos') }}">
-        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Mercado">Tienda
+        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">Tienda
       </a>
       <a href="{{ url_for('contacto') }}">
         <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
       </a>
-      {% if session['usuario_id'] %}
-        <a href="{{ url_for('carrito') }}">
-          <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">Carrito
-          {% if cantidad_carrito and cantidad_carrito > 0 %}
-            <span style="background: var(--primary); color: var(--secondary); padding:2px 8px; border-radius:12px; font-weight:bold; margin-left:4px;">
-              {{ cantidad_carrito }}
-            </span>
-          {% endif %}
-        </a>
-        <a href="{{ url_for('pedidos_cliente') }}">
-          <img src="{{ url_for('static', filename='images/misp.png') }}" alt="Mis Pedidos">Mis Pedidos
-        </a>
+      <a href="{{ url_for('carrito') }}">
+        <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
+        Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}
+      </a>
+      {% if session['usuario_nombre'] %}
         <a href="{{ url_for('panel_cliente') }}">
-          <img src="{{ url_for('static', filename='images/perfil.png')}}" alt="Mi Cuenta">Mi Dashboard
+          <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">Mi Dashboard
         </a>
       {% else %}
         <a href="{{ url_for('login') }}">

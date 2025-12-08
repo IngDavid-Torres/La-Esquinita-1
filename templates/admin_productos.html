@@ -215,18 +215,13 @@
             .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
         }
         @media(max-width:1024px){
-            header { padding: 12px 8px; }
-            nav { gap: 10px; margin-right: 2px; }
-            .container { margin: 80px auto 24px; padding: 12px 2vw 12px 2vw; max-width: 99vw; }
+            .container { margin: 140px auto 24px; padding: 12px 2vw 12px 2vw; max-width: 99vw; }
             .producto-item { padding: 10px 8px; gap: 6px; }
             .botones-container { gap: 8px; }
             .buscador-form input[type="text"] { width: 140px; }
         }
         @media(max-width:768px){
-            header { flex-direction: column; align-items: flex-start; padding: 8px 4px; }
-            nav { gap: 6px; flex-wrap: wrap; margin-right: 0; }
-            .logo img { height: 38px; }
-            .container { margin: 38px auto 10px; padding: 8px 2vw; max-width: 99vw; }
+            .container { margin: 160px auto 10px; padding: 8px 2vw; max-width: 99vw; }
             h2 { font-size: 1.1em; }
             .buscador-form input[type="text"] { width: 100px; font-size: 0.95em; }
             .buscador-form button { padding: 8px 12px; font-size: 0.95em; }
@@ -237,11 +232,19 @@
             .boton-agregar-wrapper { margin-bottom: 10px; }
             .accesibilidad-bar { left: 8px; bottom: 8px; }
         }
+        @media(max-width:600px){
+            .container { margin: 180px auto 8px; padding: 6px 1.5vw; max-width: 99vw; }
+            h2 { font-size: 1.05em; }
+            .buscador-form input[type="text"] { width: 80px; font-size: 0.94em; }
+            .buscador-form button { padding: 7px 10px; font-size: 0.94em; }
+            .producto-item { padding: 6px 3px; gap: 3px; }
+            .botones-container { gap: 5px; }
+            .boton { width: 75px; padding: 7px; font-size: 0.94em; }
+            .boton-agregar { padding: 7px 10px; font-size: 0.94em; }
+            .boton-agregar-wrapper { margin-bottom: 8px; }
+        }
         @media(max-width:480px){
-            header { flex-direction: column; align-items: flex-start; padding: 4px 2px; }
-            nav { gap: 2px; flex-wrap: wrap; margin-right: 0; }
-            .logo img { height: 28px; }
-            .container { margin: 18px auto 4px; padding: 4px 1vw; max-width: 99vw; }
+            .container { margin: 230px auto 4px; padding: 4px 1vw; max-width: 99vw; }
             h2 { font-size: 1em; }
             .buscador-form input[type="text"] { width: 60px; font-size: 0.92em; }
             .buscador-form button { padding: 6px 8px; font-size: 0.92em; }
@@ -252,10 +255,14 @@
             .boton-agregar-wrapper { margin-bottom: 6px; }
             .accesibilidad-bar { left: 4px; bottom: 80px; }
         }
+        @media(max-width:375px){
+            .container { margin: 220px auto 2px; }
+        }
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Supervisión de Productos | La Esquinita</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav-responsive.css') }}">
     <style>
         :root {
             --primary: #FFD700;
@@ -275,48 +282,7 @@
             background: linear-gradient(135deg, var(--light) 0%, #e6f2d8 100%);
             color: var(--dark);
         }
-        /* NAVBAR */
-        header {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%;
-            padding: 24px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .logo img {
-            height: 70px;
-            border-radius: 8px;
-        }
-        nav {
-            display: flex;
-            gap: 28px;
-            margin-right: 30px;
-        }
-        nav a {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 600;
-            transition: color 0.3s;
-            font-size: 1.08em;
-            padding: 6px 12px;
-        }
-        nav a img {
-            width: 32px;
-            height: 32px;
-        }
-        nav a:hover {
-            color: var(--accent);
-        }
-        
+
         .container {
             max-width: 1100px;
             margin: 130px auto 40px auto;
@@ -463,22 +429,15 @@
         }
         @media(max-width:900px){
             .container { padding: 18px 2vw 18px 2vw; }
-            .logo img { height: 48px; }
-            nav { gap: 12px; margin-right: 5px;}
         }
         @media(max-width:1024px){
-            header { padding: 12px 8px; }
-            nav { gap: 10px; margin-right: 2px; }
-            .container { margin: 80px auto 24px; padding: 12px 2vw 12px 2vw; max-width: 99vw; }
+            .container { margin: 140px auto 24px; padding: 12px 2vw 12px 2vw; max-width: 99vw; }
             .producto-item { padding: 10px 8px; gap: 6px; }
             .botones-container { gap: 8px; }
             .buscador-form input[type="text"] { width: 140px; }
         }
         @media(max-width:768px){
-            header { flex-direction: column; align-items: flex-start; padding: 8px 4px; }
-            nav { gap: 6px; flex-wrap: wrap; margin-right: 0; }
-            .logo img { height: 38px; }
-            .container { margin: 38px auto 10px; padding: 8px 2vw; max-width: 99vw; }
+            .container { margin: 160px auto 10px; padding: 8px 2vw; max-width: 99vw; }
             h2 { font-size: 1.1em; }
             .buscador-form input[type="text"] { width: 100px; font-size: 0.95em; }
             .buscador-form button { padding: 8px 12px; font-size: 0.95em; }
@@ -489,11 +448,19 @@
             .boton-agregar-wrapper { margin-bottom: 10px; }
             .accesibilidad-bar { left: 8px; bottom: 8px; }
         }
+        @media(max-width:600px){
+            .container { margin: 180px auto 8px; padding: 6px 1.5vw; max-width: 99vw; }
+            h2 { font-size: 1.05em; }
+            .buscador-form input[type="text"] { width: 80px; font-size: 0.94em; }
+            .buscador-form button { padding: 7px 10px; font-size: 0.94em; }
+            .producto-item { padding: 6px 3px; gap: 3px; }
+            .botones-container { gap: 5px; }
+            .boton { width: 75px; padding: 7px; font-size: 0.94em; }
+            .boton-agregar { padding: 7px 10px; font-size: 0.94em; }
+            .boton-agregar-wrapper { margin-bottom: 8px; }
+        }
         @media(max-width:480px){
-            header { flex-direction: column; align-items: flex-start; padding: 4px 2px; }
-            nav { gap: 2px; flex-wrap: wrap; margin-right: 0; }
-            .logo img { height: 28px; }
-            .container { margin: 18px auto 4px; padding: 4px 1vw; max-width: 99vw; }
+            .container { margin: 230px auto 4px; padding: 4px 1vw; max-width: 99vw; }
             h2 { font-size: 1em; }
             .buscador-form input[type="text"] { width: 60px; font-size: 0.92em; }
             .buscador-form button { padding: 6px 8px; font-size: 0.92em; }
@@ -503,6 +470,9 @@
             .boton-agregar { padding: 6px 8px; font-size: 0.92em; }
             .boton-agregar-wrapper { margin-bottom: 6px; }
             .accesibilidad-bar { left: 4px; bottom: 80px; }
+        }
+        @media(max-width:375px){
+            .container { margin: 220px auto 2px; }
         }
     </style>
     <script>
@@ -574,145 +544,6 @@
         </select>
         <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
     </div>
-    <script>
-        // Toggle para mostrar/ocultar el panel de accesibilidad
-        const accToggle = document.getElementById('accesibilidadToggle');
-        const accBar = document.getElementById('accesibilidadBar');
-        
-        accToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            accBar.classList.toggle('show');
-            const isOpen = accBar.classList.contains('show');
-            accToggle.classList.toggle('active', isOpen);
-            accToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú de accesibilidad' : 'Abrir menú de accesibilidad');
-        });
-        
-        // Cerrar al hacer click fuera
-        document.addEventListener('click', function(e) {
-            if (!accBar.contains(e.target) && e.target !== accToggle) {
-                accBar.classList.remove('show');
-                accToggle.classList.remove('active');
-                accToggle.setAttribute('aria-label', 'Abrir menú de accesibilidad');
-            }
-        });
-       
-        const root = document.documentElement;
-        const body = document.body;
-        let fontSize = 1;
-        let modoNocturno = false;
-        let contraste = false;
-        let contrasteValor = 1;
-        let grises = false;
-        let guiaLectura = false;
-        let lectorActivo = false;
-        let tipografia = 'default';
-
-        function setFontSize(mult) {
-            fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-            body.style.fontSize = fontSize + 'em';
-        }
-        document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-        document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
-
-        document.getElementById('modoNocturnoBtn').onclick = function() {
-            modoNocturno = !modoNocturno;
-            const container = document.querySelector('.container');
-            const items = document.querySelectorAll('.producto-item');
-            if(modoNocturno) {
-                body.classList.add('night-mode');
-                this.classList.add('active');
-                document.querySelector('.accesibilidad-bar').classList.add('night-mode');
-                document.querySelector('footer').classList.add('night-mode');
-                if(container) container.classList.add('night-mode');
-                items.forEach(item => item.classList.add('night-mode'));
-            } else {
-                body.classList.remove('night-mode');
-                this.classList.remove('active');
-                document.querySelector('.accesibilidad-bar').classList.remove('night-mode');
-                document.querySelector('footer').classList.remove('night-mode');
-                if(container) container.classList.remove('night-mode');
-                items.forEach(item => item.classList.remove('night-mode'));
-            }
-        };
-
-        const contrasteRange = document.getElementById('contrasteRange');
-        const contrasteBtn = document.getElementById('contrasteBtn');
-        contrasteBtn.onclick = function() {
-            contraste = !contraste;
-            if(contraste) {
-                contrasteValor = parseFloat(contrasteRange.value);
-                body.style.filter = `contrast(${contrasteValor})`;
-                contrasteRange.disabled = false;
-                this.classList.add('active');
-            } else {
-                body.style.filter = '';
-                contrasteRange.disabled = true;
-                this.classList.remove('active');
-            }
-        };
-        contrasteRange.oninput = function() {
-            contrasteValor = parseFloat(this.value);
-            if(contraste) {
-                body.style.filter = `contrast(${contrasteValor})`;
-            }
-        };
-        contrasteRange.disabled = true;
-
-        document.getElementById('grisesBtn').onclick = function() {
-            grises = !grises;
-            if(grises) {
-                body.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
-                this.classList.add('active');
-            } else {
-                body.style.filter = contraste ? `contrast(${contrasteValor})` : '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('guiaLecturaBtn').onclick = function() {
-            guiaLectura = !guiaLectura;
-            let contenido = document.querySelector('.container') || document.body;
-            if(guiaLectura) {
-                contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-                contenido.style.background = '#fffbe7';
-                this.classList.add('active');
-            } else {
-                contenido.style.boxShadow = '';
-                contenido.style.background = '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('tipografiaSelect').onchange = function() {
-            tipografia = this.value;
-            switch(tipografia) {
-                case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-                case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-                case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-                case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-                default: body.style.fontFamily = '';
-            }
-        };
-
-        document.getElementById('lectorPantallaBtn').onclick = function() {
-            lectorActivo = !lectorActivo;
-            let contenido = document.querySelector('.container') || document.body;
-            if(lectorActivo) {
-                this.classList.add('active');
-                let texto = contenido.innerText;
-                if('speechSynthesis' in window) {
-                    let utter = new SpeechSynthesisUtterance(texto);
-                    utter.lang = 'es-MX';
-                    window.speechSynthesis.speak(utter);
-                } else {
-                    alert('Lector de pantalla no soportado en este navegador.');
-                }
-            } else {
-                this.classList.remove('active');
-                if('speechSynthesis' in window) window.speechSynthesis.cancel();
-            }
-        };
-    </script>
     
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}

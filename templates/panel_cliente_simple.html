@@ -23,6 +23,71 @@
       margin: 0;
       padding: 0;
     }
+    .main-content {
+      padding: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 1.1em;
+      margin: 15px 0;
+    }
+    button {
+      padding: 12px 24px;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: var(--primary);
+    }
+
+    /* ========== RESPONSIVE DESIGN ========== */
+
+    @media(max-width:768px){
+      .main-content {
+        padding: 30px 20px;
+      }
+      h1 {
+        font-size: 1.6em;
+      }
+      p {
+        font-size: 1em;
+      }
+    }
+
+    @media(max-width:600px){
+      .main-content {
+        padding: 24px 16px;
+      }
+      h1 {
+        font-size: 1.4em;
+      }
+      button {
+        width: 100%;
+        padding: 14px;
+      }
+    }
+
+    @media(max-width:480px){
+      .main-content {
+        padding: 20px 12px;
+      }
+      h1 {
+        font-size: 1.3em;
+      }
+      p {
+        font-size: 0.95em;
+      }
+    }
   </style>
 </head>
 <body>

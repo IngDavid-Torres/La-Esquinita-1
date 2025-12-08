@@ -14,7 +14,7 @@
         left: 20px;
         bottom: 20px;
         z-index: 3001;
-        background: linear-gradient(135deg, #ff5722 0%, #2e7d32 100%);
+        background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
         color: white;
         border: none;
         border-radius: 50%;
@@ -27,19 +27,25 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        -webkit-tap-highlight-color: transparent;
         animation: pulse-accessibility 2s infinite;
     }
-    .accesibilidad-toggle:hover {
+    .accesibilidad-toggle:hover,
+    .accesibilidad-toggle:active {
         transform: scale(1.1);
         box-shadow: 0 6px 25px rgba(255, 87, 34, 0.6);
     }
     .accesibilidad-toggle.active {
-        background: linear-gradient(135deg, #ffb300 0%, #ffc947 100%);
-        color: #222;
+        background: linear-gradient(135deg, var(--primary) 0%, #ffc947 100%);
+        color: var(--dark);
     }
     @keyframes pulse-accessibility {
-        0%, 100% { box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4); }
-        50% { box-shadow: 0 4px 30px rgba(255, 87, 34, 0.8); }
+        0%, 100% {
+            box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+        }
+        50% {
+            box-shadow: 0 4px 30px rgba(255, 87, 34, 0.8);
+        }
     }
     :root {
       --primary: #ffb300;
@@ -62,6 +68,7 @@
       flex-direction: row;
       overflow-x: hidden;
       overflow-y: auto;
+      font-size: 16px; /* Base para accesibilidad */
     }
     /* --- Sidebar --- */
     .sidebar {
@@ -292,32 +299,54 @@
       left: 20px;
       bottom: 90px;
       z-index: 3000;
-      background: rgba(34,34,34,0.92);
+      background: #222;
       color: #fff;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
-      padding: 10px 18px 10px 18px;
-      border-radius: 22px;
+      padding: 14px 10px 10px 10px;
+      border-radius: 18px;
       box-shadow: 0 4px 18px rgba(0,0,0,0.18);
       opacity: 0;
-      min-width: 40px;
-      min-height: 40px;
+      min-width: 48px;
+      min-height: 48px;
       transition: all 0.3s ease;
       transform: translateY(20px);
       pointer-events: none;
       display: none;
-      backdrop-filter: blur(6px);
-      touch-action: manipulation;
     }
+
     .accesibilidad-bar.show {
       opacity: 1;
       transform: translateY(0);
       pointer-events: all;
       display: flex;
     }
-    .accesibilidad-bar button, .accesibilidad-bar select {
+    .accesibilidad-bar button,
+    .accesibilidad-bar select {
       background: #fff;
+      color: #222;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .accesibilidad-bar button.active {
+      background: #ffb300;
+      color: #222;
+      transform: scale(1.08);
+    }
       color: #222;
       border: none;
       border-radius: 50%;
@@ -344,38 +373,45 @@
       .sidebar-toggle-btn {
         display: flex !important;
         position: fixed;
-        top: auto;
-        bottom: 32px;
-        left: 18px;
+        top: 20px;
+        bottom: auto;
+        left: 20px;
         z-index: 2001;
         background: var(--primary);
         color: #fff;
         border: none;
         border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-        font-size: 1.4em;
+        width: 50px;
+        height: 50px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        font-size: 1.5em;
         cursor: pointer;
         align-items: center;
         justify-content: center;
-        transition: background 0.2s, color 0.2s;
+        transition: all 0.3s ease;
+      }
+      .sidebar-toggle-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
       }
       .sidebar {
-        left: -320px;
+        left: -100%;
         box-shadow: none;
-        width: 80vw;
-        max-width: 340px;
-        min-width: 220px;
+        width: 85vw;
+        max-width: 320px;
+        min-width: 260px;
         background: var(--sidebar);
         z-index: 2000;
       }
       .sidebar.sidebar-visible {
         left: 0;
-        box-shadow: 0 0 18px rgba(0,0,0,0.18);
+        box-shadow: 0 0 24px rgba(0,0,0,0.25);
       }
       .main-content {
         margin-left: 0;
+        margin: 0 auto;
+        max-width: 100%;
+        width: 100%;
       }
       .dashboard-sections {
         grid-template-columns: 1fr;
@@ -435,14 +471,264 @@
     .notificacion.night-mode { background: #ffb300 !important; color: #232323 !important; }
     .footer-fixed.night-mode { background: #181818 !important; color: #fff !important; }
     .accesibilidad-bar.night-mode { background: #232323 !important; color: #fff !important; }
+    
+    /* ========== RESPONSIVE DESIGN COMPLETO ========== */
+
+    /* Tablets y dispositivos medianos */
+    @media(max-width:1024px){
+      .sidebar {
+        width: 260px;
+      }
+      .sidebar .logo img {
+        width: 95px;
+      }
+      .sidebar .cliente-nombre {
+        font-size: 1.1em;
+      }
+      .sidebar nav {
+        gap: 14px;
+      }
+      .sidebar nav button, .sidebar nav a {
+        font-size: 1em;
+        padding: 10px 14px;
+      }
+      .main-content {
+        margin-left: 0;
+        margin: 0 auto;
+        padding: 40px 36px 36px 36px;
+        max-width: 100%;
+        width: 100%;
+      }
+      .dashboard-header h1 {
+        font-size: 1.9em;
+      }
+      .dashboard-sections {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 28px;
+      }
+      .section-box {
+        padding: 26px 20px 20px 20px;
+      }
+    }
+
+    /* Tablets pequeñas y móviles grandes */
+    @media(max-width:768px){
+      .sidebar {
+        width: 240px;
+      }
+      .sidebar .logo img {
+        width: 85px;
+      }
+      .sidebar .cliente-nombre {
+        font-size: 1em;
+        margin-bottom: 24px;
+      }
+      .sidebar nav {
+        gap: 12px;
+      }
+      .sidebar nav button, .sidebar nav a {
+        font-size: 0.95em;
+        padding: 10px 12px;
+        width: 90%;
+      }
+      .main-content {
+        margin-left: 0;
+        margin: 0 auto;
+        padding: 32px 24px 50px 24px;
+        max-width: 100%;
+        width: 100%;
+      }
+      .dashboard-header h1 {
+        font-size: 1.7em;
+      }
+      .dashboard-sections {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .section-box {
+        max-width: 100%;
+        padding: 24px 18px 18px 18px;
+      }
+      .footer-fixed {
+        padding: 18px 0 12px 0;
+        font-size: 0.95em;
+      }
+    }
+
+    /* Móviles medianos (iPhone 12, 13, 14, etc.) */
+    @media(max-width:600px){
+      .accesibilidad-toggle {
+        left: 16px;
+        bottom: 16px;
+        width: 56px;
+        height: 56px;
+        font-size: 1.4rem;
+      }
+
+      .accesibilidad-bar {
+        left: 16px;
+        bottom: 82px;
+        padding: 10px 8px;
+        min-width: 44px;
+        min-height: 44px;
+        gap: 8px;
+      }
+      
+      .accesibilidad-bar button,
+      .accesibilidad-bar select {
+        width: 38px;
+        height: 38px;
+        font-size: 1.2em;
+      }
+    }
+
+    /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+    @media(max-width:480px){
+      .sidebar-toggle-btn {
+        width: 48px !important;
+        height: 48px !important;
+        left: 16px !important;
+        top: 16px !important;
+        bottom: auto !important;
+        font-size: 1.4em !important;
+      }
+      .sidebar {
+        width: 88vw;
+        max-width: 300px;
+      }
+      .main-content {
+        padding: 80px 12px 60px 12px;
+        margin: 0 auto;
+        max-width: 100%;
+        width: 100%;
+      }
+      .dashboard-header h1 {
+        font-size: 1.3em;
+      }
+      .dashboard-sections {
+        gap: 16px;
+      }
+      .section-box {
+        padding: 18px 14px 14px 14px;
+      }
+      .section-box h2 {
+        font-size: 1.15em;
+        margin-bottom: 12px;
+      }
+      .section-box li {
+        font-size: 0.9em;
+        margin-bottom: 8px;
+      }
+      .section-box .btn, .section-box .btn-red {
+        padding: 10px 0;
+        font-size: 0.95em;
+      }
+      .accesibilidad-toggle {
+        width: 52px;
+        height: 52px;
+        left: 12px;
+        bottom: 12px;
+        font-size: 1.3rem;
+      }
+      .accesibilidad-bar {
+        left: 12px;
+        bottom: 72px;
+        padding: 8px 5px 5px 5px;
+        min-width: 40px;
+        min-height: 40px;
+        gap: 5px;
+      }
+      .accesibilidad-bar button, .accesibilidad-bar select {
+        width: 32px;
+        height: 32px;
+        font-size: 1em;
+      }
+      .footer-fixed {
+        padding: 14px 0 8px 0;
+        font-size: 0.85em;
+      }
+    }
+
+    /* iPhone SE y dispositivos muy pequeños */
+    @media(max-width:375px){
+      html {
+        font-size: 14px;
+      }
+      .sidebar-toggle-btn {
+        top: 12px !important;
+        left: 12px !important;
+        width: 46px !important;
+        height: 46px !important;
+      }
+      .sidebar {
+        width: 90vw;
+      }
+      .main-content {
+        padding: 70px 10px 60px 10px;
+        margin: 0 auto;
+        max-width: 100%;
+        width: 100%;
+      }
+      .dashboard-header h1 {
+        font-size: 1.2em;
+        text-align: center;
+      }
+      .section-box {
+        padding: 16px 12px 12px 12px;
+      }
+      .dashboard-sections {
+        gap: 12px;
+      }
+      .footer-fixed {
+        font-size: 0.8em;
+      }
+    }
+
+    /* Landscape mode para móviles */
+    @media(max-height:500px) and (orientation: landscape){
+      .sidebar {
+        overflow-y: auto;
+        max-height: 100vh;
+      }
+      .sidebar-toggle-btn {
+        top: 10px !important;
+        left: 10px !important;
+        width: 40px !important;
+        height: 40px !important;
+      }
+      .main-content {
+        padding: 60px 16px 40px 16px;
+        margin: 0 auto;
+        max-width: 100%;
+        width: 100%;
+      }
+      .dashboard-header h1 {
+        font-size: 1.3em;
+      }
+      .dashboard-sections {
+        gap: 14px;
+      }
+      .section-box {
+        padding: 16px 14px 14px 14px;
+      }
+    }
+    
     /* --- Responsive: solo ajuste de padding para evitar desbordes --- */
     @media (max-width: 600px) {
       .main-content {
-        padding: 12px 2vw 12px 2vw;
+        padding: 80px 16px 70px 16px;
+        margin: 0 auto;
+        max-width: 100%;
+        width: 100%;
       }
       .section-box {
-        padding: 18px 2vw 18px 2vw;
-        max-width: 98vw;
+        padding: 20px 16px 16px 16px;
+        max-width: 100%;
+        margin: 0 auto;
+      }
+      .dashboard-sections {
+        max-width: 100%;
+        justify-items: center;
       }
     }
   </style>
@@ -464,9 +750,12 @@
   <button class="accesibilidad-toggle" id="accesibilidadToggle" aria-label="Abrir panel de accesibilidad" title="Accesibilidad">♿</button>
   <!-- Botón flotante para mostrar/ocultar la sidebar en móviles -->
   <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Mostrar menú" title="Mostrar menú">☰</button>
-  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+  <div class="accesibilidad-bar" id="accesibilidadBar" aria-label="Barra de accesibilidad">
     <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
-    <button id="contrasteBtn" title="Contraste alto" aria-label="Contraste alto"><span class="icono">🔳</span></button>
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+      <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
+      <input id="contrasteRange" type="range" min="1" max="3" step="0.1" value="1" style="width:38px;margin:0 0 2px 0;" title="Nivel de contraste" aria-label="Nivel de contraste">
+    </div>
     <button id="grisesBtn" title="Escala de grises" aria-label="Escala de grises"><span class="icono">🌑</span></button>
     <button id="aumentarLetraBtn" title="Aumentar letra" aria-label="Aumentar letra"><span class="icono">A+</span></button>
     <button id="disminuirLetraBtn" title="Disminuir letra" aria-label="Disminuir letra"><span class="icono">A-</span></button>
@@ -501,122 +790,6 @@
         }
         
     })();
-    
-    const root = document.documentElement;
-    const body = document.body;
-    let fontSize = 1;
-    let modoNocturno = false;
-    let contraste = false;
-    let grises = false;
-    let guiaLectura = false;
-    let lectorActivo = false;
-    let tipografia = 'default';
-
-    function setFontSize(mult) {
-      fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-      body.style.fontSize = fontSize + 'em';
-    }
-    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
-
-    document.getElementById('modoNocturnoBtn').onclick = function() {
-      modoNocturno = !modoNocturno;
-      const mainContent = document.querySelector('.main-content');
-      const sectionBoxes = document.querySelectorAll('.section-box');
-      const dashboardHeader = document.querySelector('.dashboard-header');
-      const notificaciones = document.querySelectorAll('.notificacion');
-      const footer = document.querySelector('.footer-fixed');
-      const accesBar = document.querySelector('.accesibilidad-bar');
-      if(modoNocturno) {
-        body.classList.add('night-mode');
-        if(mainContent) mainContent.classList.add('night-mode');
-        sectionBoxes.forEach(e=>e.classList.add('night-mode'));
-        if(dashboardHeader) dashboardHeader.classList.add('night-mode');
-        notificaciones.forEach(e=>e.classList.add('night-mode'));
-        if(footer) footer.classList.add('night-mode');
-        if(accesBar) accesBar.classList.add('night-mode');
-        this.classList.add('active');
-      } else {
-        body.classList.remove('night-mode');
-        if(mainContent) mainContent.classList.remove('night-mode');
-        sectionBoxes.forEach(e=>e.classList.remove('night-mode'));
-        if(dashboardHeader) dashboardHeader.classList.remove('night-mode');
-        notificaciones.forEach(e=>e.classList.remove('night-mode'));
-        if(footer) footer.classList.remove('night-mode');
-        if(accesBar) accesBar.classList.remove('night-mode');
-        this.classList.remove('active');
-      }
-    };
-
-    function actualizarFiltroCliente() {
-      let filtro = '';
-      if (contraste) filtro += 'contrast(1.7)';
-      if (grises) filtro += (filtro ? ' ' : '') + 'grayscale(1)';
-      const mainContent = document.querySelector('.main-content');
-      const sectionBoxes = document.querySelectorAll('.section-box');
-      if(mainContent) mainContent.style.filter = filtro;
-      sectionBoxes.forEach(e => e.style.filter = filtro);
-      
-      body.style.filter = '';
-    }
-
-    document.getElementById('contrasteBtn').onclick = function() {
-      contraste = !contraste;
-      this.classList.toggle('active', contraste);
-      actualizarFiltroCliente();
-    };
-
-    document.getElementById('grisesBtn').onclick = function() {
-      grises = !grises;
-      this.classList.toggle('active', grises);
-      actualizarFiltroCliente();
-    };
-
-    document.getElementById('guiaLecturaBtn').onclick = function() {
-      guiaLectura = !guiaLectura;
-      let contenido = document.querySelector('.main-content') || document.body;
-      if(guiaLectura) {
-        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-        contenido.style.background = '#fffbe7';
-        contenido.scrollIntoView({behavior:'smooth', block:'center'});
-        this.classList.add('active');
-      } else {
-        contenido.style.boxShadow = '';
-        contenido.style.background = '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('tipografiaSelect').onchange = function() {
-      tipografia = this.value;
-      switch(tipografia) {
-        case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-        case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-        case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-        case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-        default: body.style.fontFamily = '';
-      }
-    };
-
-    
-    document.getElementById('lectorPantallaBtn').onclick = function() {
-      lectorActivo = !lectorActivo;
-      let contenido = document.querySelector('.main-content') || document.body;
-      if(lectorActivo) {
-        this.classList.add('active');
-        let texto = contenido.innerText;
-        if('speechSynthesis' in window) {
-          let utter = new SpeechSynthesisUtterance(texto);
-          utter.lang = 'es-MX';
-          window.speechSynthesis.speak(utter);
-        } else {
-          alert('Lector de pantalla no soportado en este navegador.');
-        }
-      } else {
-        this.classList.remove('active');
-        if('speechSynthesis' in window) window.speechSynthesis.cancel();
-      }
-    };
   </script>
   <aside class="sidebar" id="sidebar">
     <div class="logo">
@@ -626,9 +799,9 @@
       {{ usuario.nombre }}
     </div>
     <nav>
-      <a href="{{ url_for('inicio') }}"><span>🏠</span>Inicio</a>
-      <a href="{{ url_for('productos') }}"><span>🛒</span>Hacer Pedido</a>
+      <a href="{{ url_for('productos') }}"><span>🛒</span>Tienda</a>
       <a href="{{ url_for('contacto') }}"><span>📞</span>Contacto</a>
+      <a href="{{ url_for('carrito') }}"><span>🛍️</span>Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}</a>
       <a href="{{ url_for('perfil_cliente') }}"><span>✏️</span>Editar mi perfil</a>
       <a href="{{ url_for('historial_pedidos') }}"><span>📦</span>Mi Historial de Pedidos</a>
     </nav>

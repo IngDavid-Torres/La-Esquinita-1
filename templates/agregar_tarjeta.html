@@ -244,7 +244,7 @@
       color: var(--accent);
     }
     .main-section {
-      margin: 120px auto 40px auto;
+      margin: 140px auto 40px auto;
       max-width: 420px;
       background: var(--form-bg);
       padding: 38px 28px 32px 28px;
@@ -325,21 +325,223 @@
       background: var(--dark);
       color: #fff;
       text-align: center;
-      padding: 30px 20px;
+      padding: 32px 20px 40px;
       margin-top: auto;
-      font-size: 1.05em;
+      font-size: clamp(0.9rem, 2.5vw, 1.05rem);
       letter-spacing: 0.5px;
       box-shadow: 0 -2px 12px rgba(44,44,44,0.10);
     }
-    @media(max-width:768px){
-      header { padding: 14px 10px; }
-      .logo img { height: 48px; }
-      nav { gap: 18px; }
-      .main-section { margin: 90px 8px 20px 8px; padding: 18px 6vw 18px 6vw; }
+
+    /* ========== RESPONSIVE DESIGN ========== */
+
+    /* Tablets y dispositivos medianos */
+    @media(max-width:1024px){
+      header {
+        padding: 14px 16px;
+      }
+      .logo img {
+        height: 50px;
+      }
+      nav {
+        gap: 14px;
+      }
+      nav a {
+        font-size: 0.9rem;
+        gap: 4px;
+        padding: 6px 10px;
+      }
+      nav a img {
+        width: 22px;
+        height: 22px;
+      }
+      .main-section {
+        margin: 140px auto 60px;
+        padding: 26px 22px;
+      }
+      .accesibilidad-bar {
+        top: 12px;
+        right: 12px;
+      }
     }
-    @media(max-width:500px){
-      .main-section { margin: 80px 2vw 20px 2vw; }
-      nav a img { width: 26px; height: 26px; }
+
+    /* Tablets pequeñas y móviles grandes */
+    @media(max-width:768px){
+      header {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+      }
+      .logo img {
+        height: 46px;
+      }
+      nav {
+        gap: 10px;
+        justify-content: center;
+      }
+      nav a {
+        font-size: 0.85rem;
+        padding: 6px 8px;
+      }
+      nav a img {
+        width: 20px;
+        height: 20px;
+      }
+      .main-section {
+        margin: 160px 16px 50px;
+        padding: 24px 18px;
+        max-width: calc(100% - 32px);
+      }
+      footer {
+        padding: 28px 16px 36px;
+      }
+      .accesibilidad-bar {
+        top: 10px;
+        right: 10px;
+        gap: 10px;
+        padding: 10px;
+      }
+      .accesibilidad-bar button,
+      .accesibilidad-bar select {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3em;
+      }
+      .accesibilidad-toggle {
+        width: 48px;
+        height: 48px;
+        font-size: 1.8em;
+      }
+    }
+
+    /* Móviles medianos (iPhone 12, 13, 14, etc.) */
+    @media(max-width:600px){
+      header {
+        padding: 12px 14px;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .logo {
+        width: 100%;
+        justify-content: center;
+      }
+      .logo img {
+        height: 48px;
+      }
+      nav {
+        width: 100%;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      nav a {
+        font-size: 0.8rem;
+        padding: 8px 6px;
+        flex: 0 1 calc(33.333% - 8px);
+        flex-direction: column;
+        gap: 4px;
+        min-width: 65px;
+        font-weight: 600;
+      }
+      nav a img {
+        width: 28px;
+        height: 28px;
+      }
+      .main-section {
+        margin: 160px 12px 40px;
+        padding: 20px 16px;
+        max-width: calc(100% - 24px);
+      }
+      .accesibilidad-bar {
+        top: 8px;
+        right: 8px;
+        gap: 8px;
+        padding: 8px;
+      }
+      .accesibilidad-bar button,
+      .accesibilidad-bar select {
+        width: 32px;
+        height: 32px;
+        font-size: 1.2em;
+      }
+      .accesibilidad-toggle {
+        width: 44px;
+        height: 44px;
+        font-size: 1.6em;
+        top: 8px;
+        right: 8px;
+      }
+    }
+
+    /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+    @media(max-width:480px){
+      header {
+        padding: 12px 16px;
+        gap: 12px;
+      }
+      .logo img {
+        height: 50px;
+      }
+      nav a {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        min-width: 70px;
+      }
+      nav a img {
+        width: 32px;
+        height: 32px;
+      }
+      .main-section {
+        margin: 210px 10px 30px;
+        padding: 18px 14px;
+        max-width: calc(100% - 20px);
+      }
+      footer {
+        padding: 24px 12px 32px;
+      }
+    }
+
+    /* iPhone SE y dispositivos muy pequeños */
+    @media(max-width:375px){
+      html {
+        font-size: 14px;
+      }
+      header {
+        padding: 8px 10px;
+      }
+      .logo img {
+        height: 36px;
+      }
+      .main-section {
+        margin: 200px 8px 20px;
+        padding: 16px 12px;
+      }
+      .accesibilidad-bar button,
+      .accesibilidad-bar select {
+        width: 28px;
+        height: 28px;
+        font-size: 1.1em;
+      }
+      .accesibilidad-toggle {
+        width: 40px;
+        height: 40px;
+        font-size: 1.4em;
+      }
+    }
+
+    /* Landscape mode para móviles */
+    @media(max-height:500px) and (orientation: landscape){
+      .main-section {
+        margin: 60px auto 30px;
+        padding: 18px 20px;
+      }
+      header {
+        padding: 8px 12px;
+      }
+      .logo img {
+        height: 35px;
+      }
+      footer {
+        padding: 16px 12px 20px;
+      }
     }
   </style>
 </head>
@@ -369,138 +571,7 @@
     </select>
     <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
   </div>
-
-  <script>
-    // Toggle para mostrar/ocultar el panel de accesibilidad
-    const accToggle = document.getElementById('accesibilidadToggle');
-    const accBar = document.getElementById('accesibilidadBar');
-    
-    accToggle.addEventListener('click', function(e) {
-      e.stopPropagation();
-      accBar.classList.toggle('show');
-      const isOpen = accBar.classList.contains('show');
-      accToggle.classList.toggle('active', isOpen);
-      accToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú de accesibilidad' : 'Abrir menú de accesibilidad');
-    });
-    
-    // Cerrar al hacer click fuera
-    document.addEventListener('click', function(e) {
-      if (!accBar.contains(e.target) && e.target !== accToggle) {
-        accBar.classList.remove('show');
-        accToggle.classList.remove('active');
-        accToggle.setAttribute('aria-label', 'Abrir menú de accesibilidad');
-      }
-    });
-    
-    const root = document.documentElement;
-    const body = document.body;
-    let fontSize = 1;
-    let modoNocturno = false;
-    let contraste = false;
-    let contrasteValor = 1;
-    let grises = false;
-    let guiaLectura = false;
-    let lectorActivo = false;
-    let tipografia = 'default';
-
-    function setFontSize(mult) {
-      fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-      body.style.fontSize = fontSize + 'em';
-    }
-    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
-
-    document.getElementById('modoNocturnoBtn').onclick = function() {
-      modoNocturno = !modoNocturno;
-      if(modoNocturno) {
-        body.style.background = '#181818';
-        body.style.color = '#fff';
-        this.classList.add('active');
-      } else {
-        body.style.background = '';
-        body.style.color = '';
-        this.classList.remove('active');
-      }
-    };
-
-    const contrasteRange = document.getElementById('contrasteRange');
-    const contrasteBtn = document.getElementById('contrasteBtn');
-    contrasteBtn.onclick = function() {
-      contraste = !contraste;
-      if(contraste) {
-        contrasteValor = parseFloat(contrasteRange.value);
-        body.style.filter = `contrast(${contrasteValor})`;
-        contrasteRange.disabled = false;
-        this.classList.add('active');
-      } else {
-        body.style.filter = '';
-        contrasteRange.disabled = true;
-        this.classList.remove('active');
-      }
-    };
-    contrasteRange.oninput = function() {
-      contrasteValor = parseFloat(this.value);
-      if(contraste) {
-        body.style.filter = `contrast(${contrasteValor})`;
-      }
-    };
-    contrasteRange.disabled = true;
-
-    document.getElementById('grisesBtn').onclick = function() {
-      grises = !grises;
-      if(grises) {
-        body.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
-        this.classList.add('active');
-      } else {
-        body.style.filter = contraste ? `contrast(${contrasteValor})` : '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('guiaLecturaBtn').onclick = function() {
-      guiaLectura = !guiaLectura;
-      let contenido = document.getElementById('contenido-principal') || document.body;
-      if(guiaLectura) {
-        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-        contenido.style.background = '#fffbe7';
-        this.classList.add('active');
-      } else {
-        contenido.style.boxShadow = '';
-        contenido.style.background = '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('tipografiaSelect').onchange = function() {
-      tipografia = this.value;
-      switch(tipografia) {
-        case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-        case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-        case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-        case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-        default: body.style.fontFamily = '';
-      }
-    };
-
-    document.getElementById('lectorPantallaBtn').onclick = function() {
-      lectorActivo = !lectorActivo;
-      let contenido = document.getElementById('contenido-principal') || document.body;
-      if(lectorActivo) {
-        this.classList.add('active');
-        let texto = contenido.innerText;
-        if('speechSynthesis' in window) {
-          let utter = new SpeechSynthesisUtterance(texto);
-          utter.lang = 'es-MX';
-          window.speechSynthesis.speak(utter);
-        } else {
-          alert('Lector de pantalla no soportado en este navegador.');
-        }
-      } else {
-        this.classList.remove('active');
-        if('speechSynthesis' in window) window.speechSynthesis.cancel();
-      }
-    };
-  </script>
+  
   <header>
     <div class="logo">
       <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">

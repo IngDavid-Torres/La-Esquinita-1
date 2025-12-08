@@ -1,0 +1,280 @@
+/* ============================================
+   ESTILOS GLOBALES DE NAVEGACIÓN Y RESPONSIVE
+   La Esquinita - Archivo centralizado
+   ============================================ */
+
+/* HEADER Y LOGO */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 60px;
+  width: auto;
+  border-radius: 8px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* NAVEGACIÓN */
+nav {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+  color: var(--dark);
+  font-weight: 600;
+  transition: color 0.3s;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  font-size: 1rem;
+}
+
+nav a img {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+nav a:hover,
+nav a:active {
+  color: var(--accent);
+}
+
+/* ============================================
+   MEDIA QUERIES RESPONSIVE
+   ============================================ */
+
+/* Tablets y dispositivos medianos */
+@media(max-width:1024px){
+  header {
+    padding: 14px 16px;
+  }
+  .logo img {
+    height: 50px;
+  }
+  nav {
+    gap: 14px;
+  }
+  nav a {
+    font-size: 0.9rem;
+    gap: 4px;
+  }
+  nav a img {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Tablets pequeñas y móviles grandes */
+@media(max-width:768px){
+  header {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+  }
+  .logo {
+    flex: 0 0 auto;
+  }
+  .logo img {
+    height: 46px;
+  }
+  nav {
+    gap: 10px;
+    flex: 1 1 100%;
+    justify-content: space-around;
+    margin-top: 8px;
+  }
+  nav a {
+    font-size: 0.85rem;
+    gap: 4px;
+    padding: 6px 8px;
+  }
+  nav a img {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Móviles medianos (iPhone 12, 13, 14, etc.) */
+@media(max-width:600px){
+  header {
+    padding: 12px 14px;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .logo {
+    width: 100%;
+    justify-content: center;
+  }
+  .logo img {
+    height: 48px;
+  }
+  nav {
+    width: 100%;
+    gap: 8px;
+    justify-content: space-around;
+  }
+  nav a {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 65px;
+  }
+  nav a img {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+@media(max-width:480px){
+  header {
+    padding: 12px 16px;
+    gap: 12px;
+    flex-direction: column;
+  }
+  .logo {
+    width: 100%;
+    justify-content: center;
+  }
+  .logo img {
+    height: 50px;
+  }
+  nav {
+    width: 100%;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  nav a {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    flex: 0 1 auto;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 70px;
+    font-weight: 600;
+  }
+  nav a img {
+    width: 32px;
+    height: 32px;
+    margin: 0;
+  }
+}
+
+/* iPhone SE y dispositivos muy pequeños */
+@media(max-width:375px){
+  html {
+    font-size: 14px;
+  }
+  header {
+    padding: 8px 10px;
+  }
+  .logo img {
+    height: 36px;
+  }
+}
+
+/* Landscape mode para móviles */
+@media(max-height:500px) and (orientation: landscape){
+  header {
+    padding: 8px 12px;
+  }
+  .logo img {
+    height: 35px;
+  }
+}
+
+/* ============================================
+   MÁRGENES DE CONTENIDO
+   (Ajustar según el tipo de contenedor)
+   ============================================ */
+
+/* Para contenedores tipo hero/banner */
+@media(max-width:768px){
+  .hero, .banner {
+    margin-top: 140px;
+  }
+}
+
+@media(max-width:600px){
+  .hero, .banner {
+    margin-top: 180px;
+  }
+}
+
+@media(max-width:480px){
+  .hero, .banner {
+    margin-top: 220px;
+  }
+}
+
+@media(max-width:375px){
+  .hero, .banner {
+    margin-top: 200px;
+  }
+}
+
+/* Para contenedores tipo container/card */
+@media(max-width:1024px){
+  .container, .main-container {
+    margin-top: 140px;
+  }
+}
+
+@media(max-width:768px){
+  .container, .main-container {
+    margin-top: 160px;
+  }
+}
+
+@media(max-width:600px){
+  .container, .main-container {
+    margin-top: 180px;
+  }
+}
+
+@media(max-width:480px){
+  .container, .main-container {
+    margin-top: 230px;
+  }
+}
+
+@media(max-width:375px){
+  .container, .main-container {
+    margin-top: 220px;
+  }
+}
+
+@media(max-height:500px) and (orientation: landscape){
+  .container, .main-container, .hero, .banner {
+    margin-top: 60px;
+  }
+}

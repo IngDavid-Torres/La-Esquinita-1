@@ -169,11 +169,12 @@ body {
     flex-direction: column;
     min-height: 100vh;
     color: var(--dark);
+    font-size: 16px; /* Base para accesibilidad */
 }
 
 .container {
     max-width: 700px;
-    margin: 140px auto 20px auto;
+    margin: 80px auto 20px auto;
     background: rgba(255,255,255,0.97);
     padding: 30px 25px;
     border-radius: 15px;
@@ -185,14 +186,17 @@ body {
 
 header {
     position: fixed;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     width: 100%;
-    padding: 20px 40px;
+    padding: 18px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
@@ -203,7 +207,7 @@ header {
 nav {
     display: flex;
     gap: 20px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 nav a {
     display: flex;
@@ -272,17 +276,19 @@ footer {
     background: var(--dark);
     color: #fff;
     text-align: center;
-    padding: 8px 8px 7px 8px;
+    padding: 30px 20px 38px 20px;
     width: 100%;
-    font-size: 0.95em;
-    box-shadow: 0 -2px 12px rgba(44,44,44,0.10);
-    margin-top: 22px;
+    margin-top: auto;
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
 }
 footer p {
-    margin: 5px 0;
+    margin: 8px 0;
+    line-height: 1.6;
 }
 footer .social {
-    margin-top: 10px;
+    margin-top: 14px;
     display: flex;
     justify-content: center;
     gap: 15px;
@@ -296,63 +302,210 @@ footer .social a:hover {
     color: var(--primary);
 }
 
-@media(max-width:768px){
-    .container { margin: 160px 10px 20px 10px; padding: 20px; }
-    nav { gap: 10px; }
-    nav a { font-size: 0.9em; }
-    footer { padding: 7px 6px 7px 6px; font-size: 0.93em; margin-top: 16px; }
-    .pedidos-scroll { max-height: 400px; padding: 15px; }
-    .pedido { padding: 15px; }
-}
+/* ========== RESPONSIVE DESIGN ========== */
 
-@media(max-width:600px){
+/* Tablets y dispositivos medianos */
+@media(max-width:1024px){
     header {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 12px 4vw;
+        padding: 14px 16px;
     }
     .logo img {
-        height: 44px;
-        margin-bottom: 8px;
+        height: 50px;
     }
     nav {
-        gap: 6px;
-        flex-wrap: wrap;
-        width: 100%;
-        justify-content: flex-start;
+        gap: 14px;
     }
     nav a {
-        font-size: 0.85em;
-        padding: 6px 7px;
+        font-size: 0.9rem;
         gap: 4px;
+        padding: 6px 10px;
     }
     nav a img {
-        width: 24px;
-        height: 24px;
+        width: 22px;
+        height: 22px;
     }
-    .container {
-        margin: 90px 2vw 12px 2vw;
-        padding: 10px 4vw;
-        border-radius: 10px;
+      .container {
+        margin: 160px auto 60px;
+        padding: 26px 22px;
+    }
+    .pedidos-scroll {
+        max-height: 450px;
+        padding: 18px;
+    }
+}
+
+/* Tablets pequeñas y móviles grandes */
+@media(max-width:768px){
+    header {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+    }
+    .logo img {
+        height: 46px;
+    }
+    nav {
+        gap: 10px;
+        justify-content: center;
+    }
+    nav a {
+        font-size: 0.85rem;
+        padding: 6px 8px;
+    }
+    nav a img {
+        width: 20px;
+        height: 20px;
+    }
+        .container {
+        margin: 200px 16px 50px;
+        padding: 24px 18px;
+        max-width: calc(100% - 32px);
+    }
+    .pedidos-scroll {
+        max-height: 400px;
+        padding: 15px;
+    }
+    .pedido {
+        padding: 15px;
+    }
+    footer {
+        padding: 28px 16px 36px 16px;
+    }
+}
+
+/* Móviles medianos (iPhone 12, 13, 14, etc.) */
+@media(max-width:600px){
+    header {
+        padding: 12px 14px;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .logo {
+        width: 100%;
+        justify-content: center;
+    }
+    .logo img {
+        height: 48px;
+    }
+    nav {
+        width: 100%;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+    nav a {
+        font-size: 0.8rem;
+        padding: 8px 6px;
+        flex: 0 1 calc(33.333% - 8px);
+        flex-direction: column;
+        gap: 4px;
+        min-width: 65px;
+        font-weight: 600;
+    }
+    nav a img {
+        width: 28px;
+        height: 28px;
+    }
+      .container {
+        margin: 160px 12px 40px;
+        padding: 20px 16px;
+        max-width: calc(100% - 24px);
         font-size: 0.98em;
     }
     h2 {
-        font-size: 1.15em;
+        font-size: 1.3em;
         margin-bottom: 16px;
     }
     .pedidos-scroll {
-        max-height: 260px;
-        padding: 7px 2vw;
+        max-height: 280px;
+        padding: 12px;
         font-size: 0.97em;
-        border-radius: 7px;
-        margin-bottom: 12px;
     }
     .pedido {
-        padding: 9px 6px;
-        margin-bottom: 8px;
-        border-radius: 6px;
+        padding: 12px;
         font-size: 0.97em;
     }
+    footer {
+        padding: 24px 12px 32px 12px;
+    }
+}
+
+/* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+@media(max-width:480px){
+    header {
+        padding: 12px 16px;
+        gap: 12px;
+    }
+    .logo img {
+        height: 50px;
+    }
+    nav a {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        min-width: 70px;
+    }
+    nav a img {
+        width: 32px;
+        height: 32px;
+    }
+      .container {
+        margin: 240px 10px 30px;
+        padding: 18px 14px;
+        max-width: calc(100% - 20px);
+    }
+    h2 {
+        font-size: 1.2em;
+    }
+    .pedidos-scroll {
+        max-height: 250px;
+        padding: 10px;
+    }
+    .pedido {
+        padding: 10px;
+    }
+    footer {
+        padding: 20px 10px 28px 10px;
+    }
+}
+
+/* iPhone SE y dispositivos muy pequeños */
+@media(max-width:375px){
+    html {
+        font-size: 14px;
+    }
+    header {
+        padding: 8px 10px;
+    }
+    .logo img {
+        height: 36px;
+    }
+      .container {
+        margin: 200px 8px 20px;
+        padding: 16px 12px;
+    }
+    h2 {
+        font-size: 1.1em;
+    }
+    .pedidos-scroll {
+        max-height: 220px;
+    }
+}
+
+/* Landscape mode para móviles */
+@media(max-height:500px) and (orientation: landscape){
+    .container {
+        margin: 60px auto 30px;
+        padding: 18px 20px;
+    }
+    header {
+        padding: 8px 12px;
+    }
+    .logo img {
+        height: 35px;
+    }
+    .pedidos-scroll {
+        max-height: 200px;
+    }
+}
     .pedido p {
         margin: 3px 0;
         font-size: 0.97em;
@@ -378,7 +531,7 @@ footer .social a:hover {
     <button class="accesibilidad-toggle" id="accesibilidadToggle" aria-label="Abrir panel de accesibilidad" title="Accesibilidad">♿</button>
 
    
-    <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+    <div class="accesibilidad-bar" id="accesibilidadBar" aria-label="Barra de accesibilidad">
         <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
         <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
             <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
@@ -398,144 +551,29 @@ footer .social a:hover {
         <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
     </div>
 
-    <script>
-        
-        const root = document.documentElement;
-        const body = document.body;
-        let fontSize = 1;
-        let modoNocturno = false;
-        let contraste = false;
-        let contrasteValor = 1;
-        let grises = false;
-        let guiaLectura = false;
-        let lectorActivo = false;
-        let tipografia = 'default';
-
-        function setFontSize(mult) {
-            fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-            body.style.fontSize = fontSize + 'em';
-        }
-        document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-        document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
-
-        document.getElementById('modoNocturnoBtn').onclick = function() {
-            modoNocturno = !modoNocturno;
-            const container = document.querySelector('.container');
-            if(modoNocturno) {
-                body.classList.add('night-mode');
-                if(container) container.classList.add('night-mode');
-                this.classList.add('active');
-            } else {
-                body.classList.remove('night-mode');
-                if(container) container.classList.remove('night-mode');
-                this.classList.remove('active');
-            }
-        };
-
-        const contrasteRange = document.getElementById('contrasteRange');
-        const contrasteBtn = document.getElementById('contrasteBtn');
-        contrasteBtn.onclick = function() {
-            contraste = !contraste;
-            if(contraste) {
-                contrasteValor = parseFloat(contrasteRange.value);
-                body.style.filter = `contrast(${contrasteValor})`;
-                contrasteRange.disabled = false;
-                this.classList.add('active');
-            } else {
-                body.style.filter = '';
-                contrasteRange.disabled = true;
-                this.classList.remove('active');
-            }
-        };
-        contrasteRange.oninput = function() {
-            contrasteValor = parseFloat(this.value);
-            if(contraste) {
-                body.style.filter = `contrast(${contrasteValor})`;
-            }
-        };
-        contrasteRange.disabled = true;
-
-        document.getElementById('grisesBtn').onclick = function() {
-            grises = !grises;
-            if(grises) {
-                body.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
-                this.classList.add('active');
-            } else {
-                body.style.filter = contraste ? `contrast(${contrasteValor})` : '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('guiaLecturaBtn').onclick = function() {
-            guiaLectura = !guiaLectura;
-            let contenido = document.getElementById('contenido-principal') || document.body;
-            if(guiaLectura) {
-                contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-                contenido.style.background = '#fffbe7';
-                this.classList.add('active');
-            } else {
-                contenido.style.boxShadow = '';
-                contenido.style.background = '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('tipografiaSelect').onchange = function() {
-            tipografia = this.value;
-            switch(tipografia) {
-                case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-                case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-                case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-                case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-                default: body.style.fontFamily = '';
-            }
-        };
-
-        document.getElementById('lectorPantallaBtn').onclick = function() {
-            lectorActivo = !lectorActivo;
-            let contenido = document.getElementById('contenido-principal') || document.body;
-            if(lectorActivo) {
-                this.classList.add('active');
-                let texto = contenido.innerText;
-                if('speechSynthesis' in window) {
-                    let utter = new SpeechSynthesisUtterance(texto);
-                    utter.lang = 'es-MX';
-                    window.speechSynthesis.speak(utter);
-                } else {
-                    alert('Lector de pantalla no soportado en este navegador.');
-                }
-            } else {
-                this.classList.remove('active');
-                if('speechSynthesis' in window) window.speechSynthesis.cancel();
-            }
-        };
-    </script>
-
 
 <header>
     <div class="logo">
-        <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="AgroConnect">
+        <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
     </div>
     <nav>
-        <a href="{{ url_for('inicio') }}">
-            <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">Inicio
-        </a>
         <a href="{{ url_for('productos') }}">
-            <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Mercado">Tienda
+            <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">Tienda
         </a>
         <a href="{{ url_for('contacto') }}">
             <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
         </a>
-        {% if session['usuario_id'] %}
+        <a href="{{ url_for('carrito') }}">
+            <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
+            Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}
+        </a>
+        {% if session['usuario_nombre'] %}
             <a href="{{ url_for('panel_cliente') }}">
-                <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Cuenta">Mi Dashboard
-            </a>
-            <a href="{{ url_for('logout') }}">
-                <img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">Cerrar Sesión
+                <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">Mi Dashboard
             </a>
         {% else %}
             <a href="{{ url_for('login') }}">
-                <img src="{{ url_for('static', filename='images/iniciarsesion.png') }}" alt="Iniciar Sesión">Iniciar Sesión
+                <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">Ingresar
             </a>
         {% endif %}
     </nav>

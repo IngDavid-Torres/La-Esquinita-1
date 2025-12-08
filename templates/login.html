@@ -264,7 +264,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
+            width: 100%;
             padding: 18px 24px;
             display: flex;
             justify-content: space-between;
@@ -502,6 +502,66 @@
             color: #fff;
             border-color: #555;
         }
+
+        /* Alertas y mensajes flash */
+        .alert-container {
+            position: fixed;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9998;
+            width: 90%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideDown 0.3s ease-out;
+            text-align: center;
+        }
+
+        .alert.success {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: #fff;
+            border-left: 4px solid #1b5e20;
+        }
+
+        .alert.error, .alert.danger {
+            background: linear-gradient(135deg, #f44336, #c62828);
+            color: #fff;
+            border-left: 4px solid #b71c1c;
+        }
+
+        .alert.warning {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: #fff;
+            border-left: 4px solid #e65100;
+        }
+
+        .alert.info {
+            background: linear-gradient(135deg, #2196f3, #1565c0);
+            color: #fff;
+            border-left: 4px solid #0d47a1;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         
         @media(max-width:600px){
             .container {
@@ -567,7 +627,7 @@
                 padding: 8px 12px;
             }
             .container {
-                margin: 20px auto 60px;
+                margin: 140px auto 60px;
                 padding: 32px 26px;
                 max-width: 480px;
             }
@@ -576,36 +636,32 @@
         /* Tablets pequeñas y móviles grandes */
         @media(max-width:768px){
             header {
-                padding: 14px 18px;
-                flex-direction: column;
-                gap: 12px;
-            }
-            .logo {
-                width: 100%;
-                justify-content: center;
-            }
-            .logo img {
-                height: 52px;
-            }
-            nav {
-                width: 100%;
-                gap: 12px;
-                justify-content: space-around;
+                padding: 12px 16px;
                 flex-wrap: wrap;
             }
+            .logo {
+                flex: 0 0 auto;
+            }
+            .logo img {
+                height: 46px;
+            }
+            nav {
+                gap: 10px;
+                flex: 1 1 100%;
+                justify-content: space-around;
+                margin-top: 8px;
+            }
             nav a {
-                font-size: 0.9rem;
-                padding: 10px 14px;
-                flex: 0 1 auto;
-                min-width: 80px;
-                justify-content: center;
+                font-size: 0.85rem;
+                gap: 4px;
+                padding: 6px 8px;
             }
             nav a img {
-                width: 22px;
-                height: 22px;
+                width: 20px;
+                height: 20px;
             }
             .container {
-                margin: 20px auto 50px;
+                margin: 160px auto 50px;
                 padding: 30px 24px;
                 max-width: 90%;
                 width: 90%;
@@ -629,7 +685,7 @@
         /* Móviles medianos (iPhone 12, 13, 14, etc.) */
         @media(max-width:600px){
             header {
-                padding: 12px 16px;
+                padding: 12px 14px;
                 flex-direction: column;
                 gap: 10px;
             }
@@ -638,28 +694,26 @@
                 justify-content: center;
             }
             .logo img {
-                height: 50px;
+                height: 48px;
             }
             nav {
                 width: 100%;
-                gap: 10px;
+                gap: 8px;
                 justify-content: space-around;
-                padding: 0 4px;
             }
             nav a {
-                font-size: 0.85rem;
-                padding: 10px 8px;
+                font-size: 0.8rem;
+                padding: 6px 10px;
                 flex-direction: column;
-                gap: 5px;
-                min-width: 70px;
-                text-align: center;
+                gap: 4px;
+                min-width: 65px;
             }
             nav a img {
                 width: 28px;
                 height: 28px;
             }
             .container {
-                margin: 20px auto 40px;
+                margin: 180px auto 40px;
                 padding: 26px 20px;
                 max-width: 95%;
                 width: 95%;
@@ -709,29 +763,30 @@
                 justify-content: center;
             }
             .logo img {
-                height: 48px;
+                height: 50px;
             }
             nav {
                 width: 100%;
-                gap: 8px;
+                gap: 12px;
                 flex-wrap: wrap;
                 justify-content: space-around;
             }
             nav a {
-                font-size: 0.8rem;
-                padding: 10px 6px;
-                flex: 0 1 calc(33.333% - 8px);
+                font-size: 0.85rem;
+                padding: 8px 12px;
+                flex: 0 1 auto;
                 flex-direction: column;
-                gap: 4px;
-                min-width: 65px;
+                gap: 6px;
+                min-width: 70px;
                 font-weight: 600;
             }
             nav a img {
-                width: 28px;
-                height: 28px;
+                width: 32px;
+                height: 32px;
+                margin: 0;
             }
             .container {
-                margin: 20px auto 30px;
+                margin: 230px auto 30px;
                 padding: 24px 18px;
                 max-width: 96%;
                 width: 96%;
@@ -775,30 +830,16 @@
         /* iPhone SE y dispositivos muy pequeños */
         @media(max-width:375px){
             html {
-                font-size: 15px;
+                font-size: 14px;
             }
             header {
-                padding: 10px 12px;
+                padding: 8px 10px;
             }
             .logo img {
-                height: 44px;
-            }
-            nav a {
-                font-size: 0.85rem;
-                padding: 8px 12px;
-                flex: 0 1 auto;
-                flex-direction: column;
-                gap: 6px;
-                min-width: 70px;
-                font-weight: 600;
-            }
-            nav a img {
-                width: 32px;
-                height: 32px;
-                margin: 0;
+                height: 36px;
             }
             .container {
-                margin: 20px auto 25px;
+                margin: 220px auto 25px;
                 padding: 20px 16px;
                 max-width: 98%;
                 width: 98%;
@@ -815,14 +856,14 @@
         /* Landscape mode para móviles */
         @media(max-height:500px) and (orientation: landscape){
             .container {
-                margin: 80px auto 30px;
+                margin: 60px auto 30px;
                 padding: 20px 24px;
             }
             header {
-                padding: 8px 16px;
+                padding: 8px 12px;
             }
             .logo img {
-                height: 38px;
+                height: 35px;
             }
             nav {
                 gap: 8px;
@@ -890,6 +931,17 @@
                 </a>
             </nav>
         </header>
+        
+        <!-- Alertas Flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="alert-container">
+              {% for category, message in messages %}
+                <div class="alert {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
         
         <!-- JavaScript de Accesibilidad (ahora centralizado) -->
         <script src="{{ url_for('static', filename='js/accesibilidad.js') }}"></script>
@@ -1049,6 +1101,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
    
     });
+});
+
+// Auto-ocultar alertas después de 5 segundos
+document.addEventListener('DOMContentLoaded', function() {
+    const alertContainer = document.querySelector('.alert-container');
+    if (alertContainer) {
+        setTimeout(function() {
+            alertContainer.style.transition = 'opacity 0.5s ease-out';
+            alertContainer.style.opacity = '0';
+            setTimeout(function() {
+                alertContainer.remove();
+            }, 500);
+        }, 5000);
+    }
 });
 </script>
 </body>

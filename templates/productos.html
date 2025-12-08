@@ -289,7 +289,7 @@
       display: flex;
       gap: 20px;
       align-items: center;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       justify-content: flex-end;
     }
     nav a {
@@ -309,9 +309,7 @@
       height: 26px;
       flex-shrink: 0;
     }
-    nav a:hover, nav a:active {
-      color: var(--accent);
-    }
+    nav a:hover, nav a:active { color: var(--accent); }
 
     /* Hero section */
     .hero {
@@ -668,42 +666,26 @@
         height: 46px;
       }
       nav {
-        width: 100%;
         gap: 10px;
+        flex: 1 1 100%;
         justify-content: space-around;
-        flex-wrap: wrap;
+        margin-top: 8px;
       }
       nav a {
         font-size: 0.85rem;
-        padding: 8px 10px;
-        flex: 0 1 auto;
-        min-width: 70px;
-        justify-content: center;
+        gap: 4px;
+        padding: 6px 8px;
       }
       nav a img {
-        width: 26px;
-        height: 26px;
+        width: 20px;
+        height: 20px;
       }
       .hero {
         min-height: 65vh;
-        margin-top: 120px;
+        margin-top: 140px;
       }
       .hero-content {
         padding: 16px;
-      }
-      .container {
-        margin: 32px auto;
-        padding: 0 16px;
-      }
-      .productos-lista {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 16px;
-      }
-      .producto-item img {
-        height: 160px;
-      }
-      footer {
-        padding: 28px 16px 36px;
       }
       .container {
         margin: 32px auto;
@@ -738,17 +720,14 @@
       nav {
         width: 100%;
         gap: 8px;
-        flex-wrap: wrap;
         justify-content: space-around;
       }
       nav a {
         font-size: 0.8rem;
-        padding: 10px 6px;
-        flex: 0 1 calc(33.333% - 8px);
+        padding: 6px 10px;
         flex-direction: column;
         gap: 4px;
         min-width: 65px;
-        font-weight: 600;
       }
       nav a img {
         width: 28px;
@@ -756,7 +735,7 @@
       }
       .hero {
         min-height: 60vh;
-        margin-top: 130px;
+        margin-top: 180px;
         padding: 16px;
       }
       .container {
@@ -796,20 +775,6 @@
         font-size: 0.9rem;
         min-height: 40px;
         line-height: 40px;
-      }producto-item h4,
-      .producto-item p strong {
-        margin: 12px 10px 6px;
-        font-size: 1.05rem;
-      }
-      .producto-item p {
-        margin: 0 10px 12px;
-        font-size: 0.9rem;
-      }
-      .boton-carrito {
-        width: 90%;
-        padding: 10px 16px;
-        font-size: 0.9rem;
-        min-height: 40px;
       }
     }
 
@@ -849,7 +814,7 @@
       }
       .hero {
         min-height: 55vh;
-        margin-top: 110px;
+        margin-top: 220px;
         padding: 12px;
       }
       .hero-content {
@@ -897,21 +862,14 @@
         font-size: 14px;
       }
       header {
-        padding: 8px 16px;
+        padding: 8px 10px;
       }
       .logo img {
-        height: 38px;
-      }
-      nav {
-        gap: 8px;
-      }
-      nav a {
-        padding: 6px 10px;
-        font-size: 0.85rem;
+        height: 36px;
       }
       .hero {
         min-height: 50vh;
-        margin-top: 100px;
+        margin-top: 200px;
       }
       .productos-lista {
         gap: 12px;
@@ -987,14 +945,10 @@
         <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
         Carrito{% if cantidad_carrito and cantidad_carrito > 0 %} ({{ cantidad_carrito }}){% endif %}
       </a>
-      {% if session.get('usuario_id') %}
+      {% if session.get('usuario_nombre') %}
         <a href="{{ url_for('panel_cliente') }}" aria-label="Ir al panel de cliente">
           <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">
           Mi Dashboard
-        </a>
-        <a href="{{ url_for('logout') }}" onclick="return mostrarAlertaCerrarSesion(event)" aria-label="Cerrar sesión de usuario">
-          <img src="{{ url_for('static', filename='images/cerrar1.png') }}" alt="Salir">
-          Cerrar Sesión
         </a>
       {% else %}
         <a href="{{ url_for('login') }}" aria-label="Iniciar sesión en tu cuenta">

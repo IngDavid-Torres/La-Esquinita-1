@@ -401,54 +401,58 @@
         }
         
     .accesibilidad-bar {
-            position: fixed;
-            left: 20px;
-            bottom: 90px;
-            z-index: 3000;
-            background: rgba(34,34,34,0.92);
-            color: #fff;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-            padding: 10px 18px 10px 18px;
-            border-radius: 22px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-            opacity: 0;
-            min-width: 40px;
-            min-height: 40px;
-            transition: all 0.3s ease;
-            transform: translateY(20px);
-            pointer-events: none;
-            display: none;
-            backdrop-filter: blur(6px);
-        }
-        .accesibilidad-bar.show {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: all;
-            display: flex;
-        }
-        .accesibilidad-bar button, .accesibilidad-bar select {
-            background: #fff;
-            color: #222;
-            border: none;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            margin: 0 3px;
-            font-size: 1.1em;
-            cursor: pointer;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
-            transition: background 0.2s, color 0.2s, transform 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .accesibilidad-bar button.active {
-            background: #ffb300;
-            color: #222;
-            transform: scale(1.08);
-        }
+      position: fixed;
+      left: 20px;
+      bottom: 90px;
+      z-index: 3000;
+      background: #222;
+      color: #fff;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      padding: 14px 10px 10px 10px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+      opacity: 0;
+      min-width: 48px;
+      min-height: 48px;
+      transition: all 0.3s ease;
+      transform: translateY(20px);
+      pointer-events: none;
+      display: none;
+    }
+
+    .accesibilidad-bar.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+      display: flex;
+    }
+    .accesibilidad-bar button,
+    .accesibilidad-bar select {
+      background: #fff;
+      color: #222;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .accesibilidad-bar button.active {
+      background: #ffb300;
+      color: #222;
+      transform: scale(1.08);
+    }
         .accesibilidad-bar label {
             display: none;
         }
@@ -858,155 +862,6 @@
             }
             
         })();
-        
-        const root = document.documentElement;
-        const body = document.body;
-        let fontSize = 1;
-        let modoNocturno = false;
-        let contraste = false;
-        let contrasteValor = 1;
-        let grises = false;
-        let guiaLectura = false;
-        let lectorActivo = false;
-        let tipografia = 'default';
-
-        
-    const dashboardMain = document.querySelector('.dashboard-main');
-    const dashboardContainer = document.querySelector('.dashboard-container');
-    const accesBar = document.querySelector('.accesibilidad-bar');
-    const guiaLecturaOverlay = document.getElementById('guiaLecturaOverlay');
-
-    function actualizarFiltro() {
-        let filtro = '';
-        if (contraste) {
-            filtro += `contrast(${contrasteValor})`;
-        }
-        if (grises) {
-            if (filtro) filtro += ' ';
-            filtro += 'grayscale(1)';
-        }
-        const mainElements = [
-            dashboardMain,
-            ...document.querySelectorAll('.dashboard-container, .dashboard-header, .dashboard-cards, .card, .dashboard-graphs, .graph-box, .dashboard-actions, .action-box')
-        ];
-        mainElements.forEach(el => {
-            if (el) el.style.filter = filtro;
-        });
-        
-        body.style.filter = '';
-    }
-
-        function setFontSize(mult) {
-            fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-            body.style.fontSize = fontSize + 'em';
-        }
-        document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-        document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
-
-        document.getElementById('modoNocturnoBtn').onclick = function() {
-            modoNocturno = !modoNocturno;
-            const mainContent = dashboardMain;
-            const cards = document.querySelectorAll('.card');
-            const actions = document.querySelectorAll('.action-box');
-            const graphs = document.querySelectorAll('.graph-box');
-            const dashboardHeader = document.querySelector('.dashboard-header');
-            const footer = document.querySelector('footer');
-            const accesBar = document.querySelector('.accesibilidad-bar');
-            if(modoNocturno) {
-                body.classList.add('night-mode');
-                if(mainContent) mainContent.classList.add('night-mode');
-                cards.forEach(e=>e.classList.add('night-mode'));
-                actions.forEach(e=>e.classList.add('night-mode'));
-                graphs.forEach(e=>e.classList.add('night-mode'));
-                if(dashboardHeader) dashboardHeader.classList.add('night-mode');
-                if(footer) footer.classList.add('night-mode');
-                if(accesBar) accesBar.classList.add('night-mode');
-                this.classList.add('active');
-            } else {
-                body.classList.remove('night-mode');
-                if(mainContent) mainContent.classList.remove('night-mode');
-                cards.forEach(e=>e.classList.remove('night-mode'));
-                actions.forEach(e=>e.classList.remove('night-mode'));
-                graphs.forEach(e=>e.classList.remove('night-mode'));
-                if(dashboardHeader) dashboardHeader.classList.remove('night-mode');
-                if(footer) footer.classList.remove('night-mode');
-                if(accesBar) accesBar.classList.remove('night-mode');
-                this.classList.remove('active');
-            }
-        };
-
-        const contrasteRange = document.getElementById('contrasteRange');
-        const contrasteBtn = document.getElementById('contrasteBtn');
-        contrasteBtn.onclick = function() {
-            contraste = !contraste;
-            if(contraste) {
-                contrasteValor = parseFloat(contrasteRange.value);
-                contrasteRange.disabled = false;
-                this.classList.add('active');
-            } else {
-                contrasteRange.disabled = true;
-                this.classList.remove('active');
-            }
-            actualizarFiltro();
-        };
-        contrasteRange.oninput = function() {
-            contrasteValor = parseFloat(this.value);
-            if(contraste) {
-                actualizarFiltro();
-            }
-        };
-        contrasteRange.disabled = true;
-
-        document.getElementById('grisesBtn').onclick = function() {
-            grises = !grises;
-            this.classList.toggle('active', grises);
-            actualizarFiltro();
-        };
-    document.getElementById('guiaLecturaBtn').onclick = function() {
-        guiaLectura = !guiaLectura;
-        let contenido = dashboardContainer;
-        if(guiaLectura) {
-            guiaLecturaOverlay.style.display = 'block';
-            contenido.style.background = '#fffbe7';
-            contenido.scrollIntoView({behavior:'smooth', block:'center'});
-            this.classList.add('active');
-        } else {
-            guiaLecturaOverlay.style.display = 'none';
-            contenido.style.background = '';
-            this.classList.remove('active');
-        }
-    };
-
-        document.getElementById('tipografiaSelect').onchange = function() {
-            tipografia = this.value;
-            switch(tipografia) {
-                case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-                case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-                case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-                case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-                default: body.style.fontFamily = '';
-            }
-        };
-
-    document.getElementById('lectorPantallaBtn').onclick = function() {
-        lectorActivo = !lectorActivo;
-        let contenido = dashboardContainer || dashboardMain || document.body;
-        if(lectorActivo) {
-            this.classList.add('active');
-            let texto = contenido ? contenido.innerText : '';
-            if('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                let utter = new SpeechSynthesisUtterance(texto);
-                utter.lang = 'es-MX';
-                window.speechSynthesis.speak(utter);
-            } else {
-                alert('Lector de pantalla no soportado en este navegador.');
-            }
-        } else {
-            this.classList.remove('active');
-            if('speechSynthesis' in window) window.speechSynthesis.cancel();
-        }
-    };
     </script>
     <div class="sidebar">
         <div class="logo">

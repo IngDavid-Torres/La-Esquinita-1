@@ -24,11 +24,12 @@
       flex-direction: column;
       min-height: 100vh;
       line-height: 1.6;
+      font-size: 16px; /* Base para accesibilidad */
     }
 
     .container {
       max-width: 600px;
-      margin: 60px auto;
+      margin: 80px auto 40px auto;
       background: white;
       padding: 40px;
       border-radius: 20px;
@@ -152,78 +153,217 @@
       padding: 20px;
       background: #e3f2fd;
       border-radius: 8px;
-      font-size: 0.9em;
+      font-size: clamp(0.85rem, 2.5vw, 0.9rem);
       color: var(--dark);
     }
 
-    @media (max-width: 768px) {
-      .container {
-        margin: 20px;
-        padding: 25px;
+    /* ========== RESPONSIVE DESIGN ========== */
+
+    /* Tablets y dispositivos medianos */
+    @media(max-width:1024px){
+      header {
+        padding: 14px 16px;
       }
-      
+      .logo img {
+        height: 50px;
+      }
+      nav {
+        gap: 14px;
+      }
+      nav a {
+        font-size: 0.9rem;
+        gap: 4px;
+        padding: 6px 10px;
+      }
+      nav a img {
+        width: 22px;
+        height: 22px;
+      }
+      .container {
+        margin: 160px auto 60px;
+        padding: 30px 26px;
+      }
+    }
+
+    /* Tablets pequeñas y móviles grandes */
+    @media(max-width:768px){
+      header {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+      }
+      .logo img {
+        height: 46px;
+      }
+      nav {
+        gap: 10px;
+        justify-content: center;
+      }
+      nav a {
+        font-size: 0.85rem;
+        padding: 6px 8px;
+      }
+      nav a img {
+        width: 20px;
+        height: 20px;
+      }
+      .container {
+        margin: 180px 20px 50px;
+        padding: 25px 18px;
+        max-width: calc(100% - 40px);
+      }
       .botones-accion {
         flex-direction: column;
         align-items: center;
       }
-      
       .boton {
         width: 100%;
         max-width: 300px;
       }
     }
 
-      @media (max-width: 430px) {
-        .container {
-          margin: 7px 2vw;
-          padding: 10px 4vw;
-          border-radius: 12px;
-          font-size: 0.97em;
-          max-width: 99vw;
-        }
-        h1 {
-          font-size: 1.15em;
-          margin-bottom: 10px;
-        }
-        .error-icon {
-          font-size: 2.2em;
-          margin-bottom: 10px;
-        }
-        .mensaje-error {
-          font-size: 1em;
-          margin-bottom: 18px;
-        }
-        .info-error, .posibles-causas {
-          padding: 10px;
-          border-radius: 7px;
-          margin: 14px 0;
-          font-size: 0.97em;
-        }
-        .info-error h3, .posibles-causas h3 {
-          font-size: 1.05em;
-          margin-bottom: 8px;
-        }
-        .causas-lista li {
-          padding: 5px 0 5px 22px;
-          font-size: 0.97em;
-        }
-        .botones-accion {
-          gap: 7px;
-          margin-top: 14px;
-        }
-        .boton {
-          padding: 10px 7px;
-          border-radius: 18px;
-          font-size: 1em;
-          max-width: 99vw;
-        }
-        .ayuda-contacto {
-          margin-top: 14px;
-          padding: 10px;
-          border-radius: 6px;
-          font-size: 0.92em;
-        }
+    /* Móviles medianos (iPhone 12, 13, 14, etc.) */
+    @media(max-width:600px){
+      header {
+        padding: 12px 14px;
+        flex-direction: column;
+        gap: 10px;
       }
+      .logo {
+        width: 100%;
+        justify-content: center;
+      }
+      .logo img {
+        height: 48px;
+      }
+      nav {
+        width: 100%;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      nav a {
+        font-size: 0.8rem;
+        padding: 8px 6px;
+        flex: 0 1 calc(33.333% - 8px);
+        flex-direction: column;
+        gap: 4px;
+        min-width: 65px;
+        font-weight: 600;
+      }
+      nav a img {
+        width: 28px;
+        height: 28px;
+      }
+      .container {
+        margin: 180px 12px 40px;
+        padding: 22px 16px;
+        max-width: calc(100% - 24px);
+      }
+      h1 {
+        font-size: 1.3em;
+      }
+      .error-icon {
+        font-size: 2.5em;
+      }
+    }
+
+    /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+    @media(max-width:480px){
+      header {
+        padding: 12px 16px;
+        gap: 12px;
+      }
+      .logo img {
+        height: 50px;
+      }
+      nav a {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        min-width: 70px;
+      }
+      nav a img {
+        width: 32px;
+        height: 32px;
+      }
+      .container {
+        margin: 240px 10px 30px;
+        padding: 18px 14px;
+        max-width: calc(100% - 20px);
+        font-size: 0.97em;
+      }
+      h1 {
+        font-size: 1.15em;
+        margin-bottom: 10px;
+      }
+      .error-icon {
+        font-size: 2.2em;
+        margin-bottom: 10px;
+      }
+      .mensaje-error {
+        font-size: 1em;
+        margin-bottom: 18px;
+      }
+      .info-error, .posibles-causas {
+        padding: 12px;
+        margin: 14px 0;
+        font-size: 0.97em;
+      }
+      .info-error h3, .posibles-causas h3 {
+        font-size: 1.05em;
+        margin-bottom: 8px;
+      }
+      .causas-lista li {
+        padding: 5px 0 5px 22px;
+        font-size: 0.97em;
+      }
+      .botones-accion {
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .boton {
+        padding: 11px 10px;
+        font-size: 0.95em;
+      }
+      .ayuda-contacto {
+        margin-top: 14px;
+        padding: 12px;
+        font-size: 0.92em;
+      }
+    }
+
+    /* iPhone SE y dispositivos muy pequeños */
+    @media(max-width:375px){
+      html {
+        font-size: 14px;
+      }
+      header {
+        padding: 8px 10px;
+      }
+      .logo img {
+        height: 36px;
+      }
+      .container {
+        margin: 200px 8px 20px;
+        padding: 16px 12px;
+      }
+      h1 {
+        font-size: 1.05em;
+      }
+    }
+
+    /* Landscape mode para móviles */
+    @media(max-height:500px) and (orientation: landscape){
+      .container {
+        margin: 60px auto 30px;
+        padding: 18px 20px;
+      }
+      header {
+        padding: 8px 12px;
+      }
+      .logo img {
+        height: 35px;
+      }
+    }
   </style>
 </head>
 <body>

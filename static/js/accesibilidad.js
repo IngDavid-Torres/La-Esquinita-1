@@ -1,8 +1,57 @@
 // --- ACCESIBILIDAD GLOBAL CON PERSISTENCIA ---
-// Esperar a que el DOM esté listo
-document.addEventListener('DOMContentLoaded', function() {
+
+// Esperar a que TODO esté listo (incluidos scripts inline)
+window.addEventListener('load', function() {
   const root = document.documentElement;
   const body = document.body;
+  
+  // --- MANEJO DEL BOTÓN TOGGLE ---
+  const toggleBtn = document.getElementById('accesibilidadToggle');
+  const accesBar = document.querySelector('.accesibilidad-bar');
+  
+  if(toggleBtn && accesBar) {
+    // CRÍTICO: Evitar que clicks dentro del panel lo cierren
+    accesBar.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+    accesBar.addEventListener('mousedown', function(e) {
+      e.stopPropagation();
+    });
+    accesBar.addEventListener('touchstart', function(e) {
+      e.stopPropagation();
+    });
+    
+    // Prevenir scroll cuando se interactúa con el panel
+    accesBar.addEventListener('wheel', function(e) {
+      e.stopPropagation();
+    });
+    
+    // CRÍTICO: Prevenir scroll automático del navegador en todos los inputs del panel
+    const allInputs = accesBar.querySelectorAll('input, select, button');
+    allInputs.forEach(input => {
+      input.addEventListener('focus', function(e) {
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+        setTimeout(() => {
+          window.scrollTo(scrollX, scrollY);
+        }, 0);
+      }, true);
+    });
+    
+    // Cargar estado del panel
+    const panelVisible = localStorage.getItem('acc_panelVisible') === 'true';
+    if(panelVisible) {
+      accesBar.classList.add('show');
+      toggleBtn.classList.add('active');
+    }
+    
+    toggleBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const isVisible = accesBar.classList.toggle('show');
+      this.classList.toggle('active');
+      localStorage.setItem('acc_panelVisible', isVisible);
+    });
+  }
 
   // Cargar configuración guardada (MEJORADO con contrasteValor)
   let config = {
@@ -83,13 +132,23 @@ document.addEventListener('DOMContentLoaded', function() {
     let filtros = [];
     if(config.contraste) filtros.push(`contrast(${config.contrasteValor})`);
     if(config.grises) filtros.push('grayscale(1)');
-    body.style.filter = filtros.join(' ');
+    
+    const filtroFinal = filtros.join(' ');
+    
+    // Aplicar al html y body con !important
+    if(filtroFinal) {
+      document.documentElement.style.setProperty('filter', filtroFinal, 'important');
+      body.style.setProperty('filter', filtroFinal, 'important');
+    } else {
+      document.documentElement.style.removeProperty('filter');
+      body.style.removeProperty('filter');
+    }
   }
 
   // Aplicar configuración al cargar la página (MEJORADO)
   function aplicarConfiguracion() {
-    // Tamaño de letra
-    body.style.fontSize = config.fontSize + 'em';
+    // Tamaño de letra - APLICAR AL ROOT (html) para afectar TODO
+    root.style.setProperty('font-size', (config.fontSize * 16) + 'px', 'important');
     
     // Modo nocturno
     if(config.modoNocturno) {
@@ -131,9 +190,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Aumentar letra
   const btnAumentar = document.getElementById('aumentarLetraBtn');
   if(btnAumentar) {
-    btnAumentar.onclick = () => {
+    btnAumentar.onclick = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
       config.fontSize = Math.max(0.7, Math.min(2.2, config.fontSize * 1.15));
-      body.style.fontSize = config.fontSize + 'em';
+      root.style.setProperty('font-size', (config.fontSize * 16) + 'px', 'important');
       guardarConfig();
     };
   }
@@ -141,9 +202,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Disminuir letra
   const btnDisminuir = document.getElementById('disminuirLetraBtn');
   if(btnDisminuir) {
-    btnDisminuir.onclick = () => {
+    btnDisminuir.onclick = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
       config.fontSize = Math.max(0.7, Math.min(2.2, config.fontSize * 0.87));
-      body.style.fontSize = config.fontSize + 'em';
+      root.style.setProperty('font-size', (config.fontSize * 16) + 'px', 'important');
       guardarConfig();
     };
   }
@@ -151,7 +214,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Modo nocturno
   const btnNocturno = document.getElementById('modoNocturnoBtn');
   if(btnNocturno) {
-    btnNocturno.onclick = function() {
+    btnNocturno.onclick = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
       config.modoNocturno = !config.modoNocturno;
       aplicarModoNocturno(config.modoNocturno);
       
@@ -164,23 +229,22 @@ document.addEventListener('DOMContentLoaded', function() {
       guardarConfig();
     };
   }
-  // Contraste alto con range (MEJORADO con stopPropagation)
+  // Contraste alto con range
   const btnContraste = document.getElementById('contrasteBtn');
   const contrasteRange = document.getElementById('contrasteRange');
   
   if(btnContraste && contrasteRange) {
-    // FIX: Evitar que el range cierre el panel
-    contrasteRange.addEventListener('click', function(e) {
-      e.stopPropagation();
-    });
-    contrasteRange.addEventListener('mousedown', function(e) {
-      e.stopPropagation();
-    });
-    contrasteRange.addEventListener('touchstart', function(e) {
-      e.stopPropagation();
-    });
+    // Prevenir scroll automático del navegador - CRÍTICO
+    contrasteRange.addEventListener('focus', function(e) {
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      setTimeout(() => {
+        window.scrollTo(scrollX, scrollY);
+      }, 0);
+    }, true);
     
-    btnContraste.onclick = function() {
+    btnContraste.onclick = function(e) {
+      e.stopPropagation();
       config.contraste = !config.contraste;
       
       if(config.contraste) {
@@ -196,20 +260,72 @@ document.addEventListener('DOMContentLoaded', function() {
       guardarConfig();
     };
     
-    contrasteRange.oninput = function() {
+    contrasteRange.oninput = function(e) {
+      e.stopPropagation();
       config.contrasteValor = parseFloat(this.value);
       if(config.contraste) {
         actualizarFiltros();
         guardarConfig();
       }
     };
+    
+    contrasteRange.onmousedown = function(e) {
+      e.stopPropagation();
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      setTimeout(() => {
+        window.scrollTo(scrollX, scrollY);
+      }, 0);
+    };
+    
+    contrasteRange.ontouchstart = function(e) {
+      e.stopPropagation();
+    };
+    
+    contrasteRange.onchange = function(e) {
+      e.stopPropagation();
+    };
+    
+    // Restaurar estado del contraste
+    if(config.contraste) {
+      contrasteRange.disabled = false;
+      btnContraste.classList.add('active');
+      contrasteRange.value = config.contrasteValor;
+    } else {
+      contrasteRange.disabled = true;
+    }
   }
 
-  // Escala de grises (MEJORADO con actualizarFiltros)
+  // Escala de grises
+  const btnGrises = document.getElementById('grisesBtn');
+  if(btnGrises) {
+    btnGrises.onclick = function(e) {
+      e.stopPropagation();
+      config.grises = !config.grises;
+      this.classList.toggle('active', config.grises);
+      actualizarFiltros();
+      guardarConfig();
+      
+      // Mantener posición de scroll
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      setTimeout(() => {
+        window.scrollTo(scrollX, scrollY);
+      }, 0);
+    };
+    
+    // Restaurar estado
+    if(config.grises) {
+      btnGrises.classList.add('active');
+    }
+  }
+
   // Guía de lectura (NO se persiste, es temporal por sesión)
   const btnGuia = document.getElementById('guiaLecturaBtn');
   if(btnGuia) {
-    btnGuia.onclick = function() {
+    btnGuia.onclick = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
       config.guiaLectura = !config.guiaLectura;
       let contenido = document.querySelector('.dashboard-main') || document.getElementById('contenido-principal') || document.body;
       
@@ -228,29 +344,14 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // NO guardamos guiaLectura (es intencional que sea temporal)
     };
-  }   let contenido = document.querySelector('.dashboard-main') || document.getElementById('contenido-principal') || document.body;
-      
-      if(config.guiaLectura) {
-        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-        contenido.style.background = '#fffbe7';
-        if(contenido.scrollIntoView) {
-          contenido.scrollIntoView({behavior:'smooth', block:'center'});
-        }
-        this.classList.add('active');
-      } else {
-        contenido.style.boxShadow = '';
-        contenido.style.background = '';
-        this.classList.remove('active');
-      }
-      
-      guardarConfig();
-    };
   }
 
   // Cambiar tipografía
   const selectTipo = document.getElementById('tipografiaSelect');
   if(selectTipo) {
-    selectTipo.onchange = function() {
+    selectTipo.onchange = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
       config.tipografia = this.value;
       aplicarTipografia(config.tipografia);
       guardarConfig();
@@ -260,7 +361,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Lector de pantalla (no se guarda porque es temporal)
   const btnLector = document.getElementById('lectorPantallaBtn');
   if(btnLector) {
-    btnLector.onclick = function() {
+    btnLector.onclick = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
       let lectorActivo = this.classList.contains('active');
       lectorActivo = !lectorActivo;
       let contenido = document.querySelector('.dashboard-main') || document.getElementById('contenido-principal') || document.body;

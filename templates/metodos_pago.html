@@ -166,6 +166,7 @@
       flex-direction: column;
       min-height: 100vh;
       line-height: 1.6;
+      font-size: 16px; /* Base para accesibilidad */
     }
 
     
@@ -214,7 +215,7 @@
     
     .container {
       max-width: 500px;
-      margin: 120px auto 40px auto;
+      margin: 80px auto 40px auto;
       background: rgba(255,255,255,0.97);
       padding: 30px 25px;
       border-radius: 15px;
@@ -262,92 +263,216 @@
       color: #fff;
     }
 
-
-    
     footer {
       background: var(--dark);
       color: #fff;
       text-align: center;
-      padding: 30px 20px;
+      padding: 30px 20px 38px 20px;
       margin-top: auto;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      box-sizing: border-box;
     }
     footer p {
-      margin: 5px 0;
+      margin: 8px 0;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      line-height: 1.6;
     }
 
-    @media (max-width:768px){
+    /* ========== RESPONSIVE DESIGN ========== */
+
+    /* Tablets y dispositivos medianos */
+    @media(max-width:1024px){
+      header {
+        padding: 14px 16px;
+      }
+      .logo img {
+        height: 50px;
+      }
+      nav {
+        gap: 14px;
+      }
+      nav a {
+        font-size: 0.9rem;
+        gap: 4px;
+        padding: 6px 10px;
+      }
+      nav a img {
+        width: 22px;
+        height: 22px;
+      }
       .container {
-        margin: 140px 10px 40px 10px;
-        padding: 20px;
+        margin: 160px auto 60px;
+        padding: 26px 22px;
+      }
+    }
+
+    /* Tablets pequeñas y móviles grandes */
+    @media(max-width:768px){
+      header {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+      }
+      .logo img {
+        height: 46px;
       }
       nav {
         gap: 10px;
+        justify-content: center;
       }
       nav a {
-        font-size: 0.9em;
+        font-size: 0.85rem;
+        padding: 6px 8px;
+      }
+      nav a img {
+        width: 20px;
+        height: 20px;
+      }
+      .container {
+        margin: 180px 12px 40px;
+        padding: 20px 16px;
+        max-width: calc(100% - 24px);
+      }
+      h2 {
+        font-size: 1.5em;
+      }
+      footer {
+        padding: 28px 16px 36px 16px;
       }
     }
 
-      @media (max-width:600px){
-        header {
-          flex-direction: column;
-          align-items: flex-start;
-          padding: 12px 4vw;
-        }
-        .logo img {
-          height: 44px;
-          margin-bottom: 8px;
-        }
-        nav {
-          gap: 6px;
-          flex-wrap: wrap;
-          width: 100%;
-          justify-content: flex-start;
-        }
-        nav a {
-          font-size: 0.85em;
-          padding: 6px 7px;
-          gap: 4px;
-        }
-        nav a img {
-          width: 24px;
-          height: 24px;
-        }
-        .container {
-          margin: 90px 2vw 12px 2vw;
-          padding: 10px 4vw;
-          border-radius: 10px;
-          font-size: 0.98em;
-        }
-        h2 {
-          font-size: 1.15em;
-          margin-bottom: 16px;
-        }
-        .boton-pago {
-          font-size: 1em;
-          padding: 10px 0;
-          border-radius: 18px;
-          margin: 18px auto 0 auto;
-        }
-        .container > div[style*="background:#f1f8e9"] {
-          padding: 10px;
-          border-radius: 8px;
-          font-size: 0.97em;
-        }
-        ul {
-          padding-left: 14px;
-          font-size: 0.97em;
-        }
-        a[href*="carrito"] {
-          margin-top: 12px;
-          font-size: 0.97em;
-        }
-        footer {
-          padding: 10px 2vw 10px 2vw;
-          font-size: 0.92em;
-          margin-top: 18px;
-        }
+    /* Móviles medianos (iPhone 12, 13, 14, etc.) */
+    @media(max-width:600px){
+      header {
+        padding: 12px 14px;
+        flex-direction: column;
+        gap: 10px;
       }
+      .logo {
+        width: 100%;
+        justify-content: center;
+      }
+      .logo img {
+        height: 48px;
+      }
+      nav {
+        width: 100%;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      nav a {
+        font-size: 0.8rem;
+        padding: 8px 6px;
+        flex: 0 1 calc(33.333% - 8px);
+        flex-direction: column;
+        gap: 4px;
+        min-width: 65px;
+        font-weight: 600;
+      }
+      nav a img {
+        width: 28px;
+        height: 28px;
+      }
+      .container {
+        margin: 160px 12px 40px;
+        padding: 20px 16px;
+        max-width: calc(100% - 24px);
+        font-size: 0.98em;
+      }
+      h2 {
+        font-size: 1.3em;
+        margin-bottom: 16px;
+      }
+      .boton-pago {
+        font-size: 1em;
+        padding: 12px 0;
+        margin: 18px auto 0;
+      }
+      .container > div[style*="background:#f1f8e9"] {
+        padding: 12px;
+        font-size: 0.97em;
+      }
+      ul {
+        padding-left: 16px;
+        font-size: 0.97em;
+      }
+      footer {
+        padding: 24px 12px 32px 12px;
+        font-size: 0.95em;
+      }
+    }
+
+    /* Móviles pequeños (iPhone SE, iPhone 8, etc.) */
+    @media(max-width:480px){
+      header {
+        padding: 12px 16px;
+        gap: 12px;
+      }
+      .logo img {
+        height: 50px;
+      }
+      nav a {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        min-width: 70px;
+      }
+      nav a img {
+        width: 32px;
+        height: 32px;
+      }
+      .container {
+        margin: 240px 10px 30px;
+        padding: 18px 14px;
+        max-width: calc(100% - 20px);
+      }
+      h2 {
+        font-size: 1.2em;
+      }
+      .boton-pago {
+        font-size: 0.95em;
+        padding: 11px 0;
+      }
+      footer {
+        padding: 20px 10px 28px 10px;
+        font-size: 0.92em;
+      }
+    }
+
+    /* iPhone SE y dispositivos muy pequeños */
+    @media(max-width:375px){
+      html {
+        font-size: 14px;
+      }
+      header {
+        padding: 8px 10px;
+      }
+      .logo img {
+        height: 36px;
+      }
+      .container {
+        margin: 200px 8px 20px;
+        padding: 16px 12px;
+      }
+      h2 {
+        font-size: 1.1em;
+      }
+    }
+
+    /* Landscape mode para móviles */
+    @media(max-height:500px) and (orientation: landscape){
+      .container {
+        margin: 60px auto 30px;
+        padding: 18px 20px;
+      }
+      header {
+        padding: 8px 12px;
+      }
+      .logo img {
+        height: 35px;
+      }
+    }
   </style>
 
   <script>
@@ -362,8 +487,8 @@
   </script>
 </head>
 <body>
-  <button class="accesibilidad-toggle" id="accesibilidadToggle" aria-label="Abrir panel de accesibilidad" title="Accesibilidad">♿</button>
-  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad" style="z-index:3001;">
+  <button class="accesibilidad-toggle" id="accesibilidadToggle" aria-label="Abrir panel de accesibilidad" title="Accesibilidad">♠</button>
+  <div class="accesibilidad-bar" id="accesibilidadBar" aria-label="Barra de accesibilidad" style="z-index:3001;">
     <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
     <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
       <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
@@ -390,21 +515,25 @@
       <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
     </div>
     <nav>
-      <a href="{{ url_for('inicio') }}">
-        <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">Inicio
-      </a>
       <a href="{{ url_for('productos') }}">
-        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Mercado">Tienda
+        <img src="{{ url_for('static', filename='images/esquite.png') }}" alt="Tienda">Tienda
       </a>
-      <a href="{{ url_for('panel_cliente') }}">
-        <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Cuenta">Mi Dashboard
+      <a href="{{ url_for('contacto') }}">
+        <img src="{{ url_for('static', filename='images/contacto1.png') }}" alt="Contacto">Contacto
       </a>
-      <a href="{{ url_for('pedidos_cliente') }}">
-        <img src="{{ url_for('static', filename='images/misp.png') }}" alt="Mis Pedidos">Mis Pedidos
+      <a href="{{ url_for('carrito') }}">
+        <img src="{{ url_for('static', filename='images/carrito2.png') }}" alt="Carrito">
+        Carrito {% if cantidad_carrito %} ({{ cantidad_carrito }}){% endif %}
       </a>
-      <a href="{{ url_for('logout') }}">
-        <img src="{{ url_for('static', filename='images/cerrar.png') }}" alt="Cerrar Sesión">Cerrar Sesión
-      </a>
+      {% if session['usuario_nombre'] %}
+        <a href="{{ url_for('panel_cliente') }}">
+          <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Mi Dashboard">Mi Dashboard
+        </a>
+      {% else %}
+        <a href="{{ url_for('login') }}">
+          <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">Ingresar
+        </a>
+      {% endif %}
     </nav>
   </header>
 
@@ -432,116 +561,6 @@
   
   </div> 
 
-  <script>
-    
-    const root = document.documentElement;
-    const body = document.body;
-    let fontSize = 1;
-    let modoNocturno = false;
-    let contraste = false;
-    let contrasteValor = 1;
-    let grises = false;
-    let guiaLectura = false;
-    let lectorActivo = false;
-    let tipografia = 'default';
-
-    
-    const contenidoApp = document.getElementById('contenido-principal');
-
-    function setFontSize(mult) {
-      fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-      body.style.fontSize = fontSize + 'em';
-    }
-    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
-
-    document.getElementById('modoNocturnoBtn').onclick = function() {
-      modoNocturno = !modoNocturno;
-      if(modoNocturno) {
-        body.classList.add('night-mode');
-        this.classList.add('active');
-      } else {
-        body.classList.remove('night-mode');
-        this.classList.remove('active');
-      }
-    };
-
-    const contrasteRange = document.getElementById('contrasteRange');
-    const contrasteBtn = document.getElementById('contrasteBtn');
-    contrasteBtn.onclick = function() {
-      contraste = !contraste;
-      if(contraste) {
-        contrasteValor = parseFloat(contrasteRange.value);
-        contenidoApp.style.filter = `contrast(${contrasteValor})`;
-        contrasteRange.disabled = false;
-        this.classList.add('active');
-      } else {
-        contenidoApp.style.filter = '';
-        contrasteRange.disabled = true;
-        this.classList.remove('active');
-      }
-    };
-    contrasteRange.oninput = function() {
-      contrasteValor = parseFloat(this.value);
-      if(contraste) {
-        contenidoApp.style.filter = `contrast(${contrasteValor})`;
-      }
-    };
-    contrasteRange.disabled = true;
-
-    document.getElementById('grisesBtn').onclick = function() {
-      grises = !grises;
-      if(grises) {
-        contenidoApp.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
-        this.classList.add('active');
-      } else {
-        contenidoApp.style.filter = contraste ? `contrast(${contrasteValor})` : '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('guiaLecturaBtn').onclick = function() {
-      guiaLectura = !guiaLectura;
-      let contenido = document.getElementById('contenido-principal') || contenidoApp;
-      if(guiaLectura) {
-        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-        contenido.style.background = '#fffbe7';
-        this.classList.add('active');
-      } else {
-        contenido.style.boxShadow = '';
-        contenido.style.background = '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('tipografiaSelect').onchange = function() {
-      tipografia = this.value;
-      switch(tipografia) {
-        case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-        case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-        case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-        case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-        default: body.style.fontFamily = '';
-      }
-    };
-
-    document.getElementById('lectorPantallaBtn').onclick = function() {
-      lectorActivo = !lectorActivo;
-      let contenido = document.getElementById('contenido-principal') || contenidoApp;
-      if(lectorActivo) {
-        this.classList.add('active');
-        let texto = contenido.innerText;
-        if('speechSynthesis' in window) {
-          let utter = new SpeechSynthesisUtterance(texto);
-          utter.lang = 'es-MX';
-          window.speechSynthesis.speak(utter);
-        } else {
-          alert('Lector de pantalla no soportado en este navegador.');
-        }
-      } else {
-        this.classList.remove('active');
-        if('speechSynthesis' in window) window.speechSynthesis.cancel();
-      }
-    };
-  </script>
   <script src="{{ url_for('static', filename='js/accesibilidad.js') }}"></script>
+</body>
+</html>
