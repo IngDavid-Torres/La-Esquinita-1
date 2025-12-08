@@ -4,31 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Registro | La Esquinita</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/accesibilidad.css') }}">
     <style>
+        /* Botón toggle de accesibilidad */
+        .accesibilidad-toggle {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            z-index: 3001;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            animation: pulse-accessibility 2s infinite;
+        }
+
+        .accesibilidad-toggle:hover,
+        .accesibilidad-toggle:active {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(255, 87, 34, 0.6);
+        }
+
+        .accesibilidad-toggle.active {
+            background: linear-gradient(135deg, var(--primary) 0%, #ffc947 100%);
+            color: var(--dark);
+        }
+
+        @keyframes pulse-accessibility {
+            0%, 100% {
+                box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 30px rgba(255, 87, 34, 0.8);
+            }
+        }
+
+        /* Panel de accesibilidad */
         .accesibilidad-bar {
             position: fixed;
-            left: 24px;
-            bottom: 24px;
-            z-index: 2000;
+            left: 20px;
+            bottom: 90px;
+            z-index: 3000;
             background: #222;
             color: #fff;
-            display: flex;
             flex-direction: column;
             gap: 8px;
             align-items: center;
             padding: 14px 10px 10px 10px;
             border-radius: 18px;
             box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-            opacity: 0.93;
+            opacity: 0;
             min-width: 48px;
             min-height: 48px;
-            transition: box-shadow 0.2s, opacity 0.2s;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+            pointer-events: none;
+            display: none;
         }
-        .accesibilidad-bar:hover, .accesibilidad-bar:focus-within {
+
+        .accesibilidad-bar.show {
             opacity: 1;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+            transform: translateY(0);
+            pointer-events: all;
+            display: flex;
         }
         .accesibilidad-bar button, .accesibilidad-bar select {
             background: #fff;
@@ -46,6 +97,27 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .accesibilidad-bar input[type="range"] {
+            width: 38px;
+            height: 18px;
+            margin: 4px 0 2px 0;
+            background: transparent;
+            display: block;
+            padding: 0;
+        }
+        .accesibilidad-bar input[type="range"]::-webkit-slider-thumb {
+            background: #ffb300;
+        }
+        .accesibilidad-bar input[type="range"]::-moz-range-thumb {
+            background: #ffb300;
+        }
+        .accesibilidad-bar input[type="range"]::-ms-thumb {
+            background: #ffb300;
+        }
+        .accesibilidad-bar input[type="range"]:focus {
+            outline: 2px solid #ffb300;
         }
         .accesibilidad-bar button.active {
             background: #ffb300;
@@ -69,109 +141,183 @@
         .accesibilidad-bar .icono {
             font-size: 1.2em;
         }
-        body.night-mode {
-            background: #181818 !important;
-            color: #fff !important;
-        }
-        .container.night-mode {
-            background: #232323 !important;
-            color: #fff !important;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-        }
-        footer.night-mode {
-            background: #181818 !important;
-            color: #fff !important;
-        }
-        .accesibilidad-bar.night-mode {
-            background: #232323 !important;
-            color: #fff !important;
-        }
+
+        /* Media queries para accesibilidad */
         @media(max-width:600px){
-            .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
-            .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+            .accesibilidad-toggle {
+                left: 16px;
+                bottom: 16px;
+                width: 56px;
+                height: 56px;
+                font-size: 1.4rem;
+            }
+
+            .accesibilidad-bar {
+                left: 16px;
+                bottom: 80px;
+                padding: 10px 6px 6px 6px;
+                min-width: 44px;
+                min-height: 44px;
+                gap: 6px;
+            }
+
+            .accesibilidad-bar button,
+            .accesibilidad-bar select {
+                width: 34px;
+                height: 34px;
+                font-size: 1.1em;
+            }
+
+            .accesibilidad-bar .icono {
+                font-size: 1.1em;
+            }
         }
-    </style>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro | La Esquinita</title>
-    <style>
+
+        @media(max-width:480px){
+            .accesibilidad-toggle {
+                left: 12px;
+                bottom: 12px;
+                width: 52px;
+                height: 52px;
+                font-size: 1.3rem;
+            }
+
+            .accesibilidad-bar {
+                left: 12px;
+                bottom: 72px;
+                padding: 8px 5px 5px 5px;
+                min-width: 40px;
+                min-height: 40px;
+                gap: 5px;
+            }
+
+            .accesibilidad-bar button,
+            .accesibilidad-bar select {
+                width: 32px;
+                height: 32px;
+                font-size: 1em;
+            }
+
+            .accesibilidad-bar .icono {
+                font-size: 1em;
+            }
+        }
+
         :root {
-            --primary: #FFD700;
-            --secondary: #2e7d32;
-            --accent: #ff5722;
+            --primary: #ffb300;
+            --secondary: #1b5e20;
+            --accent: #d84315;
             --light: #fffdf7;
             --dark: #1c1c1c;
             --success: #28a745;
             --error: #e53935;
+            --focus-color: #005fcc;
         }
-        body {
-            font-family: 'Poppins', Arial, sans-serif;
-            background: linear-gradient(135deg, var(--light) 0%, #e6f2d8 100%);
-            min-height: 100vh;
+
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
         }
+
+        /* NAVBAR */
         header {
-            width: 100vw;
-            background: rgba(255,255,255,0.92);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 16px 0 12px 0;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
             position: fixed;
             top: 0;
             left: 0;
-            z-index: 100;
+            width: 100%;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        .logo img {
+            height: 60px;
+            width: auto;
+            border-radius: 8px;
+            max-width: 100%;
+            object-fit: contain;
         }
         nav {
             display: flex;
-            gap: 38px;
-            margin-right: 40px;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
         nav a {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 7px;
             text-decoration: none;
             color: var(--dark);
             font-weight: 600;
-            font-size: 1.08em;
             transition: color 0.3s;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            font-size: 1rem;
         }
         nav a img {
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
+            flex-shrink: 0;
         }
-        nav a:hover {
+        nav a:hover, nav a:active {
             color: var(--accent);
         }
+
         .container {
             background: rgba(255,255,255,0.98);
-            padding: 38px 28px 32px 28px;
-            border-radius: 22px;
-            box-shadow: 0px 8px 32px rgba(44,44,44,0.13);
+            padding: 40px 32px;
+            border-radius: 20px;
+            box-shadow: 0px 8px 32px rgba(0,0,0,0.1);
             text-align: center;
-            max-width: 400px;
-            width: 100%;
-            margin: 90px 0 60px 0;
+            max-width: 480px;
+            width: 90%;
+            margin: 120px auto 80px;
         }
-        .logo {
-            margin-bottom: 10px;
+        .logo-container {
+            margin-bottom: 12px;
         }
-        .logo img {
+        .logo-container img {
             height: 60px;
             border-radius: 8px;
         }
         h2 {
             color: var(--secondary);
-            font-size: 1.7em;
-            margin-bottom: 18px;
-            font-weight: bold;
-            letter-spacing: 1px;
+            font-size: 1.8em;
+            margin-bottom: 24px;
+            font-weight: 700;
         }
         form {
             width: 100%;
@@ -180,40 +326,40 @@
             align-items: center;
         }
         input, select {
-            width: 96%;
-            padding: 13px;
-            margin-bottom: 16px;
-            border: 1.5px solid var(--secondary);
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 18px;
+            border: 2px solid #ddd;
             border-radius: 10px;
-            font-size: 1.08em;
+            font-size: 1rem;
             background: #f9f9f9;
-            transition: border 0.2s;
+            transition: all 0.3s;
             font-family: inherit;
-            text-align: left;
         }
         input:focus, select:focus {
             border-color: var(--primary);
             outline: none;
-            background: #fffde7;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(255, 179, 0, 0.1);
         }
         #password-info {
-            font-size: 0.92em;
+            font-size: 0.9em;
             color: #666;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             background: #fffbe7;
-            border-radius: 7px;
-            padding: 7px 10px;
+            border-radius: 8px;
+            padding: 10px 12px;
             border: 1px dashed var(--primary);
-            width: 96%;
+            width: 100%;
             text-align: left;
         }
         .msg-error, .msg-success {
-            width: 96%;
-            margin: 0 auto 14px auto;
-            padding: 12px 10px;
+            width: 100%;
+            margin: 0 auto 16px auto;
+            padding: 12px;
             border-radius: 8px;
             font-size: 1em;
-            font-weight: bold;
+            font-weight: 600;
             text-align: left;
             display: none;
             align-items: center;
@@ -222,59 +368,74 @@
         .msg-success {
             background: var(--success);
             color: #fff;
-            border: 1.5px solid #1e7e34;
-            display: none;
+            border: 2px solid #1e7e34;
         }
         .msg-error {
             background: var(--error);
             color: #fff;
-            border: 1.5px solid #b71c1c;
-            display: none;
-        }
-        .msg-exito {
-            width: 96%;
-            margin: 0 auto 18px auto;
-            padding: 14px 12px;
-            border-radius: 8px;
-            font-size: 1.08em;
-            font-weight: bold;
-            text-align: center;
-            background: var(--primary);
-            color: var(--secondary);
-            border: 2px solid var(--secondary);
-            box-shadow: 0 2px 8px rgba(255,215,0,0.10);
-            display: none;
-            align-items: center;
-            gap: 8px;
+            border: 2px solid #b71c1c;
         }
         button[type="submit"] {
             width: 100%;
-            padding: 13px 0;
+            padding: 14px 0;
             border: none;
-            border-radius: 20px;
-            background-color: var(--primary);
+            border-radius: 25px;
+            background: var(--primary);
             color: var(--secondary);
-            font-weight: bold;
-            font-size: 1.15em;
+            font-weight: 700;
+            font-size: 1.1em;
             cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.3s, color 0.3s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px rgba(255,215,0,0.08);
+            margin-top: 12px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(255,179,0,0.3);
         }
         button[type="submit"]:hover {
-            background-color: #FFC107;
-            color: #1B5E20;
-            box-shadow: 0 4px 16px rgba(255,215,0,0.13);
+            background: #ffc947;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255,179,0,0.4);
+        }
+        .sms-option {
+            text-align: center;
+            margin: 20px 0;
+            padding: 16px;
+            background: #f0f8f0;
+            border-radius: 12px;
+            border-left: 4px solid var(--success);
+        }
+        .sms-option h4 {
+            color: var(--success);
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+        .sms-option p {
+            margin: 0 0 14px 0;
+            color: #666;
+            font-size: 0.95em;
+        }
+        .sms-option a.btn-sms {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .sms-option a.btn-sms:hover {
+            background: #1e7e34;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40,167,69,0.3);
         }
         .login-link {
-            margin-top: 18px;
-            font-size: 0.98em;
+            margin-top: 20px;
+            font-size: 0.95em;
             width: 100%;
             text-align: center;
         }
         .login-link a {
             color: var(--secondary);
-            font-weight: bold;
+            font-weight: 600;
             text-decoration: none;
             transition: color 0.3s;
         }
@@ -286,105 +447,222 @@
             background: var(--dark);
             color: #fff;
             text-align: center;
-            padding: 7px 10px 4px 10px;
-            width: 100vw;
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            font-size: 0.98em;
-            letter-spacing: 0.5px;
-            box-shadow: 0 -2px 12px rgba(44,44,44,0.10);
+            padding: 16px 20px;
+            width: 100%;
+            font-size: 0.95em;
         }
-        @media (max-width: 500px) {
-            .container {
-                padding: 10px 2vw 10px 2vw;
-                margin: 70px 0 30px 0;
-                max-width: 98vw;
-                border-radius: 14px;
-                font-size: 0.97em;
+
+        #contenido-app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #contenido-app > .container {
+            flex: 1;
+        }
+
+        /* Media queries responsivas */
+        @media(max-width:1024px){
+            header {
+                padding: 14px 20px;
             }
             .logo img {
-                height: 32px;
-                max-width: 80px;
-            }
-            header {
-                padding: 8px 0 6px 0;
-                font-size: 0.97em;
+                height: 54px;
             }
             nav {
-                gap: 10px;
-                margin-right: 2vw;
+                gap: 16px;
             }
             nav a {
-                font-size: 0.97em;
-                gap: 3px;
+                font-size: 0.95rem;
+                padding: 8px 12px;
+            }
+            .container {
+                margin: 100px auto 60px;
+                padding: 32px 26px;
+                max-width: 480px;
+            }
+        }
+
+        /* Tablets pequeñas y móviles grandes */
+        @media(max-width:768px){
+            header {
+                padding: 14px 18px;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .logo {
+                width: 100%;
+                justify-content: center;
+            }
+            .logo img {
+                height: 52px;
+            }
+            nav {
+                width: 100%;
+                gap: 12px;
+                justify-content: space-around;
+                flex-wrap: wrap;
+            }
+            nav a {
+                font-size: 0.9rem;
+                padding: 10px 14px;
+                flex: 0 1 auto;
+                min-width: 80px;
+                justify-content: center;
             }
             nav a img {
-                width: 18px;
-                height: 18px;
+                width: 22px;
+                height: 22px;
+            }
+            .container {
+                margin: 120px auto 50px;
+                padding: 30px 24px;
+                max-width: 90%;
+                width: 90%;
             }
             h2 {
-                font-size: 1.1em;
-                margin-bottom: 10px;
+                font-size: 1.5em;
+            }
+        }
+
+        /* Móviles medianos */
+        @media(max-width:600px){
+            header {
+                padding: 12px 14px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .logo {
+                width: 100%;
+                justify-content: center;
+            }
+            .logo img {
+                height: 48px;
+            }
+            nav {
+                width: 100%;
+                gap: 8px;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+            nav a {
+                font-size: 0.8rem;
+                padding: 10px 6px;
+                flex: 0 1 calc(33.333% - 8px);
+                flex-direction: column;
+                gap: 4px;
+                min-width: 65px;
+                font-weight: 600;
+            }
+            nav a img {
+                width: 28px;
+                height: 28px;
+            }
+            .container {
+                margin: 140px auto 40px;
+                padding: 26px 20px;
+                max-width: 95%;
+                width: 95%;
+            }
+            h2 {
+                font-size: 1.4em;
             }
             input, select {
-                padding: 10px;
-                font-size: 0.97em;
-                border-radius: 8px;
+                padding: 13px;
+                font-size: 1em;
             }
             button[type="submit"] {
-                padding: 10px 0;
                 font-size: 1em;
-                border-radius: 14px;
+                padding: 13px;
             }
-            .login-link {
-                font-size: 0.95em;
-                margin-top: 10px;
+        }
+
+        /* Móviles pequeños */
+        @media(max-width:480px){
+            header {
+                padding: 10px 12px;
             }
-            .sms-option {
+            .logo img {
+                height: 50px;
+            }
+            nav {
+                width: 100%;
+                gap: 12px;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+            nav a {
+                font-size: 0.85rem;
+                padding: 8px 12px;
+                flex: 0 1 auto;
+                flex-direction: column;
+                gap: 6px;
+                min-width: 70px;
+                font-weight: 600;
+            }
+            nav a img {
+                width: 32px;
+                height: 32px;
+                margin: 0;
+            }
+            .container {
+                margin: 160px auto 30px;
+                padding: 24px 18px;
+                max-width: 96%;
+                width: 96%;
+            }
+            h2 {
+                font-size: 1.3em;
+            }
+            input {
+                padding: 13px 10px;
+                font-size: 1em;
+            }
+            button {
+                font-size: 1em;
+                padding: 13px;
+            }
+        }
+
+        /* iPhone SE y dispositivos muy pequeños */
+        @media(max-width:375px){
+            header {
+                padding: 8px 16px;
+            }
+            .logo img {
+                height: 38px;
+            }
+            nav {
+                gap: 8px;
+            }
+            nav a {
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+            h2 {
+                font-size: 1.2em;
+                margin-bottom: 12px;
+            }
+            input {
                 padding: 10px;
-                font-size: 0.97em;
+                margin-bottom: 10px;
             }
-            .sms-option h4 {
-                font-size: 1em;
-                margin-bottom: 6px;
-            }
-            .sms-option a.btn-sms {
-                padding: 10px 18px;
-                font-size: 0.97em;
-                border-radius: 18px;
-            }
-            #msg-exito {
-                font-size: 1em;
-                padding: 10px 8px;
-                border-radius: 8px;
-            }
-            #msg-exito > div {
-                padding: 18px 10px 14px 10px;
-                min-width: 140px;
-                max-width: 98vw;
-                font-size: 1em;
-                border-radius: 10px;
-                gap: 10px;
-            }
-            #modal-exito > div {
-                padding: 18px 10px 14px 10px;
-                min-width: 140px;
-                max-width: 98vw;
-                font-size: 1em;
-                border-radius: 10px;
-                gap: 10px;
-            }
-            footer {
-                font-size: 0.92em;
-                padding: 4px 2vw 2px 2vw;
+            button {
+                padding: 10px;
+                margin-top: 8px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Botón toggle de accesibilidad -->
+    <button class="accesibilidad-toggle" id="accesibilidadToggle" title="Opciones de accesibilidad" aria-label="Abrir opciones de accesibilidad">
+        ♿
+    </button>
 
-    <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+    <!-- Panel de accesibilidad (oculto por defecto) -->
+    <div class="accesibilidad-bar" id="accesibilidadBar" aria-label="Barra de accesibilidad">
         <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
         <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
             <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
@@ -403,137 +681,26 @@
         </select>
         <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
     </div>
-    <script>
-        // --- ACCESIBILIDAD ---
-        const root = document.documentElement;
-        const body = document.body;
-        let fontSize = 1;
-        let modoNocturno = false;
-        let contraste = false;
-        let contrasteValor = 1;
-        let grises = false;
-        let guiaLectura = false;
-        let lectorActivo = false;
-        let tipografia = 'default';
 
-        function setFontSize(mult) {
-            fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-            body.style.fontSize = fontSize + 'em';
-        }
-        document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-        document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
-
-        document.getElementById('modoNocturnoBtn').onclick = function() {
-            modoNocturno = !modoNocturno;
-            const container = document.querySelector('.container');
-            if(modoNocturno) {
-                body.classList.add('night-mode');
-                this.classList.add('active');
-                document.querySelector('.accesibilidad-bar').classList.add('night-mode');
-                document.querySelector('footer').classList.add('night-mode');
-                if(container) container.classList.add('night-mode');
-            } else {
-                body.classList.remove('night-mode');
-                this.classList.remove('active');
-                document.querySelector('.accesibilidad-bar').classList.remove('night-mode');
-                document.querySelector('footer').classList.remove('night-mode');
-                if(container) container.classList.remove('night-mode');
-            }
-        };
-
-        const contrasteRange = document.getElementById('contrasteRange');
-        const contrasteBtn = document.getElementById('contrasteBtn');
-        contrasteBtn.onclick = function() {
-            contraste = !contraste;
-            if(contraste) {
-                contrasteValor = parseFloat(contrasteRange.value);
-                body.style.filter = `contrast(${contrasteValor})`;
-                contrasteRange.disabled = false;
-                this.classList.add('active');
-            } else {
-                body.style.filter = '';
-                contrasteRange.disabled = true;
-                this.classList.remove('active');
-            }
-        };
-        contrasteRange.oninput = function() {
-            contrasteValor = parseFloat(this.value);
-            if(contraste) {
-                body.style.filter = `contrast(${contrasteValor})`;
-            }
-        };
-        contrasteRange.disabled = true;
-
-        document.getElementById('grisesBtn').onclick = function() {
-            grises = !grises;
-            if(grises) {
-                body.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
-                this.classList.add('active');
-            } else {
-                body.style.filter = contraste ? `contrast(${contrasteValor})` : '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('guiaLecturaBtn').onclick = function() {
-            guiaLectura = !guiaLectura;
-            let contenido = document.querySelector('.container') || document.body;
-            if(guiaLectura) {
-                contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-                contenido.style.background = '#fffbe7';
-                this.classList.add('active');
-            } else {
-                contenido.style.boxShadow = '';
-                contenido.style.background = '';
-                this.classList.remove('active');
-            }
-        };
-
-        document.getElementById('tipografiaSelect').onchange = function() {
-            tipografia = this.value;
-            switch(tipografia) {
-                case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-                case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-                case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-                case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-                default: body.style.fontFamily = '';
-            }
-        };
-
-        document.getElementById('lectorPantallaBtn').onclick = function() {
-            lectorActivo = !lectorActivo;
-            let contenido = document.querySelector('.container') || document.body;
-            if(lectorActivo) {
-                this.classList.add('active');
-                let texto = contenido.innerText;
-                if('speechSynthesis' in window) {
-                    let utter = new SpeechSynthesisUtterance(texto);
-                    utter.lang = 'es-MX';
-                    window.speechSynthesis.speak(utter);
-                } else {
-                    alert('Lector de pantalla no soportado en este navegador.');
-                }
-            } else {
-                this.classList.remove('active');
-                if('speechSynthesis' in window) window.speechSynthesis.cancel();
-            }
-        };
-    </script>
-    
     <header>
-        <nav>
-            <a href="{{ url_for('inicio') }}">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
+        </div>
+        <nav role="navigation" aria-label="Navegación principal">
+            <a href="{{ url_for('inicio') }}" aria-label="Ir a la página de inicio">
                 <img src="{{ url_for('static', filename='images/inicio.png') }}" alt="Inicio">
                 Inicio
             </a>
-            <a href="{{ url_for('login') }}">
-                <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Ingresar">
+            <a href="{{ url_for('login') }}" aria-label="Iniciar sesión en tu cuenta">
+                <img src="{{ url_for('static', filename='images/iniciarsesion1.png') }}" alt="Iniciar sesión">
                 Iniciar sesión
             </a>
         </nav>
     </header>
+
+    <div id="contenido-app">
     <div class="container">
-        <div class="logo">
+        <div class="logo-container">
             <img src="{{ url_for('static', filename='images/laesquinita.png') }}" alt="La Esquinita">
         </div>
         <h2>Registro en La Esquinita</h2>
@@ -610,7 +777,159 @@
     <footer>
         <p>© 2025 La Esquinita - Todos los derechos reservados</p>
     </footer>
+    </div>
+
     <script>
+        // --- FUNCIONES DE ACCESIBILIDAD ---
+        const accesibilidadToggle = document.getElementById('accesibilidadToggle');
+        const accesibilidadBar = document.getElementById('accesibilidadBar');
+        const contenidoApp = document.getElementById('contenido-app');
+        
+        // Toggle accesibilidad bar
+        accesibilidadToggle.addEventListener('click', function() {
+            accesibilidadBar.classList.toggle('show');
+            this.classList.toggle('active');
+        });
+
+        let fontSize = 1;
+        let modoNocturno = false;
+        let contraste = false;
+        let contrasteValor = 1;
+        let grises = false;
+        let guiaLectura = false;
+        let lectorActivo = false;
+
+        // Aumentar/Disminuir letra
+        document.getElementById('aumentarLetraBtn').addEventListener('click', function() {
+            fontSize = Math.min(fontSize + 0.1, 1.5);
+            document.documentElement.style.fontSize = (fontSize * 16) + 'px';
+        });
+
+        document.getElementById('disminuirLetraBtn').addEventListener('click', function() {
+            fontSize = Math.max(fontSize - 0.1, 0.8);
+            document.documentElement.style.fontSize = (fontSize * 16) + 'px';
+        });
+
+        // Modo nocturno
+        document.getElementById('modoNocturnoBtn').addEventListener('click', function() {
+            modoNocturno = !modoNocturno;
+            if(modoNocturno) {
+                document.body.style.background = '#1a1a1a';
+                document.body.style.color = '#fff';
+                if(contenidoApp) {
+                    contenidoApp.style.background = '#2a2a2a';
+                    contenidoApp.style.color = '#fff';
+                }
+                this.classList.add('active');
+            } else {
+                document.body.style.background = '';
+                document.body.style.color = '';
+                if(contenidoApp) {
+                    contenidoApp.style.background = '';
+                    contenidoApp.style.color = '';
+                }
+                this.classList.remove('active');
+            }
+        });
+
+        // Contraste
+        const contrasteRange = document.getElementById('contrasteRange');
+        const contrasteBtn = document.getElementById('contrasteBtn');
+        
+        contrasteBtn.addEventListener('click', function() {
+            contraste = !contraste;
+            if(contraste) {
+                contrasteValor = parseFloat(contrasteRange.value);
+                if(contenidoApp) contenidoApp.style.filter = `contrast(${contrasteValor})`;
+                this.classList.add('active');
+            } else {
+                if(contenidoApp) contenidoApp.style.filter = grises ? 'grayscale(1)' : '';
+                this.classList.remove('active');
+            }
+        });
+
+        contrasteRange.addEventListener('input', function() {
+            contrasteValor = parseFloat(this.value);
+            if(contraste && contenidoApp) {
+                const filtros = [];
+                if(contraste) filtros.push(`contrast(${contrasteValor})`);
+                if(grises) filtros.push('grayscale(1)');
+                contenidoApp.style.filter = filtros.join(' ');
+            }
+        });
+
+        // Escala de grises
+        document.getElementById('grisesBtn').addEventListener('click', function() {
+            grises = !grises;
+            if(contenidoApp) {
+                const filtros = [];
+                if(contraste) filtros.push(`contrast(${contrasteValor})`);
+                if(grises) filtros.push('grayscale(1)');
+                contenidoApp.style.filter = filtros.join(' ') || '';
+            }
+            this.classList.toggle('active');
+        });
+
+        // Guía de lectura
+        document.getElementById('guiaLecturaBtn').addEventListener('click', function() {
+            guiaLectura = !guiaLectura;
+            if(guiaLectura && contenidoApp) {
+                contenidoApp.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
+                contenidoApp.style.position = 'relative';
+                contenidoApp.style.zIndex = '2500';
+                this.classList.add('active');
+            } else if(contenidoApp) {
+                contenidoApp.style.boxShadow = '';
+                contenidoApp.style.position = '';
+                contenidoApp.style.zIndex = '';
+                this.classList.remove('active');
+            }
+        });
+
+        // Cambiar tipografía
+        document.getElementById('tipografiaSelect').addEventListener('change', function() {
+            const tipografia = this.value;
+            switch(tipografia) {
+                case 'arial':
+                    document.body.style.fontFamily = 'Arial, sans-serif';
+                    break;
+                case 'verdana':
+                    document.body.style.fontFamily = 'Verdana, Geneva, sans-serif';
+                    break;
+                case 'comic':
+                    document.body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive';
+                    break;
+                case 'open':
+                    document.body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif';
+                    break;
+                default:
+                    document.body.style.fontFamily = '';
+            }
+        });
+
+        // Lector de pantalla
+        document.getElementById('lectorPantallaBtn').addEventListener('click', function() {
+            lectorActivo = !lectorActivo;
+            if(lectorActivo) {
+                const texto = contenidoApp ? contenidoApp.innerText : document.body.innerText;
+                if('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(texto);
+                    utterance.lang = 'es-MX';
+                    utterance.rate = 0.9;
+                    window.speechSynthesis.speak(utterance);
+                    this.classList.add('active');
+                } else {
+                    alert('Lector de pantalla no soportado en este navegador');
+                    lectorActivo = false;
+                }
+            } else {
+                if('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                }
+                this.classList.remove('active');
+            }
+        });
+
         function validarRegistro(event) {
             const password = document.getElementById('password').value;
             const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;

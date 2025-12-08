@@ -528,12 +528,22 @@
             color: #fff;
             text-align: center;
             padding: 30px 20px 38px 20px;
-            margin-top: auto;
             width: 100%;
             position: relative;
             z-index: 1;
             box-sizing: border-box;
         }
+
+        #contenido-app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #contenido-app > .container {
+            flex: 1;
+        }
+
         /* ========== RESPONSIVE DESIGN ========== */
 
         /* Tablets y dispositivos medianos */
@@ -586,8 +596,8 @@
                 justify-content: center;
             }
             nav a img {
-                width: 24px;
-                height: 24px;
+                width: 22px;
+                height: 22px;
             }
             .container {
                 margin: 20px auto 50px;
@@ -640,8 +650,8 @@
                 text-align: center;
             }
             nav a img {
-                width: 30px;
-                height: 30px;
+                width: 28px;
+                height: 28px;
             }
             .container {
                 margin: 20px auto 40px;
@@ -769,13 +779,18 @@
                 height: 44px;
             }
             nav a {
-                font-size: 0.75rem;
-                padding: 8px 5px;
-                min-width: 60px;
+                font-size: 0.85rem;
+                padding: 8px 12px;
+                flex: 0 1 auto;
+                flex-direction: column;
+                gap: 6px;
+                min-width: 70px;
+                font-weight: 600;
             }
             nav a img {
-                width: 26px;
-                height: 26px;
+                width: 32px;
+                height: 32px;
+                margin: 0;
             }
             .container {
                 margin: 20px auto 25px;
