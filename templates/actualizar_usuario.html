@@ -153,27 +153,81 @@
                 box-shadow: 0 2px 8px rgba(255,179,0,0.12);
                 z-index: 3000;
             }
+            /* Botón toggle de accesibilidad */
+            .accesibilidad-toggle {
+                position: fixed;
+                left: 20px;
+                bottom: 20px;
+                z-index: 3001;
+                background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                -webkit-tap-highlight-color: transparent;
+                animation: pulse-accessibility 2s infinite;
+            }
+
+            .accesibilidad-toggle:hover,
+            .accesibilidad-toggle:active {
+                transform: scale(1.1);
+                box-shadow: 0 6px 25px rgba(255, 87, 34, 0.6);
+            }
+
+            .accesibilidad-toggle.active {
+                background: linear-gradient(135deg, var(--primary) 0%, #ffc947 100%);
+                color: var(--dark);
+            }
+
+            @keyframes pulse-accessibility {
+                0%, 100% {
+                    box-shadow: 0 4px 20px rgba(255, 87, 34, 0.4);
+                }
+                50% {
+                    box-shadow: 0 4px 30px rgba(255, 87, 34, 0.8);
+                }
+            }
+
+            /* Panel de accesibilidad */
             .accesibilidad-bar {
                 position: fixed;
-                left: 24px;
-                bottom: 24px;
-                z-index: 2000;
-                background: rgba(34,34,34,0.92);
+                left: 20px;
+                bottom: 90px;
+                z-index: 3000;
+                background: #222;
                 color: #fff;
-                display: flex;
                 flex-direction: column;
                 gap: 8px;
                 align-items: center;
                 padding: 14px 10px 10px 10px;
                 border-radius: 18px;
                 box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-                opacity: 0.97;
+                opacity: 0;
                 min-width: 48px;
                 min-height: 48px;
-                transition: box-shadow 0.2s, opacity 0.2s;
-                backdrop-filter: blur(6px);
+                transition: all 0.3s ease;
+                transform: translateY(20px);
+                pointer-events: none;
+                display: none;
             }
-            .accesibilidad-bar button, .accesibilidad-bar select {
+
+            .accesibilidad-bar.show {
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: all;
+                display: flex;
+            }
+
+            .accesibilidad-bar button,
+            .accesibilidad-bar select {
                 background: #fff;
                 color: #222;
                 border: none;
@@ -189,15 +243,19 @@
                 align-items: center;
                 justify-content: center;
                 margin-bottom: 2px;
+                -webkit-tap-highlight-color: transparent;
             }
+
             .accesibilidad-bar button.active {
-                background: var(--primary);
+                background: #ffb300;
                 color: #222;
                 transform: scale(1.08);
             }
+
             .accesibilidad-bar label {
                 display: none;
             }
+
             .accesibilidad-bar select {
                 border-radius: 8px;
                 width: 38px;
@@ -206,12 +264,15 @@
                 padding: 0;
                 margin-bottom: 2px;
             }
+
             .accesibilidad-bar option {
                 font-size: 1em;
             }
+
             .accesibilidad-bar .icono {
                 font-size: 1.2em;
             }
+
             body.night-mode {
                 background: #181818 !important;
                 color: #fff !important;
@@ -229,14 +290,73 @@
                 background: #232323 !important;
                 color: #fff !important;
             }
+
+            /* Media queries para accesibilidad */
             @media(max-width:600px){
                 .container { margin-top: 70px; padding: 12px; max-width: 99vw; }
-                .accesibilidad-bar {left: 6px; bottom: 6px; padding: 7px 4px 4px 4px; min-width: 36px; min-height: 36px;}
-                .accesibilidad-bar button, .accesibilidad-bar select {width: 30px; height: 30px; font-size: 1em;}
+                
+                .accesibilidad-toggle {
+                    left: 16px;
+                    bottom: 16px;
+                    width: 56px;
+                    height: 56px;
+                    font-size: 1.4rem;
+                }
+
+                .accesibilidad-bar {
+                    left: 16px;
+                    bottom: 80px;
+                    padding: 10px 6px 6px 6px;
+                    min-width: 44px;
+                    min-height: 44px;
+                    gap: 6px;
+                }
+
+                .accesibilidad-bar button,
+                .accesibilidad-bar select {
+                    width: 34px;
+                    height: 34px;
+                    font-size: 1.1em;
+                }
+
+                .accesibilidad-bar .icono {
+                    font-size: 1.1em;
+                }
+                
                 nav { min-height: 48px; }
                 .nav-container { min-height: 48px; padding: 0 6px; }
                 nav a { font-size: 0.95em; padding: 7px 8px; }
                 footer { font-size: 0.93em; padding: 7px 0 6px 0; }
+            }
+
+            @media(max-width:480px){
+                .accesibilidad-toggle {
+                    left: 12px;
+                    bottom: 12px;
+                    width: 52px;
+                    height: 52px;
+                    font-size: 1.3rem;
+                }
+
+                .accesibilidad-bar {
+                    left: 12px;
+                    bottom: 72px;
+                    padding: 8px 5px 5px 5px;
+                    min-width: 40px;
+                    min-height: 40px;
+                    gap: 5px;
+                }
+
+                .accesibilidad-bar button,
+                .accesibilidad-bar select {
+                    width: 32px;
+                    height: 32px;
+                    font-size: 1em;
+                }
+
+                .accesibilidad-bar .icono {
+                    font-size: 1em;
+                }
             }
             @media(max-width:1024px){
                 nav { padding: 0; }
@@ -308,7 +428,13 @@
     
 </head>
 <body>
-    <div class="accesibilidad-bar" aria-label="Barra de accesibilidad">
+    <!-- Botón toggle de accesibilidad -->
+    <button class="accesibilidad-toggle" id="accesibilidadToggle" aria-label="Abrir menú de accesibilidad">
+        ♿
+    </button>
+    
+    <!-- Panel de accesibilidad (oculto por defecto) -->
+    <div class="accesibilidad-bar" id="accesibilidadBar" aria-label="Barra de accesibilidad">
         <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
         <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
             <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
@@ -328,6 +454,26 @@
         <button id="lectorPantallaBtn" title="Lector de pantalla" aria-label="Lector de pantalla"><span class="icono">🔊</span></button>
     </div>
     <script>
+        // Toggle para mostrar/ocultar el panel de accesibilidad
+        const accToggle = document.getElementById('accesibilidadToggle');
+        const accBar = document.getElementById('accesibilidadBar');
+        
+        accToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            accBar.classList.toggle('show');
+            const isOpen = accBar.classList.contains('show');
+            accToggle.classList.toggle('active', isOpen);
+            accToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú de accesibilidad' : 'Abrir menú de accesibilidad');
+        });
+        
+        // Cerrar al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (!accBar.contains(e.target) && e.target !== accToggle) {
+                accBar.classList.remove('show');
+                accToggle.classList.remove('active');
+                accToggle.setAttribute('aria-label', 'Abrir menú de accesibilidad');
+            }
+        });
       
         const root = document.documentElement;
         const body = document.body;
