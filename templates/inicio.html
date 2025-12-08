@@ -5,16 +5,16 @@
     /* Botón toggle de accesibilidad */
     .accesibilidad-toggle {
       position: fixed;
-      left: 24px;
-      bottom: 24px;
+      left: 20px;
+      bottom: 20px;
       z-index: 3001;
       background: linear-gradient(135deg, #222 0%, #444 100%);
       color: #fff;
       border: none;
       border-radius: 50%;
-      width: 56px;
-      height: 56px;
-      font-size: 1.5em;
+      width: 60px;
+      height: 60px;
+      font-size: 1.6em;
       cursor: pointer;
       box-shadow: 0 4px 18px rgba(0,0,0,0.3);
       transition: all 0.3s ease;
@@ -48,7 +48,7 @@
     /* Panel de accesibilidad */
     .accesibilidad-bar {
       position: fixed;
-      left: 24px;
+      left: 20px;
       bottom: 90px;
       z-index: 3000;
       background: #222;
@@ -145,15 +145,15 @@
     @media(max-width:600px){
       .accesibilidad-toggle {
         left: 16px;
-        bottom: 90px;
-        width: 52px;
-        height: 52px;
-        font-size: 1.3em;
+        bottom: 16px;
+        width: 56px;
+        height: 56px;
+        font-size: 1.4em;
       }
 
       .accesibilidad-bar {
         left: 16px;
-        bottom: 150px;
+        bottom: 80px;
         padding: 10px 6px 6px 6px;
         min-width: 44px;
         min-height: 44px;
@@ -175,15 +175,15 @@
     @media(max-width:480px){
       .accesibilidad-toggle {
         left: 12px;
-        bottom: 80px;
-        width: 50px;
-        height: 50px;
-        font-size: 1.2em;
+        bottom: 12px;
+        width: 52px;
+        height: 52px;
+        font-size: 1.3em;
       }
 
       .accesibilidad-bar {
         left: 12px;
-        bottom: 140px;
+        bottom: 72px;
         padding: 8px 5px 5px 5px;
         min-width: 40px;
         min-height: 40px;
@@ -244,19 +244,23 @@
       top: 0;
       left: 0;
       width: 100%;
-      padding: 16px 20px;
+      padding: 18px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
+      gap: 20px;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       z-index: 1000;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
+    .logo {
+      display: flex;
+      align-items: center;
+    }
     .logo img {
-      height: 56px;
+      height: 60px;
       width: auto;
       border-radius: 8px;
       max-width: 100%;
@@ -264,7 +268,7 @@
     }
     nav {
       display: flex;
-      gap: 18px;
+      gap: 20px;
       align-items: center;
       flex-wrap: wrap;
       justify-content: flex-end;
@@ -272,18 +276,18 @@
     nav a {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       text-decoration: none;
       color: var(--dark);
       font-weight: 600;
       transition: color 0.3s;
       white-space: nowrap;
       -webkit-tap-highlight-color: transparent;
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
     nav a img {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       flex-shrink: 0;
     }
     nav a:hover, nav a:active {
@@ -293,7 +297,7 @@
 
     .hero {
       min-height: 75vh;
-      margin-top: 72px;
+      margin-top: 80px;
       background: url("{{ url_for('static', filename='images/elote-y-esquites.jpg') }}") no-repeat center/cover;
       background-attachment: scroll;
       display: flex;
@@ -1440,7 +1444,7 @@
 
   <section class="hero">
     <div class="hero-content">
-      <h1>Bienvenido a "La Esquinita"</h1>
+      <h1>BIENVENIDO A "LA ESQUINITA"</h1>
       <p>Elotes, esquites y patitas con el auténtico sabor mexicano.</p>
       <a href="{{ url_for('carrito') }}" class="btn-primary" style="display:inline-block;text-decoration:none;">Hacer Pedido</a>
     </div>
