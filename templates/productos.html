@@ -658,6 +658,22 @@
         height: 46px;
       }
       nav {
+        width: 100%;
+        gap: 10px;
+        justify-content: space-around;
+        flex-wrap: wrap;
+      }
+      nav a {
+        font-size: 0.85rem;
+        padding: 8px 10px;
+        flex: 0 1 auto;
+        min-width: 70px;
+        justify-content: center;
+      }
+      nav a img {
+        width: 26px;
+        height: 26px;
+      }
       .hero {
         min-height: 65vh;
         margin-top: 120px;
@@ -711,15 +727,18 @@
       }
       nav {
         width: 100%;
-        gap: 10px;
+        gap: 8px;
+        flex-wrap: wrap;
         justify-content: space-around;
       }
       nav a {
         font-size: 0.8rem;
-        padding: 6px 10px;
+        padding: 10px 6px;
+        flex: 0 1 calc(33.333% - 8px);
         flex-direction: column;
         gap: 4px;
         min-width: 65px;
+        font-weight: 600;
       }
       nav a img {
         width: 28px;
@@ -868,10 +887,17 @@
         font-size: 14px;
       }
       header {
-        padding: 8px 10px;
+        padding: 8px 16px;
       }
       .logo img {
-        height: 36px;
+        height: 38px;
+      }
+      nav {
+        gap: 8px;
+      }
+      nav a {
+        padding: 6px 10px;
+        font-size: 0.85rem;
       }
       .hero {
         min-height: 50vh;
@@ -969,6 +995,7 @@
     </nav>
   </header>
 
+  <div id="contenido-app">
   <section class="hero" role="banner" aria-label="Sección principal de productos">
     <div class="hero-content">
       <h1>Te presentamos los productos que "La esquinita" te ofrece</h1>
@@ -1254,5 +1281,6 @@
       return false;
     }
   </script>
+  </div>
 </body>
 </html>
