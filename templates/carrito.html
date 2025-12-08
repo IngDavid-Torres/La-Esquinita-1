@@ -423,6 +423,65 @@
       transform: scale(1.2);
     }
 
+    /* Alertas y mensajes flash */
+    .alert-container {
+      position: fixed;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9998;
+      width: 90%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .alert {
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-size: 1em;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: slideDown 0.3s ease-out;
+      text-align: center;
+    }
+
+    .alert.success {
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: #fff;
+      border-left: 4px solid #1b5e20;
+    }
+
+    .alert.error, .alert.danger {
+      background: linear-gradient(135deg, #f44336, #c62828);
+      color: #fff;
+      border-left: 4px solid #b71c1c;
+    }
+
+    .alert.warning {
+      background: linear-gradient(135deg, #ff9800, #f57c00);
+      color: #fff;
+      border-left: 4px solid #e65100;
+    }
+
+    .alert.info {
+      background: linear-gradient(135deg, #2196f3, #1565c0);
+      color: #fff;
+      border-left: 4px solid #0d47a1;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     /* ========== RESPONSIVE DESIGN ========== */
 
     /* Tablets y dispositivos medianos */
@@ -726,6 +785,17 @@
     </nav>
   </header>
 
+  <!-- Alertas Flash -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="alert-container">
+        {% for category, message in messages %}
+          <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
   <main class="container">
     <h2>🛒 Tu Carrito</h2>
     {% if productos %}
@@ -777,6 +847,20 @@
     function confirmarEliminacion() {
       return confirm("⚠️ ¿Estás seguro de que quieres eliminar este producto del carrito?");
     }
+
+    // Auto-ocultar alertas después de 5 segundos
+    document.addEventListener('DOMContentLoaded', function() {
+      const alertContainer = document.querySelector('.alert-container');
+      if (alertContainer) {
+        setTimeout(function() {
+          alertContainer.style.transition = 'opacity 0.5s ease-out';
+          alertContainer.style.opacity = '0';
+          setTimeout(function() {
+            alertContainer.remove();
+          }, 500);
+        }, 5000);
+      }
+    });
   </script>
 </body>
 </html>

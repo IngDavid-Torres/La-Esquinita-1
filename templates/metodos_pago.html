@@ -486,8 +486,8 @@
   </script>
 </head>
 <body>
-  <button class="accesibilidad-toggle" id="accesibilidadToggle" aria-label="Abrir panel de accesibilidad" title="Accesibilidad">♿</button>
-  <div class="accesibilidad-bar" aria-label="Barra de accesibilidad" style="z-index:3001;">
+  <button class="accesibilidad-toggle" id="accesibilidadToggle" aria-label="Abrir panel de accesibilidad" title="Accesibilidad">♠</button>
+  <div class="accesibilidad-bar" id="accesibilidadBar" aria-label="Barra de accesibilidad" style="z-index:3001;">
     <button id="modoNocturnoBtn" title="Modo nocturno" aria-label="Modo nocturno"><span class="icono">🌙</span></button>
     <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
       <button id="contrasteBtn" title="Contraste" aria-label="Contraste"><span class="icono">🔳</span></button>
@@ -560,116 +560,6 @@
   
   </div> 
 
-  <script>
-    
-    const root = document.documentElement;
-    const body = document.body;
-    let fontSize = 1;
-    let modoNocturno = false;
-    let contraste = false;
-    let contrasteValor = 1;
-    let grises = false;
-    let guiaLectura = false;
-    let lectorActivo = false;
-    let tipografia = 'default';
-
-    
-    const contenidoApp = document.getElementById('contenido-principal');
-
-    function setFontSize(mult) {
-      fontSize = Math.max(0.7, Math.min(2.2, fontSize * mult));
-      body.style.fontSize = fontSize + 'em';
-    }
-    document.getElementById('aumentarLetraBtn').onclick = () => setFontSize(1.15);
-    document.getElementById('disminuirLetraBtn').onclick = () => setFontSize(0.87);
-
-    document.getElementById('modoNocturnoBtn').onclick = function() {
-      modoNocturno = !modoNocturno;
-      if(modoNocturno) {
-        body.classList.add('night-mode');
-        this.classList.add('active');
-      } else {
-        body.classList.remove('night-mode');
-        this.classList.remove('active');
-      }
-    };
-
-    const contrasteRange = document.getElementById('contrasteRange');
-    const contrasteBtn = document.getElementById('contrasteBtn');
-    contrasteBtn.onclick = function() {
-      contraste = !contraste;
-      if(contraste) {
-        contrasteValor = parseFloat(contrasteRange.value);
-        contenidoApp.style.filter = `contrast(${contrasteValor})`;
-        contrasteRange.disabled = false;
-        this.classList.add('active');
-      } else {
-        contenidoApp.style.filter = '';
-        contrasteRange.disabled = true;
-        this.classList.remove('active');
-      }
-    };
-    contrasteRange.oninput = function() {
-      contrasteValor = parseFloat(this.value);
-      if(contraste) {
-        contenidoApp.style.filter = `contrast(${contrasteValor})`;
-      }
-    };
-    contrasteRange.disabled = true;
-
-    document.getElementById('grisesBtn').onclick = function() {
-      grises = !grises;
-      if(grises) {
-        contenidoApp.style.filter = (contraste ? `contrast(${contrasteValor}) ` : '') + 'grayscale(1)';
-        this.classList.add('active');
-      } else {
-        contenidoApp.style.filter = contraste ? `contrast(${contrasteValor})` : '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('guiaLecturaBtn').onclick = function() {
-      guiaLectura = !guiaLectura;
-      let contenido = document.getElementById('contenido-principal') || contenidoApp;
-      if(guiaLectura) {
-        contenido.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.7)';
-        contenido.style.background = '#fffbe7';
-        this.classList.add('active');
-      } else {
-        contenido.style.boxShadow = '';
-        contenido.style.background = '';
-        this.classList.remove('active');
-      }
-    };
-
-    document.getElementById('tipografiaSelect').onchange = function() {
-      tipografia = this.value;
-      switch(tipografia) {
-        case 'arial': body.style.fontFamily = 'Arial, sans-serif'; break;
-        case 'verdana': body.style.fontFamily = 'Verdana, Geneva, sans-serif'; break;
-        case 'comic': body.style.fontFamily = 'Comic Sans MS, Comic Sans, cursive'; break;
-        case 'open': body.style.fontFamily = 'OpenDyslexic, Arial, sans-serif'; break;
-        default: body.style.fontFamily = '';
-      }
-    };
-
-    document.getElementById('lectorPantallaBtn').onclick = function() {
-      lectorActivo = !lectorActivo;
-      let contenido = document.getElementById('contenido-principal') || contenidoApp;
-      if(lectorActivo) {
-        this.classList.add('active');
-        let texto = contenido.innerText;
-        if('speechSynthesis' in window) {
-          let utter = new SpeechSynthesisUtterance(texto);
-          utter.lang = 'es-MX';
-          window.speechSynthesis.speak(utter);
-        } else {
-          alert('Lector de pantalla no soportado en este navegador.');
-        }
-      } else {
-        this.classList.remove('active');
-        if('speechSynthesis' in window) window.speechSynthesis.cancel();
-      }
-    };
-  </script>
   <script src="{{ url_for('static', filename='js/accesibilidad.js') }}"></script>
+</body>
+</html>
