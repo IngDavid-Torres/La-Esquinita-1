@@ -50,8 +50,8 @@ window.addEventListener('load', function() {
   }
 });
 
-// Esperar a que el DOM esté listo
-document.addEventListener('DOMContentLoaded', function() {
+// Esperar a que TODO esté listo (incluidos scripts inline)
+window.addEventListener('load', function() {
   const root = document.documentElement;
   const body = document.body;
 
